@@ -276,10 +276,13 @@ export const FACULTY_ADVISER_KEY = '/faculty/adviser';
 export const ETHICS_KEY = '/ethics';
 export const FULL_MANUSCRIPT_KEY = '/fullmanuscript';
 export const COPYRIGHT_DOCUMENTS_KEY = '/copyright';
-export const RESEARCH_PROF_LIST_KEY = '/users/research_prof_list'
-export const ANNOUNCEMENT_LIST_KEY = '/announcement/announcements_with_user_names/'
-export const COURSE_LIST_KEY = '/users/course_list'
-export const ASSIGN_PROF_TO_SECTION_KEY  = '/admin/assign-prof-to-section/list'
+export const RESEARCH_PROF_LIST_KEY = '/users/research_prof_list';
+export const ANNOUNCEMENT_LIST_KEY =
+  '/announcement/announcements_with_user_names/';
+export const COURSE_LIST_KEY = '/users/course_list';
+export const ASSIGN_PROF_TO_SECTION_KEY = '/admin/assign-prof-to-section/list';
+export const STUDENT_PROFILE_KEY = '/users/profile/student';
+export const FACULTY_PROFILE_KEY = '/users/profile/faculty';
 
 export const STATUS_STYLE = {
   pending: 'bg-[#ffff00] text-black hover:bg-[#ffff00]/90',

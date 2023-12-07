@@ -3,9 +3,53 @@ import {
   ALL_USER_KEY,
   COURSE_LIST_KEY,
   COURSE_WITH_YEAR_LIST_KEY,
+  FACULTY_PROFILE_KEY,
+  STUDENT_PROFILE_KEY,
 } from '@/lib/constants';
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
+
+export function useGetStudentProfile() {
+  const { data: session, status } = useSession();
+
+  return useQuery<DefaultApiResponse<StudentProfile>>({
+    queryKey: [STUDENT_PROFILE_KEY],
+    queryFn: async () => {
+      const res = await risApi.get<DefaultApiResponse<StudentProfile>>(
+        STUDENT_PROFILE_KEY,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.user?.authToken}`,
+          },
+        }
+      );
+      return res.data;
+    },
+    enabled: status === 'authenticated',
+    refetchOnMount: false,
+  });
+}
+
+export function useGetFacultyProfile() {
+  const { data: session, status } = useSession();
+
+  return useQuery<DefaultApiResponse<FacultyProfile>>({
+    queryKey: [FACULTY_PROFILE_KEY],
+    queryFn: async () => {
+      const res = await risApi.get<DefaultApiResponse<FacultyProfile>>(
+        FACULTY_PROFILE_KEY,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.user?.authToken}`,
+          },
+        }
+      );
+      return res.data;
+    },
+    enabled: status === 'authenticated',
+    refetchOnMount: false,
+  });
+}
 
 export function useGetAllUser() {
   const { data: session, status } = useSession();

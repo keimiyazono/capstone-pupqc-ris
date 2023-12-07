@@ -341,6 +341,7 @@ export default function UploadResearchSheet() {
 
                         <Button
                           type="button"
+                          variant="destructive"
                           disabled={user?.id === authorsField.value}
                           onClick={() => removeAuthor(idx)}
                         >
@@ -351,7 +352,7 @@ export default function UploadResearchSheet() {
 
                     <Button
                       type="button"
-                      variant="outline"
+                      variant="secondary"
                       className="gap-2 items-center"
                       onClick={() => appendAuthor({ value: '' })}
                     >
