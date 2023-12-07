@@ -67,11 +67,6 @@ export function FacultyLayout({ children }: React.PropsWithChildren) {
                 href: '/faculty/set-pre-oral-defense',
               },
               {
-                label: 'Submitted Proposal',
-                Icon: BsGraphUpArrow,
-                href: '/faculty/submitted-proposal',
-              },
-              {
                 label: 'Submitted Ethics/Protocol',
                 Icon: IoShieldHalf,
                 href: '/faculty/submitted-ethics-protocol',
