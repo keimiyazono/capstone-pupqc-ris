@@ -64,6 +64,44 @@ async function authHandler({
   }
 }
 
+// prettier-ignore
+async function studentProfileHandler(authToken: string): Promise<StudentProfile | undefined> {
+  try {
+    // prettier-ignore
+    const response = await risApi.get<DefaultApiResponse<StudentProfile>>(
+      '/users/profile/student',
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
+
+    return response.data.result
+  } catch (error) {
+    return undefined
+  }
+}
+
+// prettier-ignore
+async function facultyProfileHandler(authToken: string): Promise<FacultyProfile | undefined> {
+  try {
+    // prettier-ignore
+    const response = await risApi.get<DefaultApiResponse<FacultyProfile>>(
+      '/users/profile/faculty',
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
+
+    return response.data.result
+  } catch (error) {
+    return undefined
+  }
+}
+
 export const SESSION_MAX_AGE = 600;
 
 export const authOptions: NextAuthOptions = {
@@ -77,6 +115,8 @@ export const authOptions: NextAuthOptions = {
       },
 
       async authorize(credentials) {
+        try {
+        } catch (error) {}
         const payload: AuthHandlerValues = {
           username: credentials?.username ?? '',
           password: credentials?.password ?? '',
@@ -88,9 +128,17 @@ export const authOptions: NextAuthOptions = {
         const [data, error] = response ?? [];
 
         if (data && !error) {
+          // prettier-ignore
+          const studentProfileResponse = await studentProfileHandler(data.authToken)
+
+          // prettier-ignore
+          const facultyProfileResponse = await facultyProfileHandler(data.authToken)
+
           return {
             authToken: data.authToken,
             role: data.role,
+            studentProfile: studentProfileResponse,
+            facultyProfile: facultyProfileResponse,
           };
         }
 

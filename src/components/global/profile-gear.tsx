@@ -10,20 +10,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  useGetFacultyProfile,
-  useGetStudentProfile,
-} from '@/hooks/use-user-query';
 import { cn } from '@/lib/utils';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useId, useState } from 'react';
 import { Badge } from '../ui/badge';
-import { Skeleton } from '../ui/skeleton';
-
-type Profile = StudentProfile | FacultyProfile | undefined;
 
 export function ProfileGear() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -34,16 +27,12 @@ export function ProfileGear() {
 
   const pathname = usePathname();
 
-  // prettier-ignore
-  const { data: studentProfile, isLoading: studentProfileIsLoading } = useGetStudentProfile();
+  const { data: session } = useSession();
 
-  // prettier-ignore
-  const { data: facultyProfile, isLoading: facultyProfileIsLoading } = useGetFacultyProfile();
+  const profile =
+    session?.user?.studentProfile ?? session?.user?.facultyProfile;
 
-  // prettier-ignore
-  const profileIsLoading: boolean = studentProfileIsLoading || facultyProfileIsLoading
-
-  const profile: Profile = studentProfile?.result ?? facultyProfile?.result;
+  const isFaculty = profile && 'roles' in profile;
 
   async function logOutHandler() {
     await signOut({ redirect: false });
@@ -52,15 +41,7 @@ export function ProfileGear() {
 
   return (
     <>
-      {profileIsLoading || !profile ? (
-        <div className="flex gap-2 py-4">
-          <Skeleton className="h-10 w-10 rounded-full" />
-          <div className="space-y-1">
-            <Skeleton className="h-6 w-40" />
-            <Skeleton className="h-4 w-20" />
-          </div>
-        </div>
-      ) : (
+      {profile && (
         <DropdownMenu
           defaultOpen={isOpen}
           onOpenChange={() => setIsOpen((prev) => !prev)}
@@ -91,7 +72,7 @@ export function ProfileGear() {
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end">
             <DropdownMenuLabel className="flex flex-wrap gap-1">
-              {'roles' in profile ? (
+              {isFaculty ? (
                 profile.roles.map((role, idx) => (
                   <Badge
                     key={roleId + idx}
@@ -108,9 +89,9 @@ export function ProfileGear() {
                 ))
               ) : (
                 <>
-                  <Badge variant="outline">{profile.student_number}</Badge>
+                  <Badge variant="outline">{profile?.student_number}</Badge>
                   <Badge>
-                    {profile.course} {profile.section}
+                    {profile?.course} {profile?.section}
                   </Badge>
                 </>
               )}

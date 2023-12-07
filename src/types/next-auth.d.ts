@@ -3,6 +3,8 @@ import 'next-auth';
 type UserCredentials = {
   authToken: string
   role: keyof typeof USER_ROLE
+  studentProfile?: StudentProfile
+  facultyProfile?: FacultyProfile
 };
 
 declare module 'next-auth' {
