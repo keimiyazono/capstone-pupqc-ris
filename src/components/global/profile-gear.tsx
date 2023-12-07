@@ -17,6 +17,7 @@ import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useId, useState } from 'react';
 import { Badge } from '../ui/badge';
+import { useSidebarStore } from '@/store/sidebar-store';
 
 export function ProfileGear() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -29,12 +30,16 @@ export function ProfileGear() {
 
   const { data: session } = useSession();
 
+  const {selectSidebar} = useSidebarStore()
+
   const profile =
     session?.user?.studentProfile ?? session?.user?.facultyProfile;
 
   const isFaculty = profile && 'roles' in profile;
 
   async function logOutHandler() {
+    selectSidebar(null)
+    
     await signOut({ redirect: false });
     router.push('/');
   }

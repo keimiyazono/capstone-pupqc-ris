@@ -1,11 +1,11 @@
+import { SidebarData } from '@/types/navigation';
 import { create } from 'zustand';
 
 interface SidebarState {
-  show: boolean;
-  toggleHandler: () => void;
+  currentSidebar?: SidebarData | null;
+  selectSidebar: (sidebar: SidebarData | null) => void;
 }
 
-export const useSidebarStore = create<SidebarState>((set, get) => ({
-  show: true,
-  toggleHandler: () => set({ show: !get().show }, false),
+export const useSidebarStore = create<SidebarState>((set) => ({
+  selectSidebar: (sidebar) => set({ currentSidebar: sidebar }, false),
 }));

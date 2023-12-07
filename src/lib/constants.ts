@@ -26,14 +26,9 @@ import { SlBookOpen } from 'react-icons/sl';
 
 export const STUDENT_NAVIGATION1: NavigationParent = [
   {
-    label: 'Dashboard',
-    nodeList: [
-      {
-        label: 'Progress',
-        Icon: FaRegCircleCheck,
-        href: '/student/progress',
-      },
-    ],
+    label: 'Progress',
+    Icon: FaRegCircleCheck,
+    href: '/student/progress',
   },
   {
     label: 'Submissions',

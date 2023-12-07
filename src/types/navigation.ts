@@ -1,5 +1,10 @@
 import { IconBaseProps } from 'react-icons';
 
+export type SidebarData = {
+  label: string;
+  navigations: NavigationParent;
+};
+
 export type NavigationParent = Array<NavigationChildren | Navigation>;
 
 export interface NavigationChildren {
@@ -12,6 +17,7 @@ export interface Navigation {
   Icon: React.JSXElementConstructor<IconBaseProps>;
   href: string;
   className?: string;
+  isHidden?: boolean;
 }
 
 export interface CustomStep {

@@ -3,8 +3,7 @@
 import logo13 from '@/assets/images/logo13.png';
 import { cn } from '@/lib/utils';
 import { useSidebarStore } from '@/store/sidebar-store';
-import { Navigation, NavigationParent } from '@/types/navigation';
-import _ from 'lodash';
+import { SidebarData } from '@/types/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -28,21 +27,23 @@ import {
 
 export interface SidebarProps {
   className?: string;
-  navigation?: Navigation[];
-  nav: NavigationParent;
+  sidebars?: SidebarData[];
 }
 
-export function Sidebar({ className, navigation = [], nav }: SidebarProps) {
+export function Sidebar({ className, sidebars = [] }: SidebarProps) {
   const parentId = useId();
   const childrenId = useId();
+  const labelId = useId();
   const pathname = usePathname();
-  const { show } = useSidebarStore();
+
+  const { currentSidebar, selectSidebar } = useSidebarStore();
+
+  const options = sidebars.map(({ label }) => label);
 
   return (
     <div
       className={cn(
         'hidden xl:fixed xl:flex xl:flex-col xl:inset-y-0 xl:z-50 xl:w-64 transition-all ease-out duration-500 bg-card border-r',
-        !show && 'xl:w-20',
         className
       )}
     >
@@ -51,25 +52,33 @@ export function Sidebar({ className, navigation = [], nav }: SidebarProps) {
       </div>
 
       <div className="px-4 pt-5 pb-10">
-        <Select defaultValue="Research">
-          <SelectTrigger className="bg-primary text-white uppercase [&>svg]:hidden text-center rounded-xl justify-center font-medium tracking-wider">
+        <Select
+          defaultValue={currentSidebar?.label ?? options[0]}
+          onValueChange={(value) => {
+            const data = sidebars.find(({ label }) => label === value);
+
+            if (data) {
+              selectSidebar(data);
+            }
+          }}
+        >
+          <SelectTrigger className="bg-primary text-white [&>svg]:hidden text-center rounded-xl justify-center font-semibold">
             <SelectValue placeholder="Select a type" />
           </SelectTrigger>
           <SelectContent className="z-50">
             <SelectGroup>
-              <SelectItem value="Capstone">Capstone</SelectItem>
-              <SelectItem value="Research">Research</SelectItem>
-              <SelectItem value="Feasibility Study">
-                Feasibility Study
-              </SelectItem>
-              <SelectItem value="Business Plan">Business Plan</SelectItem>
+              {options.map((option, idx) => (
+                <SelectItem key={labelId + idx} value={option}>
+                  {option}
+                </SelectItem>
+              ))}
             </SelectGroup>
           </SelectContent>
         </Select>
       </div>
 
-      <ScrollArea className="flex flex-col flex-1 overflow-y-auto border-t">
-        {nav.map((n, parentIdx) => {
+      <ScrollArea className="flex flex-col flex-1 overflow-y-auto">
+        {currentSidebar?.navigations.map((n, parentIdx) => {
           if ('nodeList' in n) {
             const { label, nodeList } = n;
 
@@ -91,18 +100,22 @@ export function Sidebar({ className, navigation = [], nav }: SidebarProps) {
                       hasActiveNav && 'text-primary text-center'
                     )}
                   >
-                    {show ? label : _.truncate(label, { length: 4 })}
+                    {label}
                   </AccordionTrigger>
                   <AccordionContent className="p-0">
                     {nodeList.map(
-                      ({ href, label, Icon, className }, childrenIdx) => (
+                      (
+                        { href, label, Icon, className, isHidden },
+                        childrenIdx
+                      ) => (
                         <Link key={childrenId + childrenIdx} href={href}>
                           <Button
                             variant="ghost"
                             className={cn(
-                              'border-b relative justify-start w-full gap-6 text-[11px] py-6 hover:bg-blue-50 transition-colors hover:text-primary',
+                              'border-bd relative justify-start w-full gap-6 text-[11px] py-6 hover:bg-blue-50 transition-colors hover:text-primary',
                               pathname.startsWith(href) &&
                                 'bg-blue-50 text-primary after:absolute after:h-full after:w-1 after:bg-primary after:right-0',
+                              isHidden && 'hidden',
                               className
                             )}
                           >
@@ -119,15 +132,16 @@ export function Sidebar({ className, navigation = [], nav }: SidebarProps) {
               </Accordion>
             );
           } else {
-            const { href, Icon, label } = n;
+            const { href, Icon, label, isHidden } = n;
             return (
               <Link key={childrenId + parentIdx} href={href}>
                 <Button
                   variant="ghost"
                   className={cn(
-                    'border-b relative justify-start w-full gap-6 text-[11px] py-6 hover:bg-blue-50 transition-colors hover:text-primary',
+                    'relative justify-start w-full gap-6 text-[11px] py-6 hover:bg-blue-50 transition-colors hover:text-primary',
                     pathname.startsWith(href) &&
                       'bg-blue-50 text-primary after:absolute after:h-full after:w-1 after:bg-primary after:right-0',
+                    isHidden && 'hidden',
                     className
                   )}
                 >
@@ -139,7 +153,6 @@ export function Sidebar({ className, navigation = [], nav }: SidebarProps) {
           }
         })}
       </ScrollArea>
-      {/* <ThemeButton /> */}
     </div>
   );
 }
