@@ -11,13 +11,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { useSidebarStore } from '@/store/sidebar-store';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useId, useState } from 'react';
 import { Badge } from '../ui/badge';
-import { useSidebarStore } from '@/store/sidebar-store';
 
 export function ProfileGear() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -30,7 +30,7 @@ export function ProfileGear() {
 
   const { data: session } = useSession();
 
-  const {selectSidebar} = useSidebarStore()
+  const { selectSidebar } = useSidebarStore();
 
   const profile =
     session?.user?.studentProfile ?? session?.user?.facultyProfile;
@@ -38,10 +38,11 @@ export function ProfileGear() {
   const isFaculty = profile && 'roles' in profile;
 
   async function logOutHandler() {
-    selectSidebar(null)
-    
     await signOut({ redirect: false });
+
     router.push('/');
+
+    selectSidebar(null);
   }
 
   return (
