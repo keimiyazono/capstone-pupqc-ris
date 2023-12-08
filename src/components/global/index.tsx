@@ -8,3 +8,4 @@ export * from './theme-provider';
 export * from './background'
 export * from './data-table-faceted-filter'
 export * from './data-table-pagination'
+export * from './unauthorized'

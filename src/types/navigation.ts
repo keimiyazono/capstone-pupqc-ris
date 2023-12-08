@@ -1,6 +1,7 @@
 import { IconBaseProps } from 'react-icons';
 
 export type SidebarData = {
+  key: string
   label: string;
   navigations: NavigationParent;
 };

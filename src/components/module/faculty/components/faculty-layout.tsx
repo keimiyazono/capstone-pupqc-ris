@@ -1,9 +1,9 @@
 'use client';
 
 import { DashboardContent, Sidebar } from '@/components/global';
+import { useGetFacultyProfile } from '@/hooks/use-user-query';
 import { useSidebarStore } from '@/store/sidebar-store';
 import { SidebarData } from '@/types/navigation';
-import { useSession } from 'next-auth/react';
 import { useEffect, useMemo } from 'react';
 import { BiSolidDashboard } from 'react-icons/bi';
 import { BsGraphUpArrow } from 'react-icons/bs';
@@ -16,16 +16,15 @@ import { SlBookOpen } from 'react-icons/sl';
 import { TbCalendarStats } from 'react-icons/tb';
 
 export function FacultyLayout({ children }: React.PropsWithChildren) {
-  const { data: session } = useSession();
-
-  const profile = session?.user?.facultyProfile;
-  const roles = profile?.roles ?? [];
+  const { data: facultyProfile, isLoading: facultyProfileIsLoading } =
+    useGetFacultyProfile();
 
   const { selectSidebar } = useSidebarStore();
 
   const sidebars = useMemo<SidebarData[]>(() => {
-    return [
+    const navigations = [
       {
+        key: 'research professor',
         label: 'Professor',
         navigations: [
           {
@@ -106,6 +105,7 @@ export function FacultyLayout({ children }: React.PropsWithChildren) {
         ],
       },
       {
+        key: 'adviser',
         label: 'Adviser',
         navigations: [
           {
@@ -113,10 +113,64 @@ export function FacultyLayout({ children }: React.PropsWithChildren) {
             Icon: BiSolidDashboard,
             href: '/faculty/dashboard',
           },
+          {
+            label: 'Students Documents',
+            nodeList: [
+              {
+                label: 'Submitted Proposal',
+                Icon: BsGraphUpArrow,
+                href: '/faculty/submitted-proposal',
+              },
+              {
+                label: 'Set Pre-Oral Defense Date',
+                Icon: TbCalendarStats,
+                href: '/faculty/set-pre-oral-defense',
+              },
+              {
+                label: 'Submitted Ethics/Protocol',
+                Icon: IoShieldHalf,
+                href: '/faculty/submitted-ethics-protocol',
+              },
+              {
+                label: 'Submitted Full Manuscript',
+                Icon: GiFeather,
+                href: '/faculty/submitted-full-manuscript',
+              },
+              {
+                label: 'Set Final Defense Date',
+                Icon: TbCalendarStats,
+                href: '/faculty/set-final-defense',
+              },
+              {
+                label: 'Submitted Copyright Documents',
+                Icon: FaCopyright,
+                href: '/faculty/submitted-copyright-documents',
+              },
+            ],
+          },
+          {
+            label: 'Collaboration',
+            Icon: HiMiniUserGroup,
+            href: '/faculty/collaboration',
+          },
+          {
+            label: 'Repository',
+            Icon: SlBookOpen,
+            href: '/faculty/repository',
+          },
+          {
+            label: 'Copyrighted research submissions',
+            Icon: FaCopyright,
+            href: '/faculty/copyrighted-research-submissions',
+          },
         ],
       },
     ];
-  }, []);
+
+    const roles = facultyProfile?.result?.roles ?? [];
+
+    return navigations.filter(({ key }) => roles.includes(key));
+  }, [facultyProfile]);
 
   useEffect(() => {
     if (sidebars.length > 0) {
@@ -126,7 +180,7 @@ export function FacultyLayout({ children }: React.PropsWithChildren) {
 
   return (
     <div>
-      <Sidebar sidebars={sidebars} />
+      {sidebars.length > 0 && <Sidebar sidebars={sidebars} />}
       <DashboardContent>{children}</DashboardContent>
     </div>
   );

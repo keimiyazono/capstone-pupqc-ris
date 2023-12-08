@@ -12,6 +12,7 @@ export function StudentLayout({ children }: React.PropsWithChildren) {
   const sidebars = useMemo<SidebarData[]>(() => {
     return [
       {
+        key: 'proposal',
         label: 'Research',
         navigations: STUDENT_NAVIGATION1,
       },

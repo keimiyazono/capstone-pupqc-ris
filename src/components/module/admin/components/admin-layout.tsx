@@ -12,6 +12,7 @@ export function AdminLayout({ children }: React.PropsWithChildren) {
   const sidebars = useMemo<SidebarData[]>(() => {
     return [
       {
+        key: 'admin',
         label: 'Admin',
         navigations: ADMIN_NAVIGATION,
       },
