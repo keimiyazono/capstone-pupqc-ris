@@ -1,19 +1,53 @@
 'use client';
 
 import { Unauthorized } from '@/components/global';
-import { Button } from '@/components/ui/button';
+import { useGetAdviserWithAssignedList } from '@/hooks/use-faculty-query';
 import { useGetFacultyProfile } from '@/hooks/use-user-query';
-import { PlusIcon } from '@radix-ui/react-icons';
-import { useMemo, useState } from 'react';
+import { useId, useMemo } from 'react';
 import { UserAndResponsibilityCard } from './card/user-and-responsibility-card';
 
 const AUTHORIZE_ROLES = ['research professor'];
 
+const DEFAULT: [string, AdviserDataGroup][] = [
+  ['Research', { research_type_name: 'Research', list: [] }],
+  ['Capstone', { research_type_name: 'Capstone', list: [] }],
+  ['Feasibility Study', { research_type_name: 'Feasibility Study', list: [] }],
+  ['Business Plan', { research_type_name: 'Business Plan', list: [] }],
+];
+
 export function UserAndResponsibilitySection() {
+  const cardId = useId();
+
   const { data: facultyProfile, isLoading: facultyProfileIsLoading } =
     useGetFacultyProfile();
 
-  const [length, setLength] = useState<number>(1);
+  const { data: adviserAssignedList } = useGetAdviserWithAssignedList();
+
+  const adviserAssignedListGroup = useMemo<AdviserDataGroup[]>(() => {
+    const list = adviserAssignedList ?? [];
+
+    const groupingsEntries = list.reduce((cache, data) => {
+      const assignments = data?.assignments ?? [];
+
+      for (const { research_type_name } of assignments) {
+        const hasResearchType = cache.has(research_type_name);
+        const previousData = cache.get(research_type_name);
+
+        if (hasResearchType && previousData) {
+          cache.set(research_type_name, {
+            research_type_name,
+            list: [...previousData.list, data],
+          });
+        } else {
+          cache.set(research_type_name, { research_type_name, list: [data] });
+        }
+      }
+
+      return cache;
+    }, new Map<string, AdviserDataGroup>(DEFAULT));
+
+    return Object.values(Object.fromEntries(groupingsEntries));
+  }, [adviserAssignedList]);
 
   const profile = facultyProfile?.result;
 
@@ -28,19 +62,16 @@ export function UserAndResponsibilitySection() {
       {profile && !facultyProfileIsLoading && (
         <section>
           {isAuthorized ? (
-            <div className="space-y-6">
-              <div className="space-y-3 divide-y">
-                {Array.from({ length }).map((_, idx) => (
-                  <UserAndResponsibilityCard key={Date.now() + idx} />
-                ))}
-              </div>
-
-              <Button
-                className="gap-3 text-lg font-medium w-full"
-                onClick={() => setLength((prev) => prev + 1)}
-              >
-                <PlusIcon /> <span>Add more</span>
-              </Button>
+            <div className="space-y-10">
+              {adviserAssignedListGroup.map(
+                ({ research_type_name, list }, idx) => (
+                  <UserAndResponsibilityCard
+                    key={cardId + idx}
+                    research_type_name={research_type_name}
+                    advisers={list}
+                  />
+                )
+              )}
             </div>
           ) : (
             <Unauthorized />

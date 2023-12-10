@@ -71,3 +71,12 @@ export const uploadEthicsProtocolFormSchema = z.object({
       'This field is required.'
     ),
 });
+
+
+export const updateAdviserSectionFormSchema = z.object({
+  sections: z
+    .object({
+      value: z.string(),
+    })
+    .array(),
+});

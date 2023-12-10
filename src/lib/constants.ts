@@ -275,10 +275,11 @@ export const RESEARCH_PROF_LIST_KEY = '/users/research_prof_list';
 export const ANNOUNCEMENT_LIST_KEY =
   '/announcement/announcements_with_user_names/';
 export const COURSE_LIST_KEY = '/users/course_list';
-export const ASSIGN_PROF_TO_SECTION_KEY = '/admin/assign-prof-to-section/list';
+export const ASSIGN_PROF_TO_SECTION_KEY = '/admin/prof-with-assigned';
 export const STUDENT_PROFILE_KEY = '/users/profile/student';
 export const FACULTY_PROFILE_KEY = '/users/profile/faculty';
 export const ADVISER_KEY = '/researchprof/adviser'
+export const ADVISER_WITH_ASSIGNED_KEY = '/researchprof/adviser-with-assigned'
 
 export const STATUS_STYLE = {
   pending: 'bg-[#ffff00] text-black hover:bg-[#ffff00]/90',

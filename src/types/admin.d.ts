@@ -13,3 +13,30 @@ declare interface AssignProfToSection {
   section: string
   course: string
 }
+
+
+declare interface ProfWithAssign {
+  user_profile: UserProfile
+  assignments: Assignment[]
+}
+
+declare interface UserProfile {
+  id: string
+  username: string
+  email: string
+  name: string
+  birth: string
+  phone_number: string
+}
+
+declare interface Assignment {
+  id: string
+  research_type_name: string
+  assignsection: Assignsection[]
+}
+
+declare interface Assignsection {
+  id: string
+  section: string
+  course: string
+}

@@ -105,7 +105,7 @@ export function FacultyLayout({ children }: React.PropsWithChildren) {
         ],
       },
       {
-        key: 'adviser',
+        key: 'research adviser',
         label: 'Adviser',
         navigations: [
           {

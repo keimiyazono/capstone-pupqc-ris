@@ -18,7 +18,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/components/ui/use-toast';
 import {
-  useAdminAssignProfToSection,
+  useAdminAssignProfessorTypeSection,
   useAdminDeleteAssignment,
   useGetAssignProfToSection,
 } from '@/hooks/use-admin-query';
@@ -28,7 +28,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import { Row } from '@tanstack/react-table';
 import _ from 'lodash';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { IoAdd } from 'react-icons/io5';
@@ -41,6 +41,7 @@ export type SectionsComboboxOptions = {
 } & ComboboxOptions;
 
 export type SectionsComboboxOptionsData = {
+  id: string;
   section: string;
   course: string;
 };
@@ -60,7 +61,7 @@ export function DataTableRowSectionDistribution<TData>({
 
   const { data: assignedSections } = useGetAssignProfToSection();
   const { data: courses } = useGetCourseWithYearList();
-  const assign = useAdminAssignProfToSection();
+  const assign = useAdminAssignProfessorTypeSection();
   const deleteAssignment = useAdminDeleteAssignment();
 
   const form = useForm<z.infer<typeof updateProfSectionFormSchema>>({
@@ -84,6 +85,7 @@ export function DataTableRowSectionDistribution<TData>({
           value: uuidv4(),
           label: `${course} ${section}`,
           data: {
+            id: '',
             course,
             section,
           },
@@ -95,34 +97,34 @@ export function DataTableRowSectionDistribution<TData>({
     (option) => !sectionsFields.some((author) => author.value === option.value)
   );
 
-  useEffect(() => {
-    if (assignedSections && assignedSections.result.length > 0) {
-      const list = assignedSections.result;
+  // useEffect(() => {
+  //   if (assignedSections && assignedSections.length > 0) {
+  //     const list = assignedSections;
 
-      const collection = list
-        .filter((value) => {
-          return value.user_id === user_id;
-        })
-        .map((value) => {
-          const data = courseList.find(
-            ({ data }) =>
-              data.course === value.course && data.section === value.section
-          );
+  //     const collection = list
+  //       .filter((value) => {
+  //         return value.user_profile.id === user_id;
+  //       })
+  //       .map(({ assignments }) => {
+  //         const data = courseList.find(
+  //           ({ data }) => assignments.some((value) => data.course === value.assignsection && data.section === value.section)
 
-          return { value: data?.value ?? '' };
-        })
-        .filter(({ value }) => Boolean(value));
+  //         );
 
-      sectionsFields.forEach(({ value }, idx) => {
-        if (!Boolean(value)) {
-          removeSection(idx);
-        }
-      });
+  //         return { value: data?.value ?? '' };
+  //       })
+  //       .filter(({ value }) => Boolean(value));
 
-      appendSection(collection);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [assignedSections, user_id, courseList]);
+  //     sectionsFields.forEach(({ value }, idx) => {
+  //       if (!Boolean(value)) {
+  //         removeSection(idx);
+  //       }
+  //     });
+
+  //     appendSection(collection);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [assignedSections, user_id, courseList]);
 
   return (
     <div>
@@ -184,10 +186,10 @@ export function DataTableRowSectionDistribution<TData>({
                                     try {
                                       sectionUpdate(idx, option);
 
-                                      await assign.mutateAsync({
-                                        user_id,
-                                        sections: [option.data],
-                                      });
+                                      // await assign.mutateAsync({
+                                      //   user_id,
+                                      //   sections: [option.data],
+                                      // });
 
                                       toast({
                                         title: 'Assign Section Success',
@@ -238,10 +240,10 @@ export function DataTableRowSectionDistribution<TData>({
                         if (typeof section === 'undefined') return;
 
                         try {
-                          await deleteAssignment.mutateAsync({
-                            user_id,
-                            sections: [section.data as any],
-                          });
+                          // await deleteAssignment.mutateAsync({
+                          //   user_id,
+                          //   sections: [section.data as any],
+                          // });
 
                           toast({
                             title: 'Remove Assignment Section Success',

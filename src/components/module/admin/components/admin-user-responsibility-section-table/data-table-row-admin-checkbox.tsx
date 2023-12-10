@@ -1,45 +1,45 @@
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/components/ui/use-toast';
-import { useAdminAssignRoles } from '@/hooks/use-admin-query';
+import {
+  useAdminAssignAdmin,
+  useAdminRemoveAssignAdmin,
+} from '@/hooks/use-admin-query';
+import { FACULTY_TYPES } from '@/lib/constants';
 import { Row } from '@tanstack/react-table';
 
-interface DataTableRowCheckboxProps<TData> {
+interface DataTableRowAdminCheckboxProps<TData> {
   row: Row<TData>;
-  value: string;
 }
 
-export function DataTableRowCheckbox<TData>({
+export function DataTableRowAdminCheckbox<TData>({
   row,
-  value,
-}: DataTableRowCheckboxProps<TData>) {
+}: DataTableRowAdminCheckboxProps<TData>) {
   const { toast } = useToast();
   const id = row.getValue('id') as string;
   const facultyName = row.getValue('faculty_name') as string;
 
   const roles = (row.getValue('role_names') ?? []) as string[];
 
-  const hasRole = roles.includes(value);
+  const hasRole = roles.includes(FACULTY_TYPES.ADMIN);
 
-  const update = useAdminAssignRoles();
+  const assign = useAdminAssignAdmin();
+  const removeAssign = useAdminRemoveAssignAdmin();
 
   async function toggleHandler() {
     try {
       if (hasRole) {
-        const filteredRoles = roles.filter((role) => role !== value);
-
-        await update.mutateAsync({ user_id: id, roles: filteredRoles });
+        await removeAssign.mutateAsync({ user_id: id });
 
         toast({
           title: 'Update Roles Success',
-          description: `Disabled the \'${value}\' role for ${facultyName}.`,
+          description: `Disabled the \'${FACULTY_TYPES.ADMIN}\' role for ${facultyName}.`,
         });
       } else {
-        const updatedRoles = [...roles, value];
-        await update.mutateAsync({ user_id: id, roles: updatedRoles });
+        await assign.mutateAsync({ user_id: id });
 
         toast({
           title: 'Update Roles Success',
-          description: `Enabled the \'${value}\' role for ${facultyName}.`,
+          description: `Enabled the \'${FACULTY_TYPES.ADMIN}\' role for ${facultyName}.`,
         });
       }
     } catch (error: any) {

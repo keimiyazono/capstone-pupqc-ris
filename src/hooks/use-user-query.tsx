@@ -48,6 +48,7 @@ export function useGetFacultyProfile() {
     },
     enabled: status === 'authenticated',
     refetchOnMount: false,
+    refetchOnWindowFocus: false
   });
 }
 

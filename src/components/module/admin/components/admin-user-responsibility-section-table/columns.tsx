@@ -4,7 +4,8 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { FACULTY_TYPES } from '@/lib/constants';
 import { DataTableColumnHeader } from './data-table-column-header';
-import { DataTableRowCheckbox } from './data-table-row-checkbox';
+import { DataTableRowAdminCheckbox } from './data-table-row-admin-checkbox';
+import { DataTableRowResearchProfCheckbox } from './data-table-row-research-prof-checkbox';
 
 export const columns: ColumnDef<AdminFacultyWithRoles>[] = [
   {
@@ -25,12 +26,7 @@ export const columns: ColumnDef<AdminFacultyWithRoles>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Research Professor" />
     ),
-    cell: ({ row }) => (
-      <DataTableRowCheckbox
-        row={row}
-        value={FACULTY_TYPES.RESEARCH_PROFESSOR}
-      />
-    ),
+    cell: ({ row }) => <DataTableRowResearchProfCheckbox row={row} />,
     enableSorting: false,
   },
   {
@@ -38,9 +34,7 @@ export const columns: ColumnDef<AdminFacultyWithRoles>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Admin" />
     ),
-    cell: ({ row }) => (
-      <DataTableRowCheckbox row={row} value={FACULTY_TYPES.ADMIN} />
-    ),
+    cell: ({ row }) => <DataTableRowAdminCheckbox row={row} />,
     enableSorting: false,
   },
   {

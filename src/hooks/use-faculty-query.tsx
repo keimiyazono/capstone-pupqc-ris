@@ -1,10 +1,11 @@
 import { risApi } from '@/lib/api';
 import {
   ADVISER_KEY,
+  ADVISER_WITH_ASSIGNED_KEY,
   FACULTY_ADVISER_KEY,
   FACULTY_LIST_KEY,
 } from '@/lib/constants';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 
 export function useGetFacultyAdviser() {
@@ -42,6 +43,7 @@ export function useGetFaculties() {
       return res.data;
     },
     enabled: status === 'authenticated',
+    refetchOnMount: false,
   });
 }
 
@@ -62,5 +64,77 @@ export function useGetAdviserAssigned(user_id: string) {
       return res.data;
     },
     enabled: status === 'authenticated',
+    refetchOnMount: false,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+}
+
+export function useGetAdviserWithAssignedList() {
+  const { data: session, status } = useSession();
+
+  return useQuery<AdviserData[]>({
+    queryKey: [ADVISER_WITH_ASSIGNED_KEY],
+    queryFn: async () => {
+      const res = await risApi.get<AdviserData[]>(ADVISER_WITH_ASSIGNED_KEY, {
+        headers: {
+          Authorization: `Bearer ${session?.user?.authToken}`,
+        },
+      });
+      return res.data;
+    },
+    enabled: status === 'authenticated',
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+  });
+}
+
+export function useAssignAdviser() {
+  const { data: session } = useSession();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: PostAssignAdviserPayload) => {
+      return risApi.post(
+        '/researchprof/assign-adviser-type-section/',
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.user.authToken}`,
+          },
+        }
+      );
+    },
+
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: [ADVISER_WITH_ASSIGNED_KEY],
+      });
+    },
+  });
+}
+
+export function useUpdateAssignAdviser() {
+  const { data: session } = useSession();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ user_id, ...payload }: PutAssignAdviserPayload) => {
+      return risApi.put(
+        `/researchprof/assign-adviser-update/${user_id}`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.user.authToken}`,
+          },
+        }
+      );
+    },
+
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: [ADVISER_WITH_ASSIGNED_KEY],
+      });
+    },
   });
 }
