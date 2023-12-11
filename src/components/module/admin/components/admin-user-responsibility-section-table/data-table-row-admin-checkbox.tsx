@@ -6,6 +6,7 @@ import {
 } from '@/hooks/use-admin-query';
 import { FACULTY_TYPES } from '@/lib/constants';
 import { Row } from '@tanstack/react-table';
+import { useSession } from 'next-auth/react';
 
 interface DataTableRowAdminCheckboxProps<TData> {
   row: Row<TData>;
@@ -14,7 +15,11 @@ interface DataTableRowAdminCheckboxProps<TData> {
 export function DataTableRowAdminCheckbox<TData>({
   row,
 }: DataTableRowAdminCheckboxProps<TData>) {
+  const { data: session } = useSession();
+  const sessionUserId = session?.user.facultyProfile?.id;
+
   const { toast } = useToast();
+
   const id = row.getValue('id') as string;
   const facultyName = row.getValue('faculty_name') as string;
 
@@ -51,5 +56,11 @@ export function DataTableRowAdminCheckbox<TData>({
     }
   }
 
-  return <Checkbox checked={hasRole} onClick={toggleHandler} />;
+  return (
+    <Checkbox
+      checked={hasRole}
+      onClick={toggleHandler}
+      disabled={sessionUserId === id}
+    />
+  );
 }

@@ -121,26 +121,22 @@ export function useAdminRemoveAssignAdmin() {
 }
 
 export interface AssignProfessorTypeSectionPayload {
-  assign_research_type: AssignResearchType;
-  assign_section: AssignSection[];
-}
-
-export interface AssignResearchType {
   user_id: string;
-  research_type_name: string;
-}
-
-export interface AssignSection {
-  section: string;
-  course: string;
+  assignment: Array<{
+    section: string;
+    course: string;
+  }>;
 }
 
 export function useAdminAssignProfessorTypeSection() {
   const { data: session } = useSession();
 
   return useMutation({
-    mutationFn: (payload: AssignProfessorTypeSectionPayload) => {
-      return risApi.post('/admin/assign-professor-type-section/', payload, {
+    mutationFn: ({
+      user_id,
+      assignment,
+    }: AssignProfessorTypeSectionPayload) => {
+      return risApi.post(`/admin/assign-section/${user_id}`, assignment, {
         headers: {
           Authorization: `Bearer ${session?.user.authToken}`,
         },
@@ -153,21 +149,11 @@ export function useAdminDeleteAssignment() {
   const { data: session } = useSession();
 
   return useMutation({
-    mutationFn: ({
-      user_id,
-      sections,
-    }: {
-      user_id: string;
-      sections: Array<{
-        sections: string;
-        course: string;
-      }>;
-    }) => {
-      return risApi.delete(`/admin/delete-assignment/${user_id}`, {
+    mutationFn: ({ section_id }: { section_id: string }) => {
+      return risApi.delete(`/admin/delete-assigned-sections/${section_id}`, {
         headers: {
           Authorization: `Bearer ${session?.user.authToken}`,
         },
-        data: sections,
       });
     },
   });
