@@ -262,6 +262,7 @@ export const USERS_KEY = '/users';
 export const ALL_USER_KEY = '/users/all_user';
 export const FACULTY_WITH_ROLES_KEY = '/users/users_faculty_with_roles';
 export const ADMIN_FACULTY_WITH_ROLES_KEY = '/admin/users_faculty_with_roles';
+export const USER_FACULTY_WITH_ROLES_KEY = '/users/users_faculty_with_roles';
 export const COURSE_WITH_YEAR_LIST_KEY = '/users/course_with_year_list';
 export const RESEARCH_KEY = '/research';
 export const STUDENT_LIST_KEY = '/users/student_list';
@@ -278,8 +279,8 @@ export const COURSE_LIST_KEY = '/users/course_list';
 export const ASSIGN_PROF_TO_SECTION_KEY = '/admin/prof-with-assigned';
 export const STUDENT_PROFILE_KEY = '/users/profile/student';
 export const FACULTY_PROFILE_KEY = '/users/profile/faculty';
-export const ADVISER_KEY = '/researchprof/adviser'
-export const ADVISER_WITH_ASSIGNED_KEY = '/researchprof/adviser-with-assigned'
+export const ADVISER_KEY = '/researchprof/adviser';
+export const ADVISER_WITH_ASSIGNED_KEY = '/researchprof/adviser-with-assigned';
 
 export const STATUS_STYLE = {
   pending: 'bg-[#ffff00] text-black hover:bg-[#ffff00]/90',
@@ -297,7 +298,7 @@ export const USER_TYPES = {
   STUDENT: 'student',
   FACULTY: 'faculty',
   ADMIN: 'admin',
-  ADVISER: 'adviser',
+  RESEARCH_ADVISER: 'research adviser',
   RESEARCH_PROFESSOR: 'research professor',
 };
 
@@ -308,7 +309,7 @@ export const STUDENT_TYPES = {
 export const FACULTY_TYPES = {
   FACULTY: 'faculty',
   ADMIN: 'admin',
-  ADVISER: 'adviser',
+  RESEARCH_ADVISER: 'research adviser',
   RESEARCH_PROFESSOR: 'research professor',
 };
 

@@ -5,6 +5,7 @@ import {
   COURSE_WITH_YEAR_LIST_KEY,
   FACULTY_PROFILE_KEY,
   STUDENT_PROFILE_KEY,
+  USER_FACULTY_WITH_ROLES_KEY,
 } from '@/lib/constants';
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
@@ -106,5 +107,27 @@ export function useGetCourseWithYearList() {
       return res.data;
     },
     enabled: status === 'authenticated',
+  });
+}
+
+export function useGetUserFacultyWithRoles() {
+  const { data: session, status } = useSession();
+
+  return useQuery<DefaultApiResponse<AdminFacultyWithRoles[]>>({
+    queryKey: [USER_FACULTY_WITH_ROLES_KEY],
+    queryFn: async () => {
+      const res = await risApi.get<DefaultApiResponse<AdminFacultyWithRoles[]>>(
+        USER_FACULTY_WITH_ROLES_KEY,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.user?.authToken}`,
+          },
+        }
+      );
+      return res.data;
+    },
+    enabled: status === 'authenticated',
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 }

@@ -1,59 +1,79 @@
 declare interface AdviserDataGroup {
-  research_type_name: string
-  list: AdviserData[]
+  research_type_name: string;
+  id: string;
+  list: AdviserData[];
 }
 
 declare interface AdviserData {
-  user_profile: UserProfile
-  assignments: Assignment[]
+  user_profile: UserProfile;
+  assignments: Assignment[];
 }
 
 declare interface UserProfile {
-  id: string
-  username: string
-  email: string
-  name: string
-  birth: string
-  phone_number: string
+  id: string;
+  username: string;
+  email: string;
+  name: string;
+  birth: string;
+  phone_number: string;
 }
 
 declare interface Assignment {
-  research_type_name: string
-  assignsection: Assignsection[]
+  id: string;
+  research_type_name: string;
+  assignsection: Assignsection[];
 }
 
 declare interface Assignsection {
-  section: string
-  course: string
+  id: string;
+  section: string;
+  course: string;
 }
 
 declare interface PostAssignAdviserPayload {
-  assign_research_type: PostAssignResearchTypePayload
-  assign_section: PostAssignSectionPayload[]
+  assign_research_type: PostAssignResearchTypePayload;
+  assign_section: PostAssignSectionPayload[];
 }
 
 declare interface PostAssignResearchTypePayload {
-  user_id: string
-  research_type_name: string
+  user_id: string;
+  research_type_name: string;
 }
 
 declare interface PostAssignSectionPayload {
-  section: string
-  course: string
+  section: string;
+  course: string;
 }
-
 
 declare interface PutAssignAdviserPayload {
   user_id: string;
-  assignresearchtype: PutAssignresearchtypePayload
-  assignsection: PutAssignsectionPayload[]
+  assignresearchtype: PutAssignresearchtypePayload;
+  assignsection: PutAssignsectionPayload[];
 }
 
 declare interface PutAssignresearchtypePayload {
-  research_type_name: string
+  research_type_name: string;
 }
 
 declare interface PutAssignsectionPayload {
-  section: string
-  course: string
+  section: string;
+  course: string;
+}
+
+declare interface ResearchTypeData {
+  assigned_research_type: AssignedResearchType;
+  user_profile: ResearchTypeDataUserProfile;
+  assigned_sections: Assignsection[];
+}
+
+declare interface AssignedResearchType {
+  id: string;
+  research_type_name: string;
+}
+
+declare interface ResearchTypeDataUserProfile {
+  id: string;
+  username: string;
+  email: string;
+  name: string;
 }

@@ -4,6 +4,7 @@ import {
   ADVISER_WITH_ASSIGNED_KEY,
   FACULTY_ADVISER_KEY,
   FACULTY_LIST_KEY,
+  USER_FACULTY_WITH_ROLES_KEY,
 } from '@/lib/constants';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
@@ -64,9 +65,6 @@ export function useGetAdviserAssigned(user_id: string) {
       return res.data;
     },
     enabled: status === 'authenticated',
-    refetchOnMount: false,
-    retry: false,
-    refetchOnWindowFocus: false,
   });
 }
 
@@ -84,20 +82,68 @@ export function useGetAdviserWithAssignedList() {
       return res.data;
     },
     enabled: status === 'authenticated',
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
   });
 }
 
-export function useAssignAdviser() {
+export function useGetAdviserById({
+  user_id,
+  research_type,
+  enabled = false,
+}: {
+  user_id: string;
+  research_type: string;
+  enabled?: boolean;
+}) {
+  const { data: session, status } = useSession();
+
+  const PATH_KEY = `/researchprof/adviser/${user_id}/assigned`;
+
+  return useQuery<AdviserData>({
+    queryKey: [PATH_KEY, research_type],
+    queryFn: async () => {
+      const res = await risApi.get<AdviserData>(PATH_KEY, {
+        headers: {
+          Authorization: `Bearer ${session?.user?.authToken}`,
+        },
+      });
+      return res.data;
+    },
+    enabled: status === 'authenticated' && enabled,
+  });
+}
+
+export function useGetAdviserListByResearchType({
+  research_type,
+}: {
+  research_type: string;
+}) {
+  const { data: session, status } = useSession();
+
+  const PATH_KEY = `/researchprof/adviser/${research_type}/list`;
+
+  return useQuery<ResearchTypeData[]>({
+    queryKey: [PATH_KEY],
+    queryFn: async () => {
+      const res = await risApi.get<ResearchTypeData[]>(PATH_KEY, {
+        headers: {
+          Authorization: `Bearer ${session?.user?.authToken}`,
+        },
+      });
+      return res.data;
+    },
+    enabled: status === 'authenticated' && Boolean(research_type),
+  });
+}
+
+export function useAdminAssignResearchAdviserRole() {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: PostAssignAdviserPayload) => {
+    mutationFn: ({ user_id }: { user_id: string; research_type: string }) => {
       return risApi.post(
-        '/researchprof/assign-adviser-type-section/',
-        payload,
+        `/researchprof/assign-adviser/${user_id}`,
+        {},
         {
           headers: {
             Authorization: `Bearer ${session?.user.authToken}`,
@@ -106,23 +152,93 @@ export function useAssignAdviser() {
       );
     },
 
-    onSuccess() {
-      queryClient.invalidateQueries({
+    async onSuccess(_, { research_type }) {
+      await queryClient.invalidateQueries({
         queryKey: [ADVISER_WITH_ASSIGNED_KEY],
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: [USER_FACULTY_WITH_ROLES_KEY],
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: [`/researchprof/adviser/${research_type}/list`],
       });
     },
   });
 }
 
-export function useUpdateAssignAdviser() {
+export function useAdminAssignResearchAdviser() {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ user_id, ...payload }: PutAssignAdviserPayload) => {
-      return risApi.put(
-        `/researchprof/assign-adviser-update/${user_id}`,
-        payload,
+    mutationFn: (payload: { user_id: string; research_type_name: string }) => {
+      return risApi.post('/researchprof/assign-adviser-type/', payload, {
+        headers: {
+          Authorization: `Bearer ${session?.user.authToken}`,
+        },
+      });
+    },
+
+    async onSuccess(_, { research_type_name }) {
+      await queryClient.invalidateQueries({
+        queryKey: [ADVISER_WITH_ASSIGNED_KEY],
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: [USER_FACULTY_WITH_ROLES_KEY],
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: [`/researchprof/adviser/${research_type_name}/list`],
+      });
+    },
+  });
+}
+
+export function useAdminRemoveAssignResearchAdviserRole() {
+  const { data: session } = useSession();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ user_id }: { user_id: string; research_type: string }) => {
+      return risApi.delete(`/researchprof/remove-adviser-role/${user_id}`, {
+        headers: {
+          Authorization: `Bearer ${session?.user.authToken}`,
+        },
+      });
+    },
+
+    async onSuccess(_, { research_type }) {
+      await queryClient.invalidateQueries({
+        queryKey: [ADVISER_WITH_ASSIGNED_KEY],
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: [USER_FACULTY_WITH_ROLES_KEY],
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: [`/researchprof/adviser/${research_type}/list`],
+      });
+    },
+  });
+}
+
+export function useAdminRemoveAssignResearchAdviser() {
+  const { data: session } = useSession();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      research_type_id,
+    }: {
+      research_type_id: string;
+      research_type: string;
+    }) => {
+      return risApi.delete(
+        `/researchprof/delete-assigned-research-type/${research_type_id}`,
         {
           headers: {
             Authorization: `Bearer ${session?.user.authToken}`,
@@ -131,9 +247,17 @@ export function useUpdateAssignAdviser() {
       );
     },
 
-    onSuccess() {
-      queryClient.invalidateQueries({
+    async onSuccess(_, { research_type }) {
+      await queryClient.invalidateQueries({
         queryKey: [ADVISER_WITH_ASSIGNED_KEY],
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: [USER_FACULTY_WITH_ROLES_KEY],
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: [`/researchprof/adviser/${research_type}/list`],
       });
     },
   });

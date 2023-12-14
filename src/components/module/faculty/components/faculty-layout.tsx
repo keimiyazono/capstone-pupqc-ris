@@ -25,7 +25,7 @@ export function FacultyLayout({ children }: React.PropsWithChildren) {
     const navigations = [
       {
         key: 'research professor',
-        label: 'Professor',
+        label: 'Research Professor',
         navigations: [
           {
             label: 'Dashboard',
@@ -106,7 +106,7 @@ export function FacultyLayout({ children }: React.PropsWithChildren) {
       },
       {
         key: 'research adviser',
-        label: 'Adviser',
+        label: 'Research Adviser',
         navigations: [
           {
             label: 'Dashboard',
