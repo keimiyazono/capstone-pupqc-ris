@@ -320,7 +320,7 @@ export default function UploadCopyrightDocumentSheet() {
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                'flex-1 justify-between line-clamp-1',
+                                'flex flex-1 justify-between line-clamp-1',
                                 !field.value && 'text-muted-foreground'
                               )}
                             >
