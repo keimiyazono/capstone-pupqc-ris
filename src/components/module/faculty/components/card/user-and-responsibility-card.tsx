@@ -67,6 +67,7 @@ type TableData = Array<
 export function UserAndResponsibilityCard({
   research_type_name,
   addMoreCallback,
+  advisers,
   selected_research_types = [],
   hideAddMore = false,
 }: UserAndResponsibilityCardProps) {
@@ -84,18 +85,19 @@ export function UserAndResponsibilityCard({
 
   const data = useMemo<TableData>(() => {
     const facultys = facultyData?.result ?? [];
-    const advisers = adviserList ?? [];
 
     const mergedAndModified: TableData = facultys.map((value) => {
-      const adviser = advisers.find(
+      const adviser = (adviserList ?? []).find(
         ({ user_profile }) => user_profile.id === value.id
       );
 
       const isAdviser = Boolean(adviser);
 
-      const assignments = (adviser?.assigned_sections ?? []) as any;
+      const assignments =
+        advisers.find(({ user_profile }) => user_profile.id === value.id)
+          ?.assignments ?? [];
 
-      const research_type_id = adviser?.assigned_research_type.id ?? '';
+      const research_type_id = adviser?.assigned_research_type?.id ?? '';
 
       return { ...value, isAdviser, assignments, research_type_id };
     });
@@ -105,7 +107,7 @@ export function UserAndResponsibilityCard({
     });
 
     return sorted;
-  }, [adviserList, facultyData?.result]);
+  }, [adviserList, advisers, facultyData?.result]);
 
   return (
     <>

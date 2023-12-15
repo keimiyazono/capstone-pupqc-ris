@@ -59,6 +59,7 @@ export function DataTableRowResearchAdviserCheckbox<TData>({
 
   async function toggleHandler() {
     try {
+      table.options.meta?.setIsUpdating(true);
       setIsSubmitting(true);
 
       if (isAdviser) {
@@ -106,14 +107,17 @@ export function DataTableRowResearchAdviserCheckbox<TData>({
       });
     } finally {
       setIsSubmitting(false);
+      table.options.meta?.setIsUpdating(false);
     }
   }
+
+  const isUpdating = table.options.meta?.isUpdating;
 
   return (
     <div className="relative w-fit h-fit flex items-center justify-center">
       <Checkbox
         checked={isAdviser}
-        disabled={!isValidType || isSubmitting}
+        disabled={!isValidType || isSubmitting || isUpdating}
         onClick={toggleHandler}
       />
 

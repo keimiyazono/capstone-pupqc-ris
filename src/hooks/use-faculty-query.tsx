@@ -168,6 +168,20 @@ export function useAdminAssignResearchAdviser() {
     },
 
     async onSuccess(_, { research_type_name }) {
+      // cancel any outgoing refetches
+      await queryClient.cancelQueries({
+        queryKey: [ADVISER_WITH_ASSIGNED_KEY],
+      });
+
+      await queryClient.cancelQueries({
+        queryKey: [USER_FACULTY_WITH_ROLES_KEY],
+      });
+
+      await queryClient.cancelQueries({
+        queryKey: [`/researchprof/adviser/${research_type_name}/list`],
+      });
+
+      // validate
       await queryClient.invalidateQueries({
         queryKey: [ADVISER_WITH_ASSIGNED_KEY],
       });
@@ -197,6 +211,20 @@ export function useAdminRemoveAssignResearchAdviserRole() {
     },
 
     async onSuccess(_, { research_type }) {
+      // cancel any outgoing refetches
+      await queryClient.cancelQueries({
+        queryKey: [ADVISER_WITH_ASSIGNED_KEY],
+      });
+
+      await queryClient.cancelQueries({
+        queryKey: [USER_FACULTY_WITH_ROLES_KEY],
+      });
+
+      await queryClient.cancelQueries({
+        queryKey: [`/researchprof/adviser/${research_type}/list`],
+      });
+
+      // validate
       await queryClient.invalidateQueries({
         queryKey: [ADVISER_WITH_ASSIGNED_KEY],
       });
@@ -234,6 +262,20 @@ export function useAdminRemoveAssignResearchAdviser() {
     },
 
     async onSuccess(_, { research_type }) {
+      // cancel any outgoing refetches
+      await queryClient.cancelQueries({
+        queryKey: [ADVISER_WITH_ASSIGNED_KEY],
+      });
+
+      await queryClient.cancelQueries({
+        queryKey: [USER_FACULTY_WITH_ROLES_KEY],
+      });
+
+      await queryClient.cancelQueries({
+        queryKey: [`/researchprof/adviser/${research_type}/list`],
+      });
+
+      // validate
       await queryClient.invalidateQueries({
         queryKey: [ADVISER_WITH_ASSIGNED_KEY],
       });

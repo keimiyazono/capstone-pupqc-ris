@@ -26,21 +26,26 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { memo } from 'react';
 import { DataTableToolbar } from './data-table-toolbar';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data?: TData[];
   research_type_name?: string;
-  selected_research_types: string[]
-  setSelectedResearchType: (value: string) => void
+  selected_research_types: string[];
+  setSelectedResearchType: (value: string) => void;
 }
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData extends RowData> {
     researchType: string;
-    selected_research_types: string[]
+
+    selected_research_types: string[];
     changeResearchType: (value: string) => void;
+
+    isUpdating: boolean;
+    setIsUpdating: (value: boolean) => void;
   }
 }
 
@@ -56,6 +61,7 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [researchType, setResearchType] = useState<string>(research_type_name);
+  const [isUpdating, setIsUpdating] = useState<boolean>(false);
 
   const table = useReactTable({
     data,
@@ -67,12 +73,16 @@ export function DataTable<TData, TValue>({
       columnFilters,
     },
     meta: {
-      researchType,
       selected_research_types,
+
+      researchType,
       changeResearchType(value) {
         setResearchType(value);
-        setSelectedResearchType(value)
+        setSelectedResearchType(value);
       },
+
+      isUpdating,
+      setIsUpdating,
     },
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -143,4 +153,4 @@ export function DataTable<TData, TValue>({
       <DataTablePagination table={table} />
     </div>
   );
-}
+};

@@ -63,9 +63,7 @@ export function DataTableToolbar<TData>({
                     value={value}
                     className={cn(
                       'hidden',
-                      selected_research_types.some(
-                        (selected) => selected !== value //|| researchType === selected
-                      ) && 'block bg-red-500'
+                      !selected_research_types.includes(value) && 'block'
                     )}
                   >
                     {value}
