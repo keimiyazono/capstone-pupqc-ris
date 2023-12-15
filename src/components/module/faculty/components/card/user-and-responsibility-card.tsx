@@ -70,13 +70,17 @@ export function UserAndResponsibilityCard({
   selected_research_types = [],
   hideAddMore = false,
 }: UserAndResponsibilityCardProps) {
-  const [selectedResearchType, setSelectedResearchType] = useState<string>(research_type_name ?? '');
+  const [selectedResearchType, setSelectedResearchType] = useState<string>(
+    research_type_name ?? ''
+  );
 
   const { data: facultyData, isLoading } = useGetUserFacultyWithRoles();
 
   const { data: adviserList } = useGetAdviserListByResearchType({
     research_type: selectedResearchType,
   });
+
+  console.log({ selected_research_types });
 
   const data = useMemo<TableData>(() => {
     const facultys = facultyData?.result ?? [];
@@ -117,7 +121,9 @@ export function UserAndResponsibilityCard({
               data={data}
               selected_research_types={selected_research_types}
               research_type_name={research_type_name}
-              setSelectedResearchType={(value) => setSelectedResearchType(value)}
+              setSelectedResearchType={(value) =>
+                setSelectedResearchType(value)
+              }
             />
           )}
 

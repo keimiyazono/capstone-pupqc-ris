@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { cn } from '@/lib/utils';
 
 const PROPOSAL_TYPES = [
   'Research',
@@ -40,8 +41,6 @@ export function DataTableToolbar<TData>({
     (value) => value.toLowerCase() === researchType?.toLowerCase()
   );
 
-  console.log({ researchType, selected_research_types });
-
   return (
     <div className="space-y-5">
       <div className="flex justify-end">
@@ -58,12 +57,17 @@ export function DataTableToolbar<TData>({
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {PROPOSAL_TYPES.filter((a) =>
-                  selected_research_types.some(
-                    (b) => b !== a || researchType === b
-                  )
-                ).map((value) => (
-                  <SelectItem key={value} value={value}>
+                {PROPOSAL_TYPES.map((value) => (
+                  <SelectItem
+                    key={value}
+                    value={value}
+                    className={cn(
+                      'hidden',
+                      selected_research_types.some(
+                        (selected) => selected !== value //|| researchType === selected
+                      ) && 'block bg-red-500'
+                    )}
+                  >
                     {value}
                   </SelectItem>
                 ))}

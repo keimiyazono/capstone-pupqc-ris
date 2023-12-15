@@ -151,20 +151,6 @@ export function useAdminAssignResearchAdviserRole() {
         }
       );
     },
-
-    async onSuccess(_, { research_type }) {
-      await queryClient.invalidateQueries({
-        queryKey: [ADVISER_WITH_ASSIGNED_KEY],
-      });
-
-      await queryClient.invalidateQueries({
-        queryKey: [USER_FACULTY_WITH_ROLES_KEY],
-      });
-
-      await queryClient.invalidateQueries({
-        queryKey: [`/researchprof/adviser/${research_type}/list`],
-      });
-    },
   });
 }
 

@@ -24,7 +24,8 @@ export function UserAndResponsibilitySection() {
 
   const [addMore, setAddMore] = useState<AdviserDataGroup[]>([]);
 
-  const { data: adviserAssignedList } = useGetAdviserWithAssignedList();
+  const { data: adviserAssignedList, refetch } =
+    useGetAdviserWithAssignedList();
 
   const adviserAssignedListGroup = useMemo<AdviserDataGroup[]>(() => {
     const list = adviserAssignedList ?? [];
@@ -72,6 +73,10 @@ export function UserAndResponsibilitySection() {
     [addMore, adviserAssignedListGroup]
   );
 
+  const selected_research_types = adviserAssignedListGroupMerged
+    .map(({ research_type_name }) => research_type_name)
+    .filter((v) => PROPOSAL_TYPES.includes(v));
+
   return (
     <>
       {profile && !facultyProfileIsLoading && (
@@ -91,9 +96,7 @@ export function UserAndResponsibilitySection() {
                       <UserAndResponsibilityCard
                         key={cardId + idx}
                         research_type_name={research_type_name}
-                        selected_research_types={adviserAssignedListGroup.map(
-                          ({ research_type_name }) => research_type_name
-                        )}
+                        selected_research_types={selected_research_types}
                         advisers={list}
                         addMoreCallback={() => {
                           const key = uuidv4();
