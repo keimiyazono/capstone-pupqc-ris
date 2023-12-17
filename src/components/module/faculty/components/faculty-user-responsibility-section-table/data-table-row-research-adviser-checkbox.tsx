@@ -59,7 +59,9 @@ export function DataTableRowResearchAdviserCheckbox<TData>({
 
   async function toggleHandler() {
     try {
-      table.options.meta?.setIsUpdating(true);
+      table.options.meta?.setIsUpdating &&
+        table.options.meta?.setIsUpdating(true);
+
       setIsSubmitting(true);
 
       if (isAdviser) {
@@ -107,7 +109,9 @@ export function DataTableRowResearchAdviserCheckbox<TData>({
       });
     } finally {
       setIsSubmitting(false);
-      table.options.meta?.setIsUpdating(false);
+
+      table.options.meta?.setIsUpdating &&
+        table.options.meta?.setIsUpdating(false);
     }
   }
 

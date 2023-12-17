@@ -24,8 +24,7 @@ export function UserAndResponsibilitySection() {
 
   const [addMore, setAddMore] = useState<AdviserDataGroup[]>([]);
 
-  const { data: adviserAssignedList, refetch } =
-    useGetAdviserWithAssignedList();
+  const { data: adviserAssignedList } = useGetAdviserWithAssignedList();
 
   const adviserAssignedListGroup = useMemo<AdviserDataGroup[]>(() => {
     const list = adviserAssignedList ?? [];
@@ -33,20 +32,20 @@ export function UserAndResponsibilitySection() {
     const groupingsEntries = list.reduce((cache, data) => {
       const assignments = data?.assignments ?? [];
 
-      for (const { research_type_name, id } of assignments) {
+      for (const { research_type_name, research_type_id } of assignments) {
         const hasResearchType = cache.has(research_type_name);
         const previousData = cache.get(research_type_name);
 
         if (hasResearchType && previousData) {
           cache.set(research_type_name, {
             research_type_name,
-            id,
+            id: research_type_id,
             list: [...previousData.list, data],
           });
         } else {
           cache.set(research_type_name, {
             research_type_name,
-            id,
+            id: research_type_id,
             list: [data],
           });
         }

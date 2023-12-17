@@ -6,7 +6,6 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
@@ -17,7 +16,6 @@ import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useId, useState } from 'react';
-import { Badge } from '../ui/badge';
 
 export function ProfileGear() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -77,32 +75,6 @@ export function ProfileGear() {
             />
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end">
-            <DropdownMenuLabel className="flex flex-wrap gap-1">
-              {isFaculty ? (
-                profile.roles.map((role, idx) => (
-                  <Badge
-                    key={roleId + idx}
-                    className={cn(
-                      // prettier-ignore
-                      pathname.startsWith('/faculty') && role === 'admin' && 'hidden',
-
-                      // prettier-ignore
-                      pathname.startsWith('/admin') && role === 'faculty' && 'hidden'
-                    )}
-                  >
-                    {role}
-                  </Badge>
-                ))
-              ) : (
-                <>
-                  <Badge variant="outline">{profile?.student_number}</Badge>
-                  <Badge>
-                    {profile?.course} {profile?.section}
-                  </Badge>
-                </>
-              )}
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>Profile</DropdownMenuItem>
             </DropdownMenuGroup>

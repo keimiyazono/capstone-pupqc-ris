@@ -289,7 +289,7 @@ export function AdviserAssignSection({
     if (assignments.length > 0) {
       for (const assignment of assignments) {
         if (assignment.research_type_name === research_type_name) {
-          const collection = assignment.assignsection
+          const collection = assignment.assign_sections
             .map((value) => {
               const data = courseList.find(
                 ({ data }) =>

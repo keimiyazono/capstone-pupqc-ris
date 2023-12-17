@@ -72,7 +72,6 @@ export const uploadEthicsProtocolFormSchema = z.object({
     ),
 });
 
-
 export const updateAdviserSectionFormSchema = z.object({
   sections: z
     .object({

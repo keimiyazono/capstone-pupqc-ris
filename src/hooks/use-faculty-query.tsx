@@ -290,3 +290,49 @@ export function useAdminRemoveAssignResearchAdviser() {
     },
   });
 }
+
+export interface AssignAdviserSectionPayload {
+  research_type_id: string;
+  assignment: Array<{
+    section: string;
+    course: string;
+  }>;
+}
+
+export function useAssignAdviserSection() {
+  const { data: session } = useSession();
+
+  return useMutation({
+    mutationFn: ({
+      research_type_id,
+      assignment,
+    }: AssignAdviserSectionPayload) => {
+      return risApi.post(
+        `/researchprof/add-section-to-research-assign/${research_type_id}`,
+        assignment,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.user.authToken}`,
+          },
+        }
+      );
+    },
+  });
+}
+
+export function useRemoveAdviserSection() {
+  const { data: session } = useSession();
+
+  return useMutation({
+    mutationFn: ({ section_id }: { section_id: string }) => {
+      return risApi.delete(
+        `/researchprof/delete-assigned-sections/${section_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.user.authToken}`,
+          },
+        }
+      );
+    },
+  });
+}

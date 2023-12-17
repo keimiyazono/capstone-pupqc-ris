@@ -49,6 +49,7 @@ export function DataTableToolbar<TData>({
             defaultValue={isValidType ? researchType : ''}
             disabled={isValidType}
             onValueChange={(value) => {
+              table.options.meta?.changeResearchType &&
               table.options.meta?.changeResearchType(value);
             }}
           >
@@ -77,6 +78,7 @@ export function DataTableToolbar<TData>({
             defaultValue={isValidType ? researchType : ''}
             disabled={isValidType}
             onValueChange={(value) => {
+              table.options.meta?.changeResearchType &&
               table.options.meta?.changeResearchType(value);
             }}
           >

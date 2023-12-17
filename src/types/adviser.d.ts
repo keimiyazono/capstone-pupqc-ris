@@ -19,9 +19,9 @@ declare interface UserProfile {
 }
 
 declare interface Assignment {
-  id: string;
+  research_type_id: string;
   research_type_name: string;
-  assignsection: Assignsection[];
+  assign_sections: Assignsection[];
 }
 
 declare interface Assignsection {

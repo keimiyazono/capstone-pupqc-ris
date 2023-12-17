@@ -25,29 +25,22 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { DataTableToolbar } from './data-table-toolbar';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data?: TData[];
-  research_type_name?: string;
-  selected_research_types: string[];
-  setSelectedResearchType: (value: string) => void;
+  researchType: string;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data = [],
-  selected_research_types = [],
-  research_type_name = '',
-  setSelectedResearchType,
+  researchType,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [researchType, setResearchType] = useState<string>(research_type_name);
-  const [isUpdating, setIsUpdating] = useState<boolean>(false);
 
   const table = useReactTable({
     data,
@@ -59,16 +52,7 @@ export function DataTable<TData, TValue>({
       columnFilters,
     },
     meta: {
-      selected_research_types,
-
       researchType,
-      changeResearchType(value) {
-        setResearchType(value);
-        setSelectedResearchType(value);
-      },
-
-      isUpdating,
-      setIsUpdating,
     },
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -84,8 +68,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      <DataTableToolbar table={table} />
-
+      {/* <DataTableToolbar table={table} /> */}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -114,7 +97,7 @@ export function DataTable<TData, TValue>({
                   data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="w-1/2">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
