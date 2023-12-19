@@ -33,8 +33,6 @@ export function ProfileGear() {
   const profile =
     session?.user?.studentProfile ?? session?.user?.facultyProfile;
 
-  const isFaculty = profile && 'roles' in profile;
-
   async function logOutHandler() {
     await signOut({ redirect: false });
 

@@ -281,6 +281,8 @@ export const STUDENT_PROFILE_KEY = '/users/profile/student';
 export const FACULTY_PROFILE_KEY = '/users/profile/faculty';
 export const ADVISER_KEY = '/researchprof/adviser';
 export const ADVISER_WITH_ASSIGNED_KEY = '/researchprof/adviser-with-assigned';
+export const USER_SUBMITTED_WORKFLOWS_KEY = '/researchprof/workflows/user';
+export const DISPLAY_ALL_PROCESS_KEY = '/researchprof/display-process-all/';
 
 export const STATUS_STYLE = {
   pending: 'bg-[#ffff00] text-black hover:bg-[#ffff00]/90',
