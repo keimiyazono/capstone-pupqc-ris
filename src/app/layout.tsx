@@ -1,4 +1,4 @@
-import { ProgressBar, ThemeProvider } from '@/components/global';
+import { ProgressBar } from '@/components/global';
 import { QueryProvider } from '@/components/provider/query-provider';
 import { NextAuthSessionProvider } from '@/components/provider/session-provider';
 import { Toaster } from '@/components/ui/toaster';
@@ -34,16 +34,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <NextAuthSessionProvider>
           <QueryProvider>
-            {/* <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            > */}
-              <ProgressBar />
-              {children}
-              <Toaster />
-            {/* </ThemeProvider> */}
+            <ProgressBar />
+            {children}
+            <Toaster />
           </QueryProvider>
         </NextAuthSessionProvider>
       </body>

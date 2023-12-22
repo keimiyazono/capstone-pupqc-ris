@@ -24,16 +24,12 @@ export default function FacultLogin() {
 
         <FacultyLoginForm />
 
-        {/* <ThemeButton className="h-10 w-10 rounded-full z-50 absolute bottom-2 right-6" /> */}
-
         <footer className="flex-0 flex w-full items-center justify-center py-3">
           <div className="text-xs">
             <span>PUPQC RIS © 2023</span>
           </div>
         </footer>
       </div>
-
-      {/* <ParticlesContainer options={particlesBasic} /> */}
     </>
   );
 }
