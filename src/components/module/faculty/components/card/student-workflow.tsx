@@ -9,25 +9,25 @@ import {
   CommandInput,
   CommandItem,
 } from '@/components/ui/command';
-import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from '@/components/ui/form';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useToast } from '@/components/ui/use-toast';
-import {
-  useAssignAdviserSection,
-  useRemoveAdviserSection,
-} from '@/hooks/use-faculty-query';
 import { useGetCourseWithYearList } from '@/hooks/use-user-query';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
-import { Row, Table } from '@tanstack/react-table';
 import _ from 'lodash';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { IoAdd } from 'react-icons/io5';
@@ -46,36 +46,12 @@ export type SectionsComboboxOptionsData = {
 
 const DEFAULT_OPTIONS: SectionsComboboxOptions[] = [];
 
-interface DataTableRowSectionDistributionProps<TData> {
-  row: Row<TData>;
-  table: Table<AdviserData>;
+export interface StudentWorkflowProps {
+  research_type: string;
 }
 
-export function DataTableRowSectionDistribution<TData>({
-  row,
-  table,
-}: DataTableRowSectionDistributionProps<TData>) {
-  const { toast } = useToast();
-
-  const user_profile = row.getValue('user_profile') as UserProfile;
-  const assignments = row.getValue('assignments') as Assignment[];
-
-  const researchType = table.options.meta?.researchType;
-
-  const assignment = assignments.find(
-    ({ research_type_name }) => researchType === research_type_name
-  );
-
-  const research_type_id = assignment?.research_type_id;
-
-  const sections = assignment?.assign_sections ?? [];
-
-  const user_id = user_profile.id;
-  const name = user_profile.name;
-
+export function StudentWorkflow() {
   const { data: courses } = useGetCourseWithYearList();
-  const assign = useAssignAdviserSection();
-  const deleteAssignment = useRemoveAdviserSection();
 
   const form = useForm<z.infer<typeof updateAdviserSectionFormSchema>>({
     resolver: zodResolver(updateAdviserSectionFormSchema),
@@ -109,31 +85,41 @@ export function DataTableRowSectionDistribution<TData>({
     (option) => !sectionsFields.some((author) => author.value === option.value)
   );
 
-  useEffect(() => {
-    if (sections.length > 0) {
-      const collection = sections
-        .map((assignment) => {
-          const data = courseList.find(
-            ({ data }) =>
-              data.course === assignment.course &&
-              data.section === assignment.section
-          );
+  // useEffect(() => {
+  //   if (sections.length > 0) {
+  //     const collection = sections
+  //       .map((assignment) => {
+  //         const data = courseList.find(
+  //           ({ data }) =>
+  //             data.course === assignment.course &&
+  //             data.section === assignment.section
+  //         );
 
-          return { value: data?.value ?? '' };
-        })
-        .filter(({ value }) => Boolean(value));
+  //         return { value: data?.value ?? '' };
+  //       })
+  //       .filter(({ value }) => Boolean(value));
 
-      sectionsFields.forEach(({ value }, idx) => {
-        if (!Boolean(value)) {
-          removeSection(idx);
-        }
-      });
+  //     sectionsFields.forEach(({ value }, idx) => {
+  //       if (!Boolean(value)) {
+  //         removeSection(idx);
+  //       }
+  //     });
 
-      appendSection(collection);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user_id, courseList, sections]);
+  //     appendSection(collection);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [courseList, sections]);
+  // const [workflows, setWorkflows] = useState<Workflow[]>([]);
 
+  // const { data: userSubmittedWorkflows } = useGetUserSubmittedWorkflows();
+
+  // useEffect(() => {
+  //   if (typeof userSubmittedWorkflows !== 'undefined') {
+  //     const grouping = userSubmittedWorkflows
+
+  //     setWorkflows(grouping);
+  //   }
+  // }, [userSubmittedWorkflows]);
   return (
     <div>
       <Form {...form}>
@@ -143,6 +129,7 @@ export function DataTableRowSectionDistribution<TData>({
             name="sections"
             render={() => (
               <FormItem className="col-span-2 flex flex-col">
+                <FormLabel>Student</FormLabel>
                 {sectionsFields.map((sectionsField, idx) => (
                   <div
                     key={sectionsField.id}
@@ -192,29 +179,29 @@ export function DataTableRowSectionDistribution<TData>({
                                   key={option.value}
                                   onSelect={async () => {
                                     try {
-                                      if (!research_type_id) return;
+                                      // if (!research_type_id) return;
 
                                       sectionUpdate(idx, option);
 
-                                      await assign.mutateAsync({
-                                        research_type_id,
-                                        assignment: [
-                                          {
-                                            course: option.data.course,
-                                            section: option.data.section,
-                                          },
-                                        ],
-                                      });
+                                      // await assign.mutateAsync({
+                                      //   research_type_id,
+                                      //   assignment: [
+                                      //     {
+                                      //       course: option.data.course,
+                                      //       section: option.data.section,
+                                      //     },
+                                      //   ],
+                                      // });
 
-                                      toast({
-                                        title: 'Assign Section Success',
-                                        description: `You assigned the ${option.label} section to ${name}.`,
-                                      });
+                                      // toast({
+                                      //   title: 'Assign Section Success',
+                                      //   description: `You assigned the ${option.label} section to ${name}.`,
+                                      // });
                                     } catch (error) {
-                                      toast({
-                                        title: 'Assign Section Failed',
-                                        variant: 'destructive',
-                                      });
+                                      // toast({
+                                      //   title: 'Assign Section Failed',
+                                      //   variant: 'destructive',
+                                      // });
                                     }
                                   }}
                                   className="flex max-w-none"
@@ -248,34 +235,34 @@ export function DataTableRowSectionDistribution<TData>({
                       onClick={async () => {
                         removeSection(idx);
 
-                        const section = sections.find((assignment) => {
-                          const data = courseList.some(
-                            ({ data, value }) =>
-                              data.course === assignment.course &&
-                              data.section === assignment.section &&
-                              value === sectionsField.value
-                          );
+                        // const section = sections.find((assignment) => {
+                        //   const data = courseList.some(
+                        //     ({ data, value }) =>
+                        //       data.course === assignment.course &&
+                        //       data.section === assignment.section &&
+                        //       value === sectionsField.value
+                        //   );
 
-                          return Boolean(data);
-                        });
+                        //   return Boolean(data);
+                        // });
 
-                        if (typeof section === 'undefined') return;
+                        // if (typeof section === 'undefined') return;
 
-                        try {
-                          await deleteAssignment.mutateAsync({
-                            section_id: section.id,
-                          });
+                        // try {
+                        //   await deleteAssignment.mutateAsync({
+                        //     section_id: section.id,
+                        //   });
 
-                          toast({
-                            title: 'Remove Assignment Section Success',
-                            description: `You removed the assignment of the ${section.course} ${section.section} section from ${name}.`,
-                          });
-                        } catch (error) {
-                          toast({
-                            title: 'Remove Assignment Section Failed',
-                            variant: 'destructive',
-                          });
-                        }
+                        //   toast({
+                        //     title: 'Remove Assignment Section Success',
+                        //     description: `You removed the assignment of the ${section.course} ${section.section} section from ${name}.`,
+                        //   });
+                        // } catch (error) {
+                        //   toast({
+                        //     title: 'Remove Assignment Section Failed',
+                        //     variant: 'destructive',
+                        //   });
+                        // }
                       }}
                     >
                       <FaRegTrashAlt />
@@ -292,7 +279,7 @@ export function DataTableRowSectionDistribution<TData>({
                   }
                   onClick={() => appendSection({ value: '' })}
                 >
-                  <IoAdd /> <span>Add more section</span>
+                  <IoAdd /> <span>Add more process</span>
                 </Button>
               </FormItem>
             )}

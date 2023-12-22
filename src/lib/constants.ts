@@ -281,7 +281,7 @@ export const STUDENT_PROFILE_KEY = '/users/profile/student';
 export const FACULTY_PROFILE_KEY = '/users/profile/faculty';
 export const ADVISER_KEY = '/researchprof/adviser';
 export const ADVISER_WITH_ASSIGNED_KEY = '/researchprof/adviser-with-assigned';
-export const USER_SUBMITTED_WORKFLOWS_KEY = '/researchprof/workflows/user';
+export const SUBMITTED_WORKFLOWS_KEY = '/researchprof/workflows/all-list';
 export const DISPLAY_ALL_PROCESS_KEY = '/researchprof/display-process-all/';
 
 export const STATUS_STYLE = {
