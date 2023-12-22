@@ -116,7 +116,6 @@ export const authOptions: NextAuthOptions = {
 
       async authorize(credentials) {
         try {
-          return null
         } catch (error) {}
         const payload: AuthHandlerValues = {
           username: credentials?.username ?? '',
