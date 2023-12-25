@@ -17,6 +17,8 @@ export interface StudentWorkflowRowProps {
 export function StudentWorkflowRow({ research_type }: StudentWorkflowRowProps) {
   const [studentWorkflows, setStudentWorkflows] = useState<Workflow[]>([]);
 
+  const [workflowIds, setWorkflowIds] = useState<string[]>([]);
+
   const [studentWorkflowDatas, setStudentWorkflowDatas] = useState<
     StudentWorkflowData[]
   >([]);
@@ -43,6 +45,9 @@ export function StudentWorkflowRow({ research_type }: StudentWorkflowRowProps) {
     <StudentProcessContext.Provider
       value={{
         research_type,
+
+        workflowIds,
+        setWorkflowIds,
 
         studentWorkflowDatas,
         setStudentWorkflowDatas,
