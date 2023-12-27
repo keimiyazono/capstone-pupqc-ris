@@ -25,9 +25,10 @@ declare interface Assignment {
 }
 
 declare interface Assignsection {
-  id: string;
-  section: string;
-  course: string;
+  class_id: string
+  id: string
+  course: string
+  section: string
 }
 
 declare interface PostAssignAdviserPayload {

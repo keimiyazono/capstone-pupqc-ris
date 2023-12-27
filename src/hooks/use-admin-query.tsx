@@ -123,8 +123,7 @@ export function useAdminRemoveAssignAdmin() {
 export interface AssignProfessorTypeSectionPayload {
   user_id: string;
   assignment: Array<{
-    section: string;
-    course: string;
+    class_id: string
   }>;
 }
 

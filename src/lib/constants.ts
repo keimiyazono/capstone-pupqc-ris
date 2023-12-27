@@ -283,6 +283,7 @@ export const ADVISER_KEY = '/researchprof/adviser';
 export const ADVISER_WITH_ASSIGNED_KEY = '/researchprof/adviser-with-assigned';
 export const SUBMITTED_WORKFLOWS_KEY = '/researchprof/workflows/all-list';
 export const DISPLAY_ALL_PROCESS_KEY = '/researchprof/display-process-all/';
+export const SECTION_KEY = '/sections';
 
 export const STATUS_STYLE = {
   pending: 'bg-[#ffff00] text-black hover:bg-[#ffff00]/90',

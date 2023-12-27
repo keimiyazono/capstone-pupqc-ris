@@ -22,7 +22,7 @@ import {
   useAdminDeleteAssignment,
   useGetAssignProfToSection,
 } from '@/hooks/use-admin-query';
-import { useGetCourseWithYearList } from '@/hooks/use-user-query';
+import { useGetClassRooms } from '@/hooks/use-section-query';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
@@ -32,7 +32,6 @@ import { useEffect, useMemo } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { IoAdd } from 'react-icons/io5';
-import { v4 as uuidv4 } from 'uuid';
 import * as z from 'zod';
 import { updateProfSectionFormSchema } from '../../validation';
 
@@ -59,7 +58,8 @@ export function DataTableRowSectionDistribution<TData>({
   const name = row.getValue('name') as string;
 
   const { data: assignedSections } = useGetAssignProfToSection();
-  const { data: courses } = useGetCourseWithYearList();
+
+  const { data: classRooms } = useGetClassRooms();
   const assign = useAdminAssignProfessorTypeSection();
   const deleteAssignment = useAdminDeleteAssignment();
 
@@ -79,9 +79,9 @@ export function DataTableRowSectionDistribution<TData>({
   } = useFieldArray({ control: form.control, name: 'sections' });
 
   const courseList = useMemo<SectionsComboboxOptions[]>(() => {
-    return courses?.result
-      ? courses.result.map(({ course, section }) => ({
-          value: uuidv4(),
+    return classRooms?.result
+      ? classRooms.result.map(({ Class: { id, course, section } }) => ({
+          value: id,
           label: `${course} ${section}`,
           data: {
             course,
@@ -89,7 +89,7 @@ export function DataTableRowSectionDistribution<TData>({
           },
         }))
       : DEFAULT_OPTIONS;
-  }, [courses]);
+  }, [classRooms]);
 
   const courseListFiltered = courseList.filter(
     (option) => !sectionsFields.some((author) => author.value === option.value)
@@ -107,11 +107,8 @@ export function DataTableRowSectionDistribution<TData>({
         .flat()
         .map((assignment) => {
           const data = courseList.find(
-            ({ data }) =>
-              data.course === assignment.course &&
-              data.section === assignment.section
+            ({ value }) => value === assignment.class_id
           );
-
           return { value: data?.value ?? '' };
         })
         .filter(({ value }) => Boolean(value));
@@ -191,8 +188,7 @@ export function DataTableRowSectionDistribution<TData>({
                                         user_id,
                                         assignment: [
                                           {
-                                            course: option.data.course,
-                                            section: option.data.section,
+                                            class_id: option.value,
                                           },
                                         ],
                                       });
@@ -248,11 +244,8 @@ export function DataTableRowSectionDistribution<TData>({
                           .map(({ assignments }) => assignments)
                           .flat()
                           .find((assignment) => {
-                            const data = courseList.some(
-                              ({ data, value }) =>
-                                data.course === assignment.course &&
-                                data.section === assignment.section &&
-                                value === sectionsField.value
+                            const data = courseList.find(
+                              ({ value }) => value === assignment.class_id
                             );
 
                             return Boolean(data);

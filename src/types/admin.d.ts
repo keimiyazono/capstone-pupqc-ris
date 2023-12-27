@@ -20,6 +20,7 @@ declare interface ProfWithAssign {
   email: string;
   faculty_name: string;
   assignments: Array<{
+    class_id: string
     section: string;
     course: string;
     id: string;
