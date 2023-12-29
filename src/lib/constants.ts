@@ -275,6 +275,7 @@ export const COPYRIGHT_DOCUMENTS_KEY = '/copyright';
 export const RESEARCH_PROF_LIST_KEY = '/users/research_prof_list';
 export const ANNOUNCEMENT_LIST_KEY =
   '/announcement/announcements_with_user_names/';
+export const ANNOUNCEMENT_KEY = '/announcement/announcement';
 export const COURSE_LIST_KEY = '/users/course_list';
 export const ASSIGN_PROF_TO_SECTION_KEY = '/admin/prof-with-assigned';
 export const STUDENT_PROFILE_KEY = '/users/profile/student';

@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/components/ui/use-toast';
 import { useDeleteAnnouncement } from '@/hooks/use-announcement-query';
+import Link from 'next/link';
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -65,6 +66,19 @@ export function DataTableRowActions<TData>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
+        <DropdownMenuItem asChild>
+          <Link
+            href={`/admin/announcement/${id}`}
+            className="px-0 py-0 mx-0 my-0 h-9"
+          >
+            <Button
+              variant="ghost"
+              className="w-full justify-start font-medium px-0 py-0 mx-0 my-0"
+            >
+              Edit
+            </Button>
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <AlertDialog>
             <AlertDialogTrigger asChild>

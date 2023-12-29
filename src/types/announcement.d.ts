@@ -22,3 +22,19 @@ declare interface UploadAnnouncementPayload {
   content: string;
   other_details: string;
 }
+
+declare interface GetAnnouncementByIdResponse {
+  user_role_target: string
+  announcement_type: string
+  title: string
+  content: string
+  other_details: string
+}
+
+declare interface UpdateAnnouncementPayload {
+  user_role_target: string
+  announcement_type: string
+  title: string
+  content: string
+  other_details: string
+}
