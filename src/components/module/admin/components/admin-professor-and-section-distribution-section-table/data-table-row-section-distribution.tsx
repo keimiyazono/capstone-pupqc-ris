@@ -44,7 +44,7 @@ export type SectionsComboboxOptionsData = {
   course: string;
 };
 
-const DEFAULT_OPTIONS: SectionsComboboxOptions[] = [];
+const DEFAULT_OPTIONS: ComboboxOptions[] = [];
 
 interface DataTableRowSectionDistributionProps<TData> {
   row: Row<TData>;
@@ -78,15 +78,11 @@ export function DataTableRowSectionDistribution<TData>({
     remove: removeSection,
   } = useFieldArray({ control: form.control, name: 'sections' });
 
-  const courseList = useMemo<SectionsComboboxOptions[]>(() => {
+  const courseList = useMemo<ComboboxOptions[]>(() => {
     return classRooms?.result
       ? classRooms.result.map(({ Class: { id, course, section } }) => ({
           value: id,
           label: `${course} ${section}`,
-          data: {
-            course,
-            section,
-          },
         }))
       : DEFAULT_OPTIONS;
   }, [classRooms]);
@@ -101,9 +97,9 @@ export function DataTableRowSectionDistribution<TData>({
 
       const collection = list
         .filter((value) => {
-          return value.id === user_id;
+          return value.Faculty.id === user_id;
         })
-        .map(({ assignments }) => assignments)
+        .map(({ AssignedTo }) => AssignedTo)
         .flat()
         .map((assignment) => {
           const data = courseList.find(
@@ -113,14 +109,12 @@ export function DataTableRowSectionDistribution<TData>({
         })
         .filter(({ value }) => Boolean(value));
 
-      sectionsFields.forEach(({ value }, idx) => {
-        if (!Boolean(value)) {
-          removeSection(idx);
-        }
-      });
-
       appendSection(collection);
     }
+
+    return () => {
+      removeSection();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assignedSections, user_id, courseList]);
 
@@ -233,15 +227,13 @@ export function DataTableRowSectionDistribution<TData>({
                       type="button"
                       variant="destructive"
                       onClick={async () => {
-                        removeSection(idx);
-
                         if (!assignedSections) return;
 
                         const section = assignedSections
                           .filter((value) => {
-                            return value.id === user_id;
+                            return value.Faculty.id === user_id;
                           })
-                          .map(({ assignments }) => assignments)
+                          .map(({ AssignedTo }) => AssignedTo)
                           .flat()
                           .find((assignment) => {
                             const data = courseList.find(
@@ -255,8 +247,10 @@ export function DataTableRowSectionDistribution<TData>({
 
                         try {
                           await deleteAssignment.mutateAsync({
-                            section_id: section.id,
+                            assigned_id: section.assigned_id,
                           });
+
+                          removeSection(idx);
 
                           toast({
                             title: 'Remove Assignment Section Success',

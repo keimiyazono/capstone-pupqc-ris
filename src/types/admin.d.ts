@@ -15,14 +15,19 @@ declare interface AssignProfToSection {
 }
 
 declare interface ProfWithAssign {
+  Faculty: Faculty;
+  AssignedTo: AssignedTo[];
+}
+
+declare interface Faculty {
   id: string;
-  username: string;
-  email: string;
+  faculty_id: string;
   faculty_name: string;
-  assignments: Array<{
-    class_id: string
-    section: string;
-    course: string;
-    id: string;
-  }>;
+}
+
+declare interface AssignedTo {
+  assigned_id: string;
+  class_id: string;
+  course: string;
+  section: string;
 }

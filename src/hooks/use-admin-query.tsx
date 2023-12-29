@@ -123,7 +123,7 @@ export function useAdminRemoveAssignAdmin() {
 export interface AssignProfessorTypeSectionPayload {
   user_id: string;
   assignment: Array<{
-    class_id: string
+    class_id: string;
   }>;
 }
 
@@ -148,8 +148,8 @@ export function useAdminDeleteAssignment() {
   const { data: session } = useSession();
 
   return useMutation({
-    mutationFn: ({ section_id }: { section_id: string }) => {
-      return risApi.delete(`/admin/delete-assigned-sections/${section_id}`, {
+    mutationFn: ({ assigned_id }: { assigned_id: string }) => {
+      return risApi.delete(`/admin/delete-assigned-sections/${assigned_id}`, {
         headers: {
           Authorization: `Bearer ${session?.user.authToken}`,
         },
