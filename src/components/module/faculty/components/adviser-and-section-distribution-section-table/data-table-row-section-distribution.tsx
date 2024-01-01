@@ -19,9 +19,11 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/components/ui/use-toast';
 import {
   useAssignAdviserSection,
+  useGetAdviserById,
   useRemoveAdviserSection,
+  useUpdateAdviserSection,
 } from '@/hooks/use-faculty-query';
-import { useGetCourseWithYearList } from '@/hooks/use-user-query';
+import { useGetClassRooms } from '@/hooks/use-section-query';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
@@ -31,20 +33,14 @@ import { useEffect, useMemo } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { IoAdd } from 'react-icons/io5';
-import { v4 as uuidv4 } from 'uuid';
 import * as z from 'zod';
 import { updateAdviserSectionFormSchema } from '../../validation';
 
-export type SectionsComboboxOptions = {
-  data: SectionsComboboxOptionsData;
+export type SectionComboboxOptions = {
+  section_id: string;
 } & ComboboxOptions;
 
-export type SectionsComboboxOptionsData = {
-  section: string;
-  course: string;
-};
-
-const DEFAULT_OPTIONS: SectionsComboboxOptions[] = [];
+const DEFAULT_OPTIONS: SectionComboboxOptions[] = [];
 
 interface DataTableRowSectionDistributionProps<TData> {
   row: Row<TData>;
@@ -60,21 +56,22 @@ export function DataTableRowSectionDistribution<TData>({
   const user_profile = row.getValue('user_profile') as UserProfile;
   const assignments = row.getValue('assignments') as Assignment[];
 
-  const researchType = table.options.meta?.researchType;
+  const researchType = table.options.meta?.researchType ?? 'Research';
 
   const assignment = assignments.find(
     ({ research_type_name }) => researchType === research_type_name
   );
 
-  const research_type_id = assignment?.research_type_id;
+  const research_type_id = assignment?.research_type_id ?? '';
 
   const sections = assignment?.assign_sections ?? [];
 
   const user_id = user_profile.id;
   const name = user_profile.name;
 
-  const { data: courses } = useGetCourseWithYearList();
+  const { data: classRooms } = useGetClassRooms();
   const assign = useAssignAdviserSection();
+  const updateAassign = useUpdateAdviserSection();
   const deleteAssignment = useRemoveAdviserSection();
 
   const form = useForm<z.infer<typeof updateAdviserSectionFormSchema>>({
@@ -92,47 +89,60 @@ export function DataTableRowSectionDistribution<TData>({
     remove: removeSection,
   } = useFieldArray({ control: form.control, name: 'sections' });
 
-  const courseList = useMemo<SectionsComboboxOptions[]>(() => {
-    return courses?.result
-      ? courses.result.map(({ course, section }) => ({
-          value: uuidv4(),
-          label: `${course} ${section}`,
-          data: {
-            course,
-            section,
-          },
-        }))
+  const { data: assignedSections } = useGetAdviserById({
+    user_id,
+    research_type: researchType,
+    enabled: true,
+  });
+
+  const courseList = useMemo<SectionComboboxOptions[]>(() => {
+    return classRooms?.result
+      ? classRooms.result.map(({ Class: { id, course, section } }) => {
+          const list = assignedSections?.assignments ?? [];
+
+          const item = list
+            .filter(
+              ({ research_type_name }) => research_type_name === researchType
+            )
+            .map(({ assignsection = [] }) => assignsection)
+            .flat()
+            .find(({ class_id }) => class_id === id);
+
+          return {
+            value: id,
+            label: `${course} ${section}`,
+            section_id: item?.id ?? '',
+          };
+        })
       : DEFAULT_OPTIONS;
-  }, [courses]);
+  }, [classRooms, assignedSections, researchType]);
 
   const courseListFiltered = courseList.filter(
     (option) => !sectionsFields.some((author) => author.value === option.value)
   );
 
   useEffect(() => {
-    if (sections.length > 0) {
-      const collection = sections
-        .map((assignment) => {
-          const data = courseList.find(
-            ({ data }) =>
-              data.course === assignment.course &&
-              data.section === assignment.section
-          );
+    if (assignedSections) {
+      const list = assignedSections.assignments;
 
+      const collection = list
+        .filter(({ research_type_name }) => research_type_name === researchType)
+        .map(({ assignsection = [] }) => assignsection)
+        .flat()
+        .map(({ class_id }) => {
+          const data = courseList.find(({ value }) => value === class_id);
           return { value: data?.value ?? '' };
         })
         .filter(({ value }) => Boolean(value));
 
-      sectionsFields.forEach(({ value }, idx) => {
-        if (!Boolean(value)) {
-          removeSection(idx);
-        }
-      });
-
       appendSection(collection);
     }
+
+    return () => {
+      removeSection();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user_id, courseList, sections]);
+  }, [assignedSections, user_id, courseList]);
 
   return (
     <div>
@@ -191,20 +201,23 @@ export function DataTableRowSectionDistribution<TData>({
                                   value={option.label}
                                   key={option.value}
                                   onSelect={async () => {
+                                    sectionUpdate(idx, option);
+
                                     try {
-                                      if (!research_type_id) return;
-
-                                      sectionUpdate(idx, option);
-
+                                      // if (Boolean(option.section_id)) {
+                                      //   console.log('dasdasdasdasdasd wd');
+                                      // } else {
                                       await assign.mutateAsync({
+                                        research_type: researchType,
                                         research_type_id,
+                                        user_id,
                                         assignment: [
                                           {
-                                            course: option.data.course,
-                                            section: option.data.section,
+                                            class_id: option.value,
                                           },
                                         ],
                                       });
+                                      // }
 
                                       toast({
                                         title: 'Assign Section Success',
@@ -248,16 +261,18 @@ export function DataTableRowSectionDistribution<TData>({
                       onClick={async () => {
                         removeSection(idx);
 
-                        const section = sections.find((assignment) => {
-                          const data = courseList.some(
-                            ({ data, value }) =>
-                              data.course === assignment.course &&
-                              data.section === assignment.section &&
-                              value === sectionsField.value
-                          );
+                        const list = assignedSections?.assignments ?? [];
 
-                          return Boolean(data);
-                        });
+                        const section = list
+                          .filter(
+                            ({ research_type_name }) =>
+                              research_type_name === researchType
+                          )
+                          .map(({ assignsection = [] }) => assignsection)
+                          .flat()
+                          .find(
+                            ({ class_id }) => class_id === sectionsField.value
+                          );
 
                         if (typeof section === 'undefined') return;
 
@@ -268,7 +283,7 @@ export function DataTableRowSectionDistribution<TData>({
 
                           toast({
                             title: 'Remove Assignment Section Success',
-                            description: `You removed the assignment of the ${section.course} ${section.section} section from ${name}.`,
+                            // description: `You removed the assignment of the ${section.course} ${section.section} section from ${name}.`,
                           });
                         } catch (error) {
                           toast({

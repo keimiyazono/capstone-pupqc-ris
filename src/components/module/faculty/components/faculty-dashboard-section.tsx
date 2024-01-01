@@ -1,10 +1,25 @@
+'use client';
+
 import { Card, CardContent } from '@/components/ui/card';
+import {
+  useGetFacultyAnnouncementFundingOpportunity,
+  useGetFacultyAnnouncementTrainingAndWorkshop,
+} from '@/hooks/use-announcement-query';
 import { IoCloudUploadOutline } from 'react-icons/io5';
 import { LuCheckCircle, LuShield, LuXCircle } from 'react-icons/lu';
 import { MdOutlinePending } from 'react-icons/md';
 import { PiChalkboardTeacherLight } from 'react-icons/pi';
+import { TiptapRenderer } from '../../tiptap/components/tiptap-renderer';
 
 export function FacultyDashboardSection() {
+  const { data: fundingOpportunities } =
+    useGetFacultyAnnouncementFundingOpportunity();
+
+  const { data: trainingAndWorkshops } =
+    useGetFacultyAnnouncementTrainingAndWorkshop();
+
+  console.log({ fundingOpportunities, trainingAndWorkshops });
+
   return (
     <section className="space-y-10">
       <div className="flex flex-wrap items-center gap-4">
@@ -82,41 +97,39 @@ export function FacultyDashboardSection() {
       </div>
 
       <div className="prose dark:prose-headings:text-white max-w-none">
-        <h2>Announcement</h2>
+        <h2>Funding And Opportunity</h2>
 
-        <Card>
-          <CardContent>
-            <p>
-              🌟 Now Accepting Applications: Research Excellence Grants at PUP!
-              🌟
-            </p>
+        <div className="space-y-6">
+          {fundingOpportunities &&
+            fundingOpportunities.map(({ announcement }) => (
+              <Card key={announcement.id}>
+                <CardContent>
+                  <p>🌟 {announcement.title} 🌟</p>
+                  <TiptapRenderer html={announcement.content} />
+                  {/* <p>Best Regards,</p>
 
-            <h3>Dear PUP Faculty and Researchers,</h3>
+                <p>PUPQC Research Admin</p> */}
+                </CardContent>
+              </Card>
+            ))}
+        </div>
 
-            <p>
-              Exciting news! The Research Excellence Grants program is now
-              accepting applications. This is your chance to secure funding of
-              up to Php50,000 per project, fueling your innovative research
-              across all academic disciplines.
-            </p>
+        <h2>Training And Workshops</h2>
 
-            <p>Apply by January 1, 2024!</p>
+        <div className="space-y-6">
+          {trainingAndWorkshops &&
+            trainingAndWorkshops.map(({ announcement }) => (
+              <Card key={announcement.id}>
+                <CardContent>
+                  <p>🌟 {announcement.title} 🌟</p>
+                  <TiptapRenderer html={announcement.content} />
+                  {/* <p>Best Regards,</p>
 
-            <p>
-              Seize this opportunity to turn your groundbreaking ideas into
-              reality. Let your research journey begin! Access the Google Form
-              to submit your application today.
-            </p>
-
-            <p>🔗 www.gformsample.com/sample</p>
-
-            <p>Let your research journey begin!</p>
-
-            <p>Best Regards,</p>
-
-            <p>PUPQC Research Admin</p>
-          </CardContent>
-        </Card>
+                <p>PUPQC Research Admin</p> */}
+                </CardContent>
+              </Card>
+            ))}
+        </div>
       </div>
     </section>
   );

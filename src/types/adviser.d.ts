@@ -22,13 +22,14 @@ declare interface Assignment {
   research_type_id: string;
   research_type_name: string;
   assign_sections: Assignsection[];
+  assignsection?: Assignsection[];
 }
 
 declare interface Assignsection {
-  class_id: string
-  id: string
-  course: string
-  section: string
+  class_id: string;
+  id: string;
+  course: string;
+  section: string;
 }
 
 declare interface PostAssignAdviserPayload {

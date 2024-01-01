@@ -286,6 +286,18 @@ export const SUBMITTED_WORKFLOWS_KEY = '/researchprof/workflows/all-list';
 export const DISPLAY_ALL_PROCESS_KEY = '/researchprof/display-process-all/';
 export const SECTION_KEY = '/sections';
 
+export const STUDENT_ANNOUNCEMENTS_FUNDING_OPPORTUNITY =
+  '/announcement/announcements_for-student/FundingOpportunity';
+
+export const STUDENT_ANNOUNCEMENTS_TRAINING_AND_WORKSHOP =
+  '/announcement/announcements_for-student/Training&Workshop';
+
+export const FACULTY_ANNOUNCEMENTS_FUNDING_OPPORTUNITY =
+  '/announcement/announcements_for-faculty/FundingOpportunity';
+
+export const FACULTY_ANNOUNCEMENTS_TRAINING_AND_WORKSHOP =
+  '/announcement/announcements_for-faculty/Training&Workshop';
+
 export const STATUS_STYLE = {
   pending: 'bg-[#ffff00] text-black hover:bg-[#ffff00]/90',
   approved: 'bg-[#008000] text-white hover:bg-[#008000]/90',

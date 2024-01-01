@@ -52,6 +52,8 @@ export function RepositorySection() {
   const [activeChars, setActiveChars] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<string>('');
   const [search, setSearch] = useState<string>('');
+  const [years, setYears] = useState<string[]>([]);
+  const [selectedYear, setSelectedYear] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { data: courseList, isLoading: courseListLoading } = useGetCourseList();

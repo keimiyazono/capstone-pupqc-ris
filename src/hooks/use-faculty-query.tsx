@@ -137,7 +137,6 @@ export function useGetAdviserListByResearchType({
 
 export function useAdminAssignResearchAdviserRole() {
   const { data: session } = useSession();
-  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({ user_id }: { user_id: string; research_type: string }) => {
@@ -292,15 +291,17 @@ export function useAdminRemoveAssignResearchAdviser() {
 }
 
 export interface AssignAdviserSectionPayload {
+  research_type: string;
   research_type_id: string;
+  user_id: string;
   assignment: Array<{
-    section: string;
-    course: string;
+    class_id: string;
   }>;
 }
 
 export function useAssignAdviserSection() {
   const { data: session } = useSession();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({
@@ -308,7 +309,7 @@ export function useAssignAdviserSection() {
       assignment,
     }: AssignAdviserSectionPayload) => {
       return risApi.post(
-        `/researchprof/add-section-to-research-assign/${research_type_id}`,
+        `/researchprof/assign-adviser-section/${research_type_id}/`,
         assignment,
         {
           headers: {
@@ -316,6 +317,12 @@ export function useAssignAdviserSection() {
           },
         }
       );
+    },
+
+    async onSuccess(_, { user_id, research_type }) {
+      await queryClient.invalidateQueries({
+        queryKey: [`/researchprof/adviser/${user_id}/assigned`, research_type],
+      });
     },
   });
 }
@@ -331,6 +338,36 @@ export function useRemoveAdviserSection() {
           headers: {
             Authorization: `Bearer ${session?.user.authToken}`,
           },
+        }
+      );
+    },
+  });
+}
+
+export interface UpdateAdviserSectionPayload {
+  research_type_id: string;
+  user_id: string;
+  new_class_id: string;
+}
+
+export function useUpdateAdviserSection() {
+  const { data: session } = useSession();
+  // const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      research_type_id,
+      user_id,
+      new_class_id,
+    }: UpdateAdviserSectionPayload) => {
+      return risApi.put(
+        `/researchprof/update-assign-adviser-section/${research_type_id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${session?.user.authToken}`,
+          },
+          params: { user_id, new_class_id },
         }
       );
     },

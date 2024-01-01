@@ -1,5 +1,12 @@
 import { risApi } from '@/lib/api';
-import { ANNOUNCEMENT_KEY, ANNOUNCEMENT_LIST_KEY } from '@/lib/constants';
+import {
+  ANNOUNCEMENT_KEY,
+  ANNOUNCEMENT_LIST_KEY,
+  FACULTY_ANNOUNCEMENTS_FUNDING_OPPORTUNITY,
+  FACULTY_ANNOUNCEMENTS_TRAINING_AND_WORKSHOP,
+  STUDENT_ANNOUNCEMENTS_FUNDING_OPPORTUNITY,
+  STUDENT_ANNOUNCEMENTS_TRAINING_AND_WORKSHOP,
+} from '@/lib/constants';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 
@@ -38,6 +45,90 @@ export function useUpdateAnnouncement(id: string) {
       // prettier-ignore
       queryClient.invalidateQueries({ queryKey: [ANNOUNCEMENT_KEY, id] });
     },
+  });
+}
+
+export function useGetStudentAnnouncementFundingOpportunity() {
+  const { data: session, status } = useSession();
+
+  return useQuery<AnnouncementList[]>({
+    queryKey: [STUDENT_ANNOUNCEMENTS_FUNDING_OPPORTUNITY],
+    queryFn: async () => {
+      const res = await risApi.get<AnnouncementList[]>(
+        STUDENT_ANNOUNCEMENTS_FUNDING_OPPORTUNITY,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.user?.authToken}`,
+          },
+        }
+      );
+      return res.data;
+    },
+    enabled: status === 'authenticated',
+    refetchOnMount: true,
+  });
+}
+
+export function useGetStudentAnnouncementTrainingAndWorkshop() {
+  const { data: session, status } = useSession();
+
+  return useQuery<AnnouncementList[]>({
+    queryKey: [STUDENT_ANNOUNCEMENTS_TRAINING_AND_WORKSHOP],
+    queryFn: async () => {
+      const res = await risApi.get<AnnouncementList[]>(
+        STUDENT_ANNOUNCEMENTS_TRAINING_AND_WORKSHOP,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.user?.authToken}`,
+          },
+        }
+      );
+      return res.data;
+    },
+    enabled: status === 'authenticated',
+    refetchOnMount: true,
+  });
+}
+
+export function useGetFacultyAnnouncementFundingOpportunity() {
+  const { data: session, status } = useSession();
+
+  return useQuery<AnnouncementList[]>({
+    queryKey: [FACULTY_ANNOUNCEMENTS_FUNDING_OPPORTUNITY],
+    queryFn: async () => {
+      const res = await risApi.get<AnnouncementList[]>(
+        FACULTY_ANNOUNCEMENTS_FUNDING_OPPORTUNITY,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.user?.authToken}`,
+          },
+        }
+      );
+      return res.data;
+    },
+    enabled: status === 'authenticated',
+    refetchOnMount: true,
+  });
+}
+
+export function useGetFacultyAnnouncementTrainingAndWorkshop() {
+  const { data: session, status } = useSession();
+
+  return useQuery<AnnouncementList[]>({
+    queryKey: [FACULTY_ANNOUNCEMENTS_TRAINING_AND_WORKSHOP],
+    queryFn: async () => {
+      const res = await risApi.get<AnnouncementList[]>(
+        FACULTY_ANNOUNCEMENTS_TRAINING_AND_WORKSHOP,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.user?.authToken}`,
+          },
+        }
+      );
+      return res.data;
+    },
+    enabled: status === 'authenticated',
+    refetchOnMount: true,
   });
 }
 
