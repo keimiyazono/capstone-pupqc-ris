@@ -22,27 +22,26 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useGetCourseWithYearList } from '@/hooks/use-user-query';
+import { useToast } from '@/components/ui/use-toast';
+import {
+  useDeleteStudentWorkflowSteps,
+  useGetStudentWorkflows,
+  useGetWorkflowListNameProcessStudent,
+  useUpdateStudentWorkflowsProcess,
+} from '@/hooks/use-workflow-query';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import _ from 'lodash';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { IoAdd } from 'react-icons/io5';
-import { v4 as uuidv4 } from 'uuid';
 import * as z from 'zod';
-import { updateAdviserSectionFormSchema } from '../../validation';
+import { updateResearchProcessFormSchema } from '../../validation';
+import { useStudentProcessContext } from '../context/process';
 
-export type SectionsComboboxOptions = {
-  data: SectionsComboboxOptionsData;
-} & ComboboxOptions;
-
-export type SectionsComboboxOptionsData = {
-  section: string;
-  course: string;
-};
+export type SectionsComboboxOptions = {} & ComboboxOptions;
 
 const DEFAULT_OPTIONS: SectionsComboboxOptions[] = [];
 
@@ -51,88 +50,79 @@ export interface StudentWorkflowProps {
 }
 
 export function StudentWorkflow() {
-  const { data: courses } = useGetCourseWithYearList();
+  const { toast } = useToast();
 
-  const form = useForm<z.infer<typeof updateAdviserSectionFormSchema>>({
-    resolver: zodResolver(updateAdviserSectionFormSchema),
+  const form = useForm<z.infer<typeof updateResearchProcessFormSchema>>({
+    resolver: zodResolver(updateResearchProcessFormSchema),
     shouldFocusError: false,
     defaultValues: {
-      sections: [],
+      process: [],
     },
   });
 
-  const {
-    fields: sectionsFields,
-    append: appendSection,
-    update: sectionUpdate,
-    remove: removeSection,
-  } = useFieldArray({ control: form.control, name: 'sections' });
+  const { research_type, studentWorkflowPayload, setStudentWorkflowPayload } =
+    useStudentProcessContext();
 
-  const courseList = useMemo<SectionsComboboxOptions[]>(() => {
-    return courses?.result
-      ? courses.result.map(({ course, section }) => ({
-          value: uuidv4(),
-          label: `${course} ${section}`,
-          data: {
-            course,
-            section,
-          },
+  const {
+    fields: processFields,
+    append: processSection,
+    update: processUpdate,
+    remove: removeProcess,
+  } = useFieldArray({ control: form.control, name: 'process' });
+
+  const { data: studentWorkflows } = useGetStudentWorkflows(research_type);
+  const { data: studentWorkflowList } = useGetWorkflowListNameProcessStudent();
+
+  const updateProcess = useUpdateStudentWorkflowsProcess();
+  const deleteProcess = useDeleteStudentWorkflowSteps();
+
+  const processList = useMemo<SectionsComboboxOptions[]>(() => {
+    return studentWorkflowList
+      ? Object.entries(studentWorkflowList).map(([key, value]) => ({
+          value: key,
+          label: value,
         }))
       : DEFAULT_OPTIONS;
-  }, [courses]);
+  }, [studentWorkflowList]);
 
-  const courseListFiltered = courseList.filter(
-    (option) => !sectionsFields.some((author) => author.value === option.value)
+  const processListFiltered = processList.filter(
+    (option) => !processFields.some((author) => author.value === option.value)
   );
 
-  // useEffect(() => {
-  //   if (sections.length > 0) {
-  //     const collection = sections
-  //       .map((assignment) => {
-  //         const data = courseList.find(
-  //           ({ data }) =>
-  //             data.course === assignment.course &&
-  //             data.section === assignment.section
-  //         );
+  useEffect(() => {
+    if (studentWorkflows) {
+      const item = studentWorkflows[0];
 
-  //         return { value: data?.value ?? '' };
-  //       })
-  //       .filter(({ value }) => Boolean(value));
+      const collection = item
+        ? item.steps
+            .map(({ name }) => {
+              const data = processList.find(({ value }) => value === name);
+              return { value: data?.value ?? '' };
+            })
+            .filter(({ value }) => Boolean(value))
+        : [];
 
-  //     sectionsFields.forEach(({ value }, idx) => {
-  //       if (!Boolean(value)) {
-  //         removeSection(idx);
-  //       }
-  //     });
+      processSection(collection);
+    }
 
-  //     appendSection(collection);
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [courseList, sections]);
-  // const [workflows, setWorkflows] = useState<Workflow[]>([]);
-
-  // const { data: userSubmittedWorkflows } = useGetUserSubmittedWorkflows();
-
-  // useEffect(() => {
-  //   if (typeof userSubmittedWorkflows !== 'undefined') {
-  //     const grouping = userSubmittedWorkflows
-
-  //     setWorkflows(grouping);
-  //   }
-  // }, [userSubmittedWorkflows]);
+    return () => {
+      removeProcess();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [studentWorkflows, processList]);
   return (
     <div>
       <Form {...form}>
         <form className="space-y-3">
           <FormField
             control={form.control}
-            name="sections"
+            name="process"
             render={() => (
               <FormItem className="col-span-2 flex flex-col">
-                <FormLabel>Student</FormLabel>
-                {sectionsFields.map((sectionsField, idx) => (
+                <FormLabel>Student Process</FormLabel>
+                {processFields.map((processField, idx) => (
                   <div
-                    key={sectionsField.id}
+                    key={processField.id}
                     className="flex items-center gap-3"
                   >
                     <Popover modal>
@@ -143,17 +133,17 @@ export function StudentWorkflow() {
                             role="combobox"
                             className={cn(
                               'flex-1 justify-between',
-                              !sectionsField.value && 'text-muted-foreground'
+                              !processField.value && 'text-muted-foreground'
                             )}
-                            disabled={Boolean(sectionsField.value)}
+                            disabled={Boolean(processField.value)}
                           >
                             {_.truncate(
-                              sectionsField.value
-                                ? courseList.find(
+                              processField.value
+                                ? processList.find(
                                     (option) =>
-                                      option.value === sectionsField.value
+                                      option.value === processField.value
                                   )?.label
-                                : 'Select section',
+                                : 'Select process',
                               { length: 60 }
                             )}
                             <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -163,45 +153,57 @@ export function StudentWorkflow() {
                       <PopoverContent className="p-0 w-fit">
                         <Command className="popover-content-width-same-as-its-trigger">
                           <CommandInput
-                            placeholder="Search sections..."
+                            placeholder="Search process..."
                             className="h-9"
                           />
                           <ScrollArea
                             className="flex max-h-80 flex-col"
                             type="always"
                           >
-                            <CommandEmpty>No sections found.</CommandEmpty>
+                            <CommandEmpty>No process found.</CommandEmpty>
 
                             <CommandGroup>
-                              {courseListFiltered.map((option) => (
+                              {processListFiltered.map((option) => (
                                 <CommandItem
                                   value={option.label}
                                   key={option.value}
                                   onSelect={async () => {
                                     try {
-                                      // if (!research_type_id) return;
+                                      processUpdate(idx, option);
 
-                                      sectionUpdate(idx, option);
+                                      const item = studentWorkflows?.[0];
 
-                                      // await assign.mutateAsync({
-                                      //   research_type_id,
-                                      //   assignment: [
-                                      //     {
-                                      //       course: option.data.course,
-                                      //       section: option.data.section,
-                                      //     },
-                                      //   ],
-                                      // });
+                                      const new_steps_data = [
+                                        ...(item?.steps?.map(
+                                          ({ name, description }) => ({
+                                            name,
+                                            description,
+                                          })
+                                        ) ?? []),
+                                        {
+                                          name: option.value,
+                                          description: option.label,
+                                        },
+                                      ];
 
-                                      // toast({
-                                      //   title: 'Assign Section Success',
-                                      //   description: `You assigned the ${option.label} section to ${name}.`,
-                                      // });
+                                      await updateProcess.mutateAsync({
+                                        research_type,
+                                        steps_data: new_steps_data,
+                                      });
+
+                                      setStudentWorkflowPayload({
+                                        ...studentWorkflowPayload,
+                                        workflow_steps: new_steps_data,
+                                      });
+
+                                      toast({
+                                        title: 'Update Process Success',
+                                      });
                                     } catch (error) {
-                                      // toast({
-                                      //   title: 'Assign Section Failed',
-                                      //   variant: 'destructive',
-                                      // });
+                                      toast({
+                                        title: 'Update Process Failed',
+                                        variant: 'destructive',
+                                      });
                                     }
                                   }}
                                   className="flex max-w-none"
@@ -212,8 +214,8 @@ export function StudentWorkflow() {
                                   <CheckIcon
                                     className={cn(
                                       'ml-auto h-4 w-4',
-                                      option.value === sectionsField.value ||
-                                        sectionsFields.some(
+                                      option.value === processField.value ||
+                                        processFields.some(
                                           (author) =>
                                             author.value === option.value
                                         )
@@ -233,36 +235,43 @@ export function StudentWorkflow() {
                       type="button"
                       variant="destructive"
                       onClick={async () => {
-                        removeSection(idx);
+                        removeProcess(idx);
 
-                        // const section = sections.find((assignment) => {
-                        //   const data = courseList.some(
-                        //     ({ data, value }) =>
-                        //       data.course === assignment.course &&
-                        //       data.section === assignment.section &&
-                        //       value === sectionsField.value
-                        //   );
+                        const workflow_step_ids =
+                          studentWorkflows
+                            ?.map(({ steps }) => steps)
+                            .flat()
+                            .filter(({ name }) => name === processField.value)
+                            .map(({ id }) => id) ?? [];
 
-                        //   return Boolean(data);
-                        // });
+                        if (workflow_step_ids.length < 1) return;
 
-                        // if (typeof section === 'undefined') return;
+                        try {
+                          await deleteProcess.mutateAsync({
+                            type: research_type,
+                            workflow_step_ids,
+                          });
 
-                        // try {
-                        //   await deleteAssignment.mutateAsync({
-                        //     section_id: section.id,
-                        //   });
+                          const new_steps_data =
+                            studentWorkflowPayload?.workflow_steps?.filter(
+                              ({ name }) => name !== processField.value
+                            );
 
-                        //   toast({
-                        //     title: 'Remove Assignment Section Success',
-                        //     description: `You removed the assignment of the ${section.course} ${section.section} section from ${name}.`,
-                        //   });
-                        // } catch (error) {
-                        //   toast({
-                        //     title: 'Remove Assignment Section Failed',
-                        //     variant: 'destructive',
-                        //   });
-                        // }
+                          setStudentWorkflowPayload({
+                            ...studentWorkflowPayload,
+                            workflow_steps: new_steps_data,
+                          });
+
+                          toast({
+                            title: 'Remove Process Success',
+                            // description: `You removed the assignment of the ${section.course} ${section.section} section from ${name}.`,
+                          });
+                        } catch (error) {
+                          toast({
+                            title: 'Remove Process Failed',
+                            variant: 'destructive',
+                          });
+                        }
                       }}
                     >
                       <FaRegTrashAlt />
@@ -274,10 +283,10 @@ export function StudentWorkflow() {
                   type="button"
                   className="gap-2 items-center"
                   disabled={
-                    courseListFiltered.length < 1 ||
-                    sectionsFields.length === courseList.length
+                    processListFiltered.length < 1 ||
+                    processFields.length === processList.length
                   }
-                  onClick={() => appendSection({ value: '' })}
+                  onClick={() => processSection({ value: '' })}
                 >
                   <IoAdd /> <span>Add more process</span>
                 </Button>

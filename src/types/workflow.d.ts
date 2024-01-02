@@ -55,3 +55,14 @@ declare interface UpdateStudentWorkflowSteps {
   name: string;
   description: string;
 }
+
+
+declare interface UpdateStudentWorkflowProcessRequest {
+  research_type: string
+  steps_data: UpdateStudentWorkflowStepsData[]
+}
+
+declare interface UpdateStudentWorkflowStepsData {
+  name: string
+  description: string
+}

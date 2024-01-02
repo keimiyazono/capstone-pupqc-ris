@@ -79,3 +79,12 @@ export const updateAdviserSectionFormSchema = z.object({
     })
     .array(),
 });
+
+export const updateResearchProcessFormSchema = z.object({
+  process: z
+    .object({
+      value: z.string(),
+    })
+    .array(),
+});
+

@@ -1,5 +1,8 @@
 import { risApi } from '@/lib/api';
-import { SUBMITTED_WORKFLOWS_KEY } from '@/lib/constants';
+import {
+  SUBMITTED_WORKFLOWS_KEY,
+  WORKFLOW_LIST_NAME_PROCESS_STUDENT,
+} from '@/lib/constants';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 
@@ -33,6 +36,26 @@ export function useGetSubmittedWorkflows() {
           Authorization: `Bearer ${session?.user?.authToken}`,
         },
       });
+      return res.data;
+    },
+    enabled: status === 'authenticated',
+  });
+}
+
+export function useGetWorkflowListNameProcessStudent() {
+  const { data: session, status } = useSession();
+
+  return useQuery<Record<string, string>>({
+    queryKey: [WORKFLOW_LIST_NAME_PROCESS_STUDENT],
+    queryFn: async () => {
+      const res = await risApi.get<Record<string, string>>(
+        WORKFLOW_LIST_NAME_PROCESS_STUDENT,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.user?.authToken}`,
+          },
+        }
+      );
       return res.data;
     },
     enabled: status === 'authenticated',
@@ -95,6 +118,57 @@ export function useDeleteStudentWorkflow() {
     async onSuccess(_, { type }) {
       await queryClient.invalidateQueries({
         queryKey: [`/workflow/${type}`],
+      });
+    },
+  });
+}
+
+export function useDeleteStudentWorkflowSteps() {
+  const { data: session } = useSession();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      workflow_step_ids,
+    }: {
+      workflow_step_ids: string[];
+      type: string;
+    }) => {
+      return Promise.all(
+        workflow_step_ids.map((workflow_step_id) =>
+          risApi.delete(`/workflow/delete-workflows-step/${workflow_step_id}`, {
+            headers: {
+              Authorization: `Bearer ${session?.user.authToken}`,
+            },
+          })
+        )
+      );
+    },
+
+    async onSuccess(_, { type }) {
+      await queryClient.invalidateQueries({
+        queryKey: [`/workflow/${type}`],
+      });
+    },
+  });
+}
+
+export function useUpdateStudentWorkflowsProcess() {
+  const { data: session } = useSession();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: UpdateStudentWorkflowProcessRequest) => {
+      return risApi.put('/workflow/update_by_type', payload, {
+        headers: {
+          Authorization: `Bearer ${session?.user.authToken}`,
+        },
+      });
+    },
+
+    async onSuccess(_, { research_type }) {
+      await queryClient.invalidateQueries({
+        queryKey: [`/workflow/${research_type}`],
       });
     },
   });

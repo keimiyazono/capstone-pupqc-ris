@@ -298,6 +298,9 @@ export const FACULTY_ANNOUNCEMENTS_FUNDING_OPPORTUNITY =
 export const FACULTY_ANNOUNCEMENTS_TRAINING_AND_WORKSHOP =
   '/announcement/announcements_for-faculty/Training&Workshop';
 
+export const WORKFLOW_LIST_NAME_PROCESS_STUDENT =
+  '/workflow/workflows-list-name-process-student';
+
 export const STATUS_STYLE = {
   pending: 'bg-[#ffff00] text-black hover:bg-[#ffff00]/90',
   approved: 'bg-[#008000] text-white hover:bg-[#008000]/90',
