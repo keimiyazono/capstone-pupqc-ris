@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   useGetFacultyAnnouncementFundingOpportunity,
   useGetFacultyAnnouncementTrainingAndWorkshop,
@@ -96,40 +96,57 @@ export function FacultyDashboardSection() {
         </Card>
       </div>
 
-      <div className="prose dark:prose-headings:text-white max-w-none">
-        <h2>Funding And Opportunity</h2>
+      <div className="space-y-10">
+        {fundingOpportunities && (
+          <>
+            <h2 className="text-xl font-semibold mb-6 text-center">
+              Funding And Opportunity
+            </h2>
 
-        <div className="space-y-6">
-          {fundingOpportunities &&
-            fundingOpportunities.map(({ announcement }) => (
-              <Card key={announcement.id}>
-                <CardContent>
-                  <p>🌟 {announcement.title} 🌟</p>
-                  <TiptapRenderer html={announcement.content} />
-                  {/* <p>Best Regards,</p>
+            <div className="space-y-6">
+              {fundingOpportunities.map(({ announcement }) => (
+                <Card key={announcement.id}>
+                  <CardHeader>
+                    <CardTitle>{announcement.title}</CardTitle>
 
-                <p>PUPQC Research Admin</p> */}
-                </CardContent>
-              </Card>
-            ))}
-        </div>
+                    <TiptapRenderer
+                      html={announcement.other_details}
+                      className="text-sm text-muted-foreground"
+                    />
+                  </CardHeader>
+                  <CardContent>
+                    <TiptapRenderer html={announcement.content} />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </>
+        )}
 
-        <h2>Training And Workshops</h2>
+        {trainingAndWorkshops && (
+          <>
+            <h2 className="text-xl font-semibold mb-6 text-center">
+              Training And Workshops
+            </h2>
 
-        <div className="space-y-6">
-          {trainingAndWorkshops &&
-            trainingAndWorkshops.map(({ announcement }) => (
-              <Card key={announcement.id}>
-                <CardContent>
-                  <p>🌟 {announcement.title} 🌟</p>
-                  <TiptapRenderer html={announcement.content} />
-                  {/* <p>Best Regards,</p>
-
-                <p>PUPQC Research Admin</p> */}
-                </CardContent>
-              </Card>
-            ))}
-        </div>
+            <div className="space-y-6">
+              {trainingAndWorkshops.map(({ announcement }) => (
+                <Card key={announcement.id}>
+                  <CardHeader>
+                    <CardTitle>{announcement.title}</CardTitle>
+                    <TiptapRenderer
+                      html={announcement.other_details}
+                      className="text-sm text-muted-foreground"
+                    />
+                  </CardHeader>
+                  <CardContent>
+                    <TiptapRenderer html={announcement.content} />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </section>
   );
