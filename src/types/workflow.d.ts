@@ -19,19 +19,39 @@ declare interface Step {
   step_number: string;
 }
 
-declare interface CreateWorlflowPayload {
-  workflow_data: CreateWorlflowDataPayload;
-  workflow_steps: CreateWorlflowStepPayload[];
+declare interface CreateStudentWorkflowsRequest {
+  type: string
+  workflow_data: CreateStudentWorkflowData
+  workflow_steps: CreateStudentWorkflowStep[]
 }
 
-declare interface CreateWorlflowDataPayload {
-  course: string;
-  year: string;
+declare interface CreateStudentWorkflowData {
+  type: string
+  class_id: string[]
+}
+
+declare interface CreateStudentWorkflowStep {
+  name: string
+  description: string
+}
+
+declare interface UpdateStudentWorkflowsRequest {
   type: string;
+  workflow_id: string;
+  payload: UpdateStudentWorkflows;
 }
 
-declare interface CreateWorlflowStepPayload {
+declare interface UpdateStudentWorkflows {
+  workflow_data: UpdateStudentWorkflowData;
+  steps_data: UpdateStudentWorkflowSteps[];
+}
+
+declare interface UpdateStudentWorkflowData {
+  type: string;
+  class_id: string[];
+}
+
+declare interface UpdateStudentWorkflowSteps {
   name: string;
   description: string;
-  step_number: string;
 }

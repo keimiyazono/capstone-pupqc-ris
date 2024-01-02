@@ -22,11 +22,13 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useToast } from '@/components/ui/use-toast';
+import { useGetClassRooms } from '@/hooks/use-section-query';
 import {
-  useAssignAdviserSection,
-  useRemoveAdviserSection,
-} from '@/hooks/use-faculty-query';
-import { useGetCourseWithYearList } from '@/hooks/use-user-query';
+  useCreateStudentWorkflow,
+  useDeleteStudentWorkflow,
+  useGetStudentWorkflows,
+} from '@/hooks/use-workflow-query';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
@@ -35,33 +37,24 @@ import { useEffect, useMemo } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { IoAdd } from 'react-icons/io5';
-import { v4 as uuidv4 } from 'uuid';
 import * as z from 'zod';
 import { updateAdviserSectionFormSchema } from '../../validation';
 import { useStudentProcessContext } from '../context/process';
 
-export type SectionsComboboxOptions = {
-  data: SectionsComboboxOptionsData;
+export type SectionComboboxOptions = {
+  workflow_id: string;
+  // section_id: string;
 } & ComboboxOptions;
 
-export type SectionsComboboxOptionsData = {
-  section: string;
-  course: string;
-};
-
-const DEFAULT_OPTIONS: SectionsComboboxOptions[] = [];
+const DEFAULT_OPTIONS: SectionComboboxOptions[] = [];
 
 export function WorkflowSections() {
-  const { data: courses } = useGetCourseWithYearList();
-  const assign = useAssignAdviserSection();
-  const deleteAssignment = useRemoveAdviserSection();
+  const { toast } = useToast();
 
-  const { studentWorkflowDatas, setStudentWorkflowDatas } =
+  const { research_type, studentWorkflowPayload, setStudentWorkflowPayload } =
     useStudentProcessContext();
 
-  const sections: SectionsComboboxOptionsData[] = studentWorkflowDatas.map(
-    ({ course, year }) => ({ course, section: year })
-  );
+  const { data: classRooms } = useGetClassRooms();
 
   const form = useForm<z.infer<typeof updateAdviserSectionFormSchema>>({
     resolver: zodResolver(updateAdviserSectionFormSchema),
@@ -78,47 +71,49 @@ export function WorkflowSections() {
     remove: removeSection,
   } = useFieldArray({ control: form.control, name: 'sections' });
 
-  const courseList = useMemo<SectionsComboboxOptions[]>(() => {
-    return courses?.result
-      ? courses.result.map(({ course, section }) => ({
-          value: uuidv4(),
-          label: `${course} ${section}`,
-          data: {
-            course,
-            section,
-          },
-        }))
+  const { data: studentWorkflows } = useGetStudentWorkflows(research_type);
+  const createWorkflow = useCreateStudentWorkflow();
+  const deleteWorkflow = useDeleteStudentWorkflow();
+
+  const courseList = useMemo<SectionComboboxOptions[]>(() => {
+    return classRooms?.result
+      ? classRooms.result.map(({ Class: { id, course, section } }) => {
+          const list = studentWorkflows ?? [];
+
+          const item = list.find(({ class_id }) => class_id === id);
+
+          return {
+            value: id,
+            label: `${course} ${section}`,
+            workflow_id: item?.id ?? '',
+          };
+        })
       : DEFAULT_OPTIONS;
-  }, [courses]);
+  }, [classRooms, studentWorkflows]);
 
   const courseListFiltered = courseList.filter(
     (option) => !sectionsFields.some((author) => author.value === option.value)
   );
 
   useEffect(() => {
-    if (sections.length > 0) {
-      const collection = sections
-        .map((assignment) => {
-          const data = courseList.find(
-            ({ data }) =>
-              data.course === assignment.course &&
-              data.section === assignment.section
-          );
+    if (studentWorkflows) {
+      const list = studentWorkflows;
 
+      const collection = list
+        .map(({ class_id }) => {
+          const data = courseList.find(({ value }) => value === class_id);
           return { value: data?.value ?? '' };
         })
         .filter(({ value }) => Boolean(value));
 
-      sectionsFields.forEach(({ value }, idx) => {
-        if (!Boolean(value)) {
-          removeSection(idx);
-        }
-      });
-
       appendSection(collection);
     }
+
+    return () => {
+      removeSection();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [courseList, sections]);
+  }, [studentWorkflows, courseList]);
 
   return (
     <div>
@@ -130,145 +125,154 @@ export function WorkflowSections() {
             render={() => (
               <FormItem className="col-span-2 flex flex-col">
                 <FormLabel>Sections</FormLabel>
-                {sectionsFields.map((sectionsField, idx) => (
-                  <div
-                    key={sectionsField.id}
-                    className="flex items-center gap-3"
-                  >
-                    <Popover modal>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            className={cn(
-                              'flex-1 justify-between',
-                              !sectionsField.value && 'text-muted-foreground'
-                            )}
-                            disabled={Boolean(sectionsField.value)}
-                          >
-                            {_.truncate(
-                              sectionsField.value
-                                ? courseList.find(
-                                    (option) =>
-                                      option.value === sectionsField.value
-                                  )?.label
-                                : 'Select section',
-                              { length: 60 }
-                            )}
-                            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="p-0 w-fit">
-                        <Command className="popover-content-width-same-as-its-trigger">
-                          <CommandInput
-                            placeholder="Search sections..."
-                            className="h-9"
-                          />
-                          <ScrollArea
-                            className="flex max-h-80 flex-col"
-                            type="always"
-                          >
-                            <CommandEmpty>No sections found.</CommandEmpty>
-
-                            <CommandGroup>
-                              {courseListFiltered.map((option) => (
-                                <CommandItem
-                                  value={option.label}
-                                  key={option.value}
-                                  onSelect={async () => {
-                                    try {
-                                      // if (!research_type_id) return;
-
-                                      sectionUpdate(idx, option);
-
-                                      // await assign.mutateAsync({
-                                      //   research_type_id,
-                                      //   assignment: [
-                                      //     {
-                                      //       course: option.data.course,
-                                      //       section: option.data.section,
-                                      //     },
-                                      //   ],
-                                      // });
-
-                                      // toast({
-                                      //   title: 'Assign Section Success',
-                                      //   description: `You assigned the ${option.label} section to ${name}.`,
-                                      // });
-                                    } catch (error) {
-                                      // toast({
-                                      //   title: 'Assign Section Failed',
-                                      //   variant: 'destructive',
-                                      // });
-                                    }
-                                  }}
-                                  className="flex max-w-none"
-                                >
-                                  <div className="font-medium">
-                                    {option.label}
-                                  </div>
-                                  <CheckIcon
-                                    className={cn(
-                                      'ml-auto h-4 w-4',
-                                      option.value === sectionsField.value ||
-                                        sectionsFields.some(
-                                          (author) =>
-                                            author.value === option.value
-                                        )
-                                        ? 'opacity-100'
-                                        : 'opacity-0'
-                                    )}
-                                  />
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </ScrollArea>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      onClick={async () => {
-                        removeSection(idx);
-
-                        // const section = sections.find((assignment) => {
-                        //   const data = courseList.some(
-                        //     ({ data, value }) =>
-                        //       data.course === assignment.course &&
-                        //       data.section === assignment.section &&
-                        //       value === sectionsField.value
-                        //   );
-
-                        //   return Boolean(data);
-                        // });
-
-                        // if (typeof section === 'undefined') return;
-
-                        // try {
-                        //   await deleteAssignment.mutateAsync({
-                        //     section_id: section.id,
-                        //   });
-
-                        //   toast({
-                        //     title: 'Remove Assignment Section Success',
-                        //     description: `You removed the assignment of the ${section.course} ${section.section} section from ${name}.`,
-                        //   });
-                        // } catch (error) {
-                        //   toast({
-                        //     title: 'Remove Assignment Section Failed',
-                        //     variant: 'destructive',
-                        //   });
-                        // }
-                      }}
+                {sectionsFields.map(
+                  (sectionsField, idx, sectionsFieldsCopy) => (
+                    <div
+                      key={sectionsField.id}
+                      className="flex items-center gap-3"
                     >
-                      <FaRegTrashAlt />
-                    </Button>
-                  </div>
-                ))}
+                      <Popover modal>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className={cn(
+                                'flex-1 justify-between',
+                                !sectionsField.value && 'text-muted-foreground'
+                              )}
+                              disabled={Boolean(sectionsField.value)}
+                            >
+                              {_.truncate(
+                                sectionsField.value
+                                  ? courseList.find(
+                                      (option) =>
+                                        option.value === sectionsField.value
+                                    )?.label
+                                  : 'Select section',
+                                { length: 60 }
+                              )}
+                              <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="p-0 w-fit">
+                          <Command className="popover-content-width-same-as-its-trigger">
+                            <CommandInput
+                              placeholder="Search sections..."
+                              className="h-9"
+                            />
+                            <ScrollArea
+                              className="flex max-h-80 flex-col"
+                              type="always"
+                            >
+                              <CommandEmpty>No sections found.</CommandEmpty>
+
+                              <CommandGroup>
+                                {courseListFiltered.map((option) => (
+                                  <CommandItem
+                                    value={option.label}
+                                    key={option.value}
+                                    onSelect={async () => {
+                                      try {
+                                        const class_ids = [
+                                          ...sectionsFieldsCopy.map(
+                                            ({ value }) => value
+                                          ),
+                                          option.value,
+                                        ].filter((value) => Boolean(value));
+
+                                        const workflow_steps =
+                                          studentWorkflowPayload.workflow_steps ??
+                                          [];
+
+                                        const payload: CreateStudentWorkflowsRequest =
+                                          {
+                                            type: research_type,
+                                            workflow_data: {
+                                              type: research_type,
+                                              class_id: class_ids,
+                                            },
+                                            workflow_steps,
+                                          };
+
+                                        setStudentWorkflowPayload(payload);
+                                        sectionUpdate(idx, option);
+
+                                        await createWorkflow.mutateAsync(
+                                          payload
+                                        );
+
+                                        toast({
+                                          title: 'Assign Section Success',
+                                        });
+                                      } catch (error) {
+                                        toast({
+                                          title: 'Assign Section Failed',
+                                          variant: 'destructive',
+                                        });
+                                      }
+                                    }}
+                                    className="flex max-w-none"
+                                  >
+                                    <div className="font-medium">
+                                      {option.label}
+                                    </div>
+                                    <CheckIcon
+                                      className={cn(
+                                        'ml-auto h-4 w-4',
+                                        option.value === sectionsField.value ||
+                                          sectionsFields.some(
+                                            (author) =>
+                                              author.value === option.value
+                                          )
+                                          ? 'opacity-100'
+                                          : 'opacity-0'
+                                      )}
+                                    />
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </ScrollArea>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        onClick={async () => {
+                          removeSection(idx);
+
+                          const item = courseList.find(
+                            ({ value }) => sectionsField.value === value
+                          );
+
+                          if (typeof item === 'undefined') return;
+
+                          try {
+                            await deleteWorkflow.mutateAsync({
+                              type: research_type,
+                              workflow_id: item.workflow_id,
+                            });
+
+                            toast({
+                              title: 'Remove Assignment Section Success',
+                              // description: `You removed the assignment of the ${section.course} ${section.section} section from ${name}.`,
+                            });
+                          } catch (error) {
+                            toast({
+                              title: 'Remove Assignment Section Failed',
+                              variant: 'destructive',
+                            });
+                          }
+                        }}
+                      >
+                        <FaRegTrashAlt />
+                      </Button>
+                    </div>
+                  )
+                )}
 
                 <Button
                   type="button"

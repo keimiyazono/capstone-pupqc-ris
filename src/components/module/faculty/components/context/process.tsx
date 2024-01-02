@@ -3,39 +3,30 @@ import { Dispatch, SetStateAction, createContext, useContext } from 'react';
 export type StudentProcessContextProps = {
   research_type: string;
 
-  workflowIds: string[];
-  setWorkflowIds: Dispatch<SetStateAction<string[]>>;
-
-  studentWorkflowDatas: StudentWorkflowData[];
-  setStudentWorkflowDatas: Dispatch<SetStateAction<StudentWorkflowData[]>>;
-
-  studentWorkflowSteps: StudentWorkflowStep[];
-  setStudentWorkflowSteps: Dispatch<SetStateAction<StudentWorkflowStep[]>>;
+  studentWorkflowPayload: StudentWorkflowPayload;
+  setStudentWorkflowPayload: Dispatch<SetStateAction<StudentWorkflowPayload>>;
 };
 
-export type StudentWorkflowData = {
-  course: string;
-  year: string;
+export interface StudentWorkflowPayload {
+  workflow_data?: StudentWorkflowDataPayload;
+  workflow_steps?: StudentWorkflowStepPayload[];
+}
+
+export interface StudentWorkflowDataPayload {
   type: string;
-};
+  class_id: string[];
+}
 
-export type StudentWorkflowStep = {
+export interface StudentWorkflowStepPayload {
   name: string;
   description: string;
-  step_number: number;
-};
+}
 
 export const StudentProcessContext = createContext<StudentProcessContextProps>({
   research_type: '',
 
-  workflowIds: [],
-  setWorkflowIds: () => {},
-
-  studentWorkflowDatas: [],
-  setStudentWorkflowDatas: () => {},
-
-  studentWorkflowSteps: [],
-  setStudentWorkflowSteps: () => {},
+  studentWorkflowPayload: {},
+  setStudentWorkflowPayload: () => {},
 });
 
 export const useStudentProcessContext = () => useContext(StudentProcessContext);

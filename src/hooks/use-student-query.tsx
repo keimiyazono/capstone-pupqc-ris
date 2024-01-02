@@ -1,5 +1,5 @@
 import { risApi } from '@/lib/api';
-import { FACULTY_LIST_KEY, STUDENT_LIST_KEY, USERS_KEY } from '@/lib/constants';
+import { STUDENT_LIST_KEY, USERS_KEY } from '@/lib/constants';
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 
@@ -42,5 +42,3 @@ export function useGetStudents() {
     enabled: status === 'authenticated',
   });
 }
-
-
