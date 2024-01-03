@@ -33,3 +33,24 @@ declare interface StudentWorkflowStep {
   description: string
   step_number: number
 }
+
+declare interface GetSWFByResearchType {
+  id: string
+  type: string
+  user_id: string
+  class_: GetSWFByResearchTypeClass[]
+  steps: GetSWFByResearchTypeStep[]
+}
+
+declare interface GetSWFByResearchTypeClass {
+  id: string
+  class_id: string
+  section: string
+  course: string
+}
+
+declare interface GetSWFByResearchTypeStep {
+  id: string
+  name: string
+  description: string
+}

@@ -24,9 +24,12 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/components/ui/use-toast';
 import {
+  UpdateSWFStepsPayload,
   useDeleteStudentWorkflowSteps,
+  useDeleteStudentWorkflowStepsV2,
   useGetStudentWorkflows,
   useGetWorkflowListNameProcessStudent,
+  useUpdateStudentWorkflowSteps,
   useUpdateStudentWorkflowsProcess,
 } from '@/hooks/use-workflow-query';
 import { cn } from '@/lib/utils';
@@ -75,6 +78,9 @@ export function StudentWorkflow() {
 
   const updateProcess = useUpdateStudentWorkflowsProcess();
   const deleteProcess = useDeleteStudentWorkflowSteps();
+
+  const updateSWFSteps = useUpdateStudentWorkflowSteps();
+  const deleteSWFSteps = useDeleteStudentWorkflowStepsV2();
 
   const processList = useMemo<SectionsComboboxOptions[]>(() => {
     return studentWorkflowList
@@ -171,30 +177,46 @@ export function StudentWorkflow() {
                                     try {
                                       processUpdate(idx, option);
 
-                                      const item = studentWorkflows?.[0];
+                                      const workflows = studentWorkflows ?? [];
+                                      const workflow = workflows[0];
 
-                                      const new_steps_data = [
-                                        ...(item?.steps?.map(
-                                          ({ name, description }) => ({
-                                            name,
-                                            description,
-                                          })
-                                        ) ?? []),
-                                        {
-                                          name: option.value,
-                                          description: option.label,
-                                        },
-                                      ];
+                                      if (!workflow) return;
 
-                                      await updateProcess.mutateAsync({
-                                        research_type,
-                                        steps_data: new_steps_data,
-                                      });
+                                      const payload: UpdateSWFStepsPayload = {
+                                        type: research_type,
+                                        workflow_id: workflow.id,
+                                        workflow_steps: [
+                                          {
+                                            name: option.value,
+                                            description: option.label,
+                                          },
+                                        ],
+                                      };
 
-                                      setStudentWorkflowPayload({
-                                        ...studentWorkflowPayload,
-                                        workflow_steps: new_steps_data,
-                                      });
+                                      await updateSWFSteps.mutateAsync(payload);
+
+                                      // const new_steps_data = [
+                                      //   ...(item?.steps?.map(
+                                      //     ({ name, description }) => ({
+                                      //       name,
+                                      //       description,
+                                      //     })
+                                      //   ) ?? []),
+                                      //   {
+                                      //     name: option.value,
+                                      //     description: option.label,
+                                      //   },
+                                      // ];
+
+                                      // await updateProcess.mutateAsync({
+                                      //   research_type,
+                                      //   steps_data: new_steps_data,
+                                      // });
+
+                                      // setStudentWorkflowPayload({
+                                      //   ...studentWorkflowPayload,
+                                      //   workflow_steps: new_steps_data,
+                                      // });
 
                                       toast({
                                         title: 'Update Process Success',
@@ -237,29 +259,21 @@ export function StudentWorkflow() {
                       onClick={async () => {
                         removeProcess(idx);
 
-                        const workflow_step_ids =
-                          studentWorkflows
-                            ?.map(({ steps }) => steps)
-                            .flat()
-                            .filter(({ name }) => name === processField.value)
-                            .map(({ id }) => id) ?? [];
+                        const workflows = studentWorkflows ?? [];
+                        const workflow = workflows[0];
 
-                        if (workflow_step_ids.length < 1) return;
+                        if (!workflow) return;
+
+                        const workflow_step = workflow.steps.find(
+                          ({ name }) => name === processField.value
+                        );
+
+                        if (!workflow_step) return;
 
                         try {
-                          await deleteProcess.mutateAsync({
+                          await deleteSWFSteps.mutateAsync({
                             type: research_type,
-                            workflow_step_ids,
-                          });
-
-                          const new_steps_data =
-                            studentWorkflowPayload?.workflow_steps?.filter(
-                              ({ name }) => name !== processField.value
-                            );
-
-                          setStudentWorkflowPayload({
-                            ...studentWorkflowPayload,
-                            workflow_steps: new_steps_data,
+                            workflow_step_id: workflow_step.id, //workflow.
                           });
 
                           toast({

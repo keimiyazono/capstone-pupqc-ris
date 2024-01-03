@@ -25,8 +25,11 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/components/ui/use-toast';
 import { useGetClassRooms } from '@/hooks/use-section-query';
 import {
-  useCreateStudentWorkflow,
-  useDeleteStudentWorkflow,
+  AddSWFClassPayload,
+  CreateSWFPayload,
+  useAddStudentWorkflowClass,
+  useCreateStudentWorkflowV2,
+  useDeleteStudentWorkflowClass,
   useGetStudentWorkflows,
 } from '@/hooks/use-workflow-query';
 import { cn } from '@/lib/utils';
@@ -42,7 +45,8 @@ import { updateAdviserSectionFormSchema } from '../../validation';
 import { useStudentProcessContext } from '../context/process';
 
 export type SectionComboboxOptions = {
-  workflow_id: string;
+  // workflow_id: string;
+  class_id: string;
   // section_id: string;
 } & ComboboxOptions;
 
@@ -72,20 +76,23 @@ export function WorkflowSections() {
   } = useFieldArray({ control: form.control, name: 'sections' });
 
   const { data: studentWorkflows } = useGetStudentWorkflows(research_type);
-  const createWorkflow = useCreateStudentWorkflow();
-  const deleteWorkflow = useDeleteStudentWorkflow();
+
+  const createSWF = useCreateStudentWorkflowV2();
+  const deleteSWFClass = useDeleteStudentWorkflowClass();
+  const addSWFClass = useAddStudentWorkflowClass();
 
   const courseList = useMemo<SectionComboboxOptions[]>(() => {
     return classRooms?.result
       ? classRooms.result.map(({ Class: { id, course, section } }) => {
-          const list = studentWorkflows ?? [];
+          const workflows = studentWorkflows ?? [];
+          const workflow = workflows[0];
 
-          const item = list.find(({ class_id }) => class_id === id);
+          const item = workflow?.class_.find(({ class_id }) => class_id === id);
 
           return {
             value: id,
             label: `${course} ${section}`,
-            workflow_id: item?.id ?? '',
+            class_id: item?.id ?? '',
           };
         })
       : DEFAULT_OPTIONS;
@@ -97,9 +104,9 @@ export function WorkflowSections() {
 
   useEffect(() => {
     if (studentWorkflows) {
-      const list = studentWorkflows;
+      const workflow = studentWorkflows[0];
 
-      const collection = list
+      const collection = workflow.class_
         .map(({ class_id }) => {
           const data = courseList.find(({ value }) => value === class_id);
           return { value: data?.value ?? '' };
@@ -173,44 +180,57 @@ export function WorkflowSections() {
                                   <CommandItem
                                     value={option.label}
                                     key={option.value}
-                                    onSelect={async () => {
-                                      try {
-                                        const class_ids = [
-                                          ...sectionsFieldsCopy.map(
-                                            ({ value }) => value
-                                          ),
-                                          option.value,
-                                        ].filter((value) => Boolean(value));
+                                    onSelect={() => {
+                                      const workflows = studentWorkflows ?? [];
+                                      const workflow = workflows[0];
+                                      const hasWorkflow = Boolean(workflow);
 
-                                        const workflow_steps =
-                                          studentWorkflowPayload.workflow_steps ??
-                                          [];
+                                      if (hasWorkflow) {
+                                        const payload: AddSWFClassPayload = {
+                                          type: research_type,
+                                          workflow_id: workflow.id,
+                                          class_ids: [option.value],
+                                        };
 
-                                        const payload: CreateStudentWorkflowsRequest =
-                                          {
+                                        addSWFClass
+                                          .mutateAsync(payload)
+                                          .then(() => {
+                                            toast({
+                                              title:
+                                                'Update Student Workflow Success',
+                                            });
+                                          })
+                                          .catch(() => {
+                                            toast({
+                                              title:
+                                                'Update Student Workflow Failed',
+                                              variant: 'destructive',
+                                            });
+                                          });
+                                      } else {
+                                        const payload: CreateSWFPayload = {
+                                          workflow_data: {
                                             type: research_type,
-                                            workflow_data: {
-                                              type: research_type,
-                                              class_id: class_ids,
-                                            },
-                                            workflow_steps,
-                                          };
+                                            class_id: [option.value],
+                                          },
+                                          workflow_steps: [],
+                                        };
 
-                                        setStudentWorkflowPayload(payload);
-                                        sectionUpdate(idx, option);
-
-                                        await createWorkflow.mutateAsync(
-                                          payload
-                                        );
-
-                                        toast({
-                                          title: 'Assign Section Success',
-                                        });
-                                      } catch (error) {
-                                        toast({
-                                          title: 'Assign Section Failed',
-                                          variant: 'destructive',
-                                        });
+                                        createSWF
+                                          .mutateAsync(payload)
+                                          .then(() => {
+                                            toast({
+                                              title:
+                                                'Create Student Workflow Success',
+                                            });
+                                          })
+                                          .catch(() => {
+                                            toast({
+                                              title:
+                                                'Create Student Workflow Failed',
+                                              variant: 'destructive',
+                                            });
+                                          });
                                       }
                                     }}
                                     className="flex max-w-none"
@@ -251,9 +271,9 @@ export function WorkflowSections() {
                           if (typeof item === 'undefined') return;
 
                           try {
-                            await deleteWorkflow.mutateAsync({
+                            await deleteSWFClass.mutateAsync({
                               type: research_type,
-                              workflow_id: item.workflow_id,
+                              class_id: item.class_id,
                             });
 
                             toast({
