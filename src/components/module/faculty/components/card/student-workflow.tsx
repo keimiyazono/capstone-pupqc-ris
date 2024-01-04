@@ -25,12 +25,10 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/components/ui/use-toast';
 import {
   UpdateSWFStepsPayload,
-  useDeleteStudentWorkflowSteps,
   useDeleteStudentWorkflowStepsV2,
   useGetStudentWorkflows,
   useGetWorkflowListNameProcessStudent,
   useUpdateStudentWorkflowSteps,
-  useUpdateStudentWorkflowsProcess,
 } from '@/hooks/use-workflow-query';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -63,8 +61,7 @@ export function StudentWorkflow() {
     },
   });
 
-  const { research_type, studentWorkflowPayload, setStudentWorkflowPayload } =
-    useStudentProcessContext();
+  const { research_type } = useStudentProcessContext();
 
   const {
     fields: processFields,
@@ -75,9 +72,6 @@ export function StudentWorkflow() {
 
   const { data: studentWorkflows } = useGetStudentWorkflows(research_type);
   const { data: studentWorkflowList } = useGetWorkflowListNameProcessStudent();
-
-  const updateProcess = useUpdateStudentWorkflowsProcess();
-  const deleteProcess = useDeleteStudentWorkflowSteps();
 
   const updateSWFSteps = useUpdateStudentWorkflowSteps();
   const deleteSWFSteps = useDeleteStudentWorkflowStepsV2();
@@ -194,29 +188,6 @@ export function StudentWorkflow() {
                                       };
 
                                       await updateSWFSteps.mutateAsync(payload);
-
-                                      // const new_steps_data = [
-                                      //   ...(item?.steps?.map(
-                                      //     ({ name, description }) => ({
-                                      //       name,
-                                      //       description,
-                                      //     })
-                                      //   ) ?? []),
-                                      //   {
-                                      //     name: option.value,
-                                      //     description: option.label,
-                                      //   },
-                                      // ];
-
-                                      // await updateProcess.mutateAsync({
-                                      //   research_type,
-                                      //   steps_data: new_steps_data,
-                                      // });
-
-                                      // setStudentWorkflowPayload({
-                                      //   ...studentWorkflowPayload,
-                                      //   workflow_steps: new_steps_data,
-                                      // });
 
                                       toast({
                                         title: 'Update Process Success',

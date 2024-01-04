@@ -55,8 +55,7 @@ const DEFAULT_OPTIONS: SectionComboboxOptions[] = [];
 export function WorkflowSections() {
   const { toast } = useToast();
 
-  const { research_type, studentWorkflowPayload, setStudentWorkflowPayload } =
-    useStudentProcessContext();
+  const { research_type } = useStudentProcessContext();
 
   const { data: classRooms } = useGetClassRooms();
 
@@ -181,6 +180,8 @@ export function WorkflowSections() {
                                     value={option.label}
                                     key={option.value}
                                     onSelect={() => {
+                                      sectionUpdate(idx, option);
+
                                       const workflows = studentWorkflows ?? [];
                                       const workflow = workflows[0];
                                       const hasWorkflow = Boolean(workflow);
