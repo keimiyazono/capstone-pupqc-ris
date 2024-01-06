@@ -74,7 +74,8 @@ export function WorkflowSections() {
     remove: removeSection,
   } = useFieldArray({ control: form.control, name: 'sections' });
 
-  const { data: studentWorkflows } = useGetStudentWorkflows(research_type);
+  // prettier-ignore
+  const { data: studentWorkflows = [] } = useGetStudentWorkflows(research_type);
 
   const createSWF = useCreateStudentWorkflowV2();
   const deleteSWFClass = useDeleteStudentWorkflowClass();
@@ -102,9 +103,9 @@ export function WorkflowSections() {
   );
 
   useEffect(() => {
-    if (studentWorkflows) {
-      const workflow = studentWorkflows[0];
+    const workflow = studentWorkflows[0];
 
+    if (workflow) {
       const collection = workflow.class_
         .map(({ class_id }) => {
           const data = courseList.find(({ value }) => value === class_id);
