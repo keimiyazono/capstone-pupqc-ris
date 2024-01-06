@@ -29,7 +29,7 @@ export function FormSheetWrapper({
       <SheetTrigger asChild>{ButtonTrigger}</SheetTrigger>
       <SheetContent className="sm:max-w-2xl flex flex-col flex-grow">
         <SheetHeader className="flex flex-col flex-0 p-6">
-          <SheetTitle>{formTitle}</SheetTitle>
+          <SheetTitle className="capitalize">{formTitle}</SheetTitle>
           <SheetDescription>{formDescrition}</SheetDescription>
         </SheetHeader>
         <div className="pb-4 flex flex-grow">{children}</div>

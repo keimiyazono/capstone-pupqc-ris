@@ -2,7 +2,6 @@
 
 import UpdateResearchSheet from '@/components/module/student/components/update-research-sheet';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { risApi } from '@/lib/api';
 import { RESEARCH_KEY } from '@/lib/constants';
@@ -13,10 +12,33 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useId } from 'react';
 import { BsFillPersonFill } from 'react-icons/bs';
-import { IoChevronBackSharp } from 'react-icons/io5';
 import { ApproveDialog } from './approve-dialog';
 import { CommentSection } from './comment-section';
 import { RejectDialog } from './reject-dialog';
+
+export interface ResearchPaperDetails {
+  research_paper: ResearchPaper[];
+  authors: Author[];
+}
+
+export interface ResearchPaper {
+  id: string;
+  title: string;
+  submitted_date: string;
+  status: string;
+  file_path: string;
+  research_adviser: string;
+  faculty_name: string;
+  research_type: string;
+}
+
+export interface Author {
+  id: string;
+  name: string;
+  student_number: string;
+  section: string;
+  course: string;
+}
 
 export interface ResearchViewProps {
   id: string;
@@ -41,10 +63,10 @@ export function ResearchView({
     isFetching,
     isLoading,
     isRefetching,
-  } = useQuery<ResearchWithAuthors>({
+  } = useQuery<ResearchPaperDetails>({
     queryKey: [RESEARCH_KEY, id],
     queryFn: async () => {
-      const res = await risApi.get<ResearchWithAuthors>(
+      const res = await risApi.get<ResearchPaperDetails>(
         `${RESEARCH_KEY}/${id}`,
         {
           headers: {
@@ -57,8 +79,8 @@ export function ResearchView({
     enabled: status === 'authenticated',
   });
 
-  const research = researchWithAuthors?.research_paper;
-  const authors = researchWithAuthors?.authors;
+  const research = researchWithAuthors?.research_paper[0];
+  const authors = researchWithAuthors?.authors ?? [];
 
   const docs = [
     {
@@ -68,17 +90,7 @@ export function ResearchView({
 
   return (
     <>
-      <div className="flex items-center justify-between">
-        <Button
-          type="button"
-          variant="secondary"
-          className="gap-2"
-          onClick={() => router.back()}
-        >
-          <IoChevronBackSharp />
-          <span>Back</span>
-        </Button>
-
+      <div className="flex items-center justify-end">
         {research && (
           <div className="flex items-center gap-2">
             {showUpdateSheet && <UpdateResearchSheet research={research} />}
@@ -142,12 +154,9 @@ export function ResearchView({
           </div>
           {authors && (
             <div className="mt-5 flex items-center gap-3">
-              {authors.map(({ user_id, student_name }) => (
-                <div
-                  key={user_id}
-                  className="flex items-center gap-2 capitalize"
-                >
-                  <BsFillPersonFill /> <span>{student_name}</span>
+              {authors.map(({ id, name }) => (
+                <div key={id} className="flex items-center gap-2 capitalize">
+                  <BsFillPersonFill /> <span>{name}</span>
                 </div>
               ))}
             </div>

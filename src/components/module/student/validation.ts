@@ -8,7 +8,7 @@ export const studentloginFormSchema = z.object({
 
 export const uploadResearchFormSchema = z.object({
   title: z.string({ required_error: 'This field is required.' }),
-  research_type: z.string({ required_error: 'This field is required.' }),
+  // research_type: z.string({ required_error: 'This field is required.' }),
   file: z.custom<File>((val) => val instanceof File, 'This field is required.'),
   research_adviser: z.string({ required_error: 'This field is required.' }),
   author_ids: z

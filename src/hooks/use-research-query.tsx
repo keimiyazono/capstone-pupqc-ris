@@ -78,6 +78,24 @@ export function useGetUserResearchPapers() {
   });
 }
 
+export function useGetUserResearchPapersByType(type: string) {
+  const { data: session, status } = useSession();
+
+  return useQuery<Research[]>({
+    queryKey: [RESEARCH_KEY, type],
+    queryFn: async () => {
+      const res = await risApi.get<Research[]>(RESEARCH_KEY + '/user', {
+        headers: {
+          Authorization: `Bearer ${session?.user?.authToken}`,
+        },
+        params: { type },
+      });
+      return res.data;
+    },
+    enabled: status === 'authenticated',
+  });
+}
+
 export function useGetAllResearchPapersWithAuthors() {
   const { data: session, status } = useSession();
 

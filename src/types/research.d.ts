@@ -11,6 +11,7 @@ declare interface ResearchPaperData {
   file_path: string;
   // status: ResearchStatuses;
   research_adviser: string;
+  workflow_step_id: string;
 }
 
 declare type ResearchStatuses = 'Approved' | 'Rejected' | 'Pending' | 'Revised';

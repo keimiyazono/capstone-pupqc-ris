@@ -30,31 +30,31 @@ export const STUDENT_NAVIGATION1: NavigationParent = [
     Icon: FaRegCircleCheck,
     href: '/student/progress',
   },
-  {
-    label: 'Submissions',
-    nodeList: [
-      {
-        label: 'Proposal',
-        Icon: BsGraphUpArrow,
-        href: '/student/proposal',
-      },
-      {
-        label: 'Ethics/Protocol',
-        Icon: IoShieldHalf,
-        href: '/student/ethics-protocol',
-      },
-      {
-        label: 'Full Manuscript',
-        Icon: GiFeather,
-        href: '/student/full-manuscript',
-      },
-      {
-        label: 'Copyright Documents',
-        Icon: FaCopyright,
-        href: '/student/copyright-documents',
-      },
-    ],
-  },
+  // {
+  //   label: 'Submissions',
+  //   nodeList: [
+  //     {
+  //       label: 'Proposal',
+  //       Icon: BsGraphUpArrow,
+  //       href: '/student/proposal',
+  //     },
+  //     {
+  //       label: 'Ethics/Protocol',
+  //       Icon: IoShieldHalf,
+  //       href: '/student/ethics-protocol',
+  //     },
+  //     {
+  //       label: 'Full Manuscript',
+  //       Icon: GiFeather,
+  //       href: '/student/full-manuscript',
+  //     },
+  //     {
+  //       label: 'Copyright Documents',
+  //       Icon: FaCopyright,
+  //       href: '/student/copyright-documents',
+  //     },
+  //   ],
+  // },
   {
     label: 'Pages',
     nodeList: [
@@ -300,6 +300,8 @@ export const FACULTY_ANNOUNCEMENTS_TRAINING_AND_WORKSHOP =
 
 export const WORKFLOW_LIST_NAME_PROCESS_STUDENT =
   '/workflow/workflows-list-name-process-student';
+
+export const STUDENT_MY_WORKFLOW = '/student/myflow'
 
 export const STATUS_STYLE = {
   pending: 'bg-[#ffff00] text-black hover:bg-[#ffff00]/90',

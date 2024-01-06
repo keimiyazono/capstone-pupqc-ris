@@ -26,20 +26,15 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
+import { useGetFaculties } from '@/hooks/use-faculty-query';
 import { useUploadResearch } from '@/hooks/use-research-query';
 import {
+  useGetMyAdviserList,
+  useGetStudentMyWorkflow,
   useGetStudentProfile,
   useGetStudents,
 } from '@/hooks/use-student-query';
-import { useGetFaculties } from '@/hooks/use-faculty-query';
 import { uploadFile } from '@/lib/upload-file';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -53,6 +48,7 @@ import { FaRegTrashAlt } from 'react-icons/fa';
 import { IoAdd, IoCloudUploadOutline } from 'react-icons/io5';
 import * as z from 'zod';
 import { uploadResearchFormSchema } from '../validation';
+import { useStudentWorkflowContext } from './context/student-workflow';
 
 export type StudentOptions = {
   student_number: string;
@@ -63,12 +59,19 @@ const STUDENT_DEFAULT_OPTIONS: StudentOptions[] = [];
 
 export default function UploadResearchSheet() {
   const [open, setOpen] = useState<boolean>(false);
+  const { researchType } = useStudentWorkflowContext();
 
   const { toast } = useToast();
 
   const { data: profile } = useGetStudentProfile();
   const { data: studentData } = useGetStudents();
   const { data: facultyData } = useGetFaculties();
+  const { data: myWorkflow = [] } = useGetStudentMyWorkflow();
+  const { data: adviserList = [] } = useGetMyAdviserList(researchType);
+
+  const currentWorkflow = myWorkflow.find(({ type }) => type === researchType);
+  const steps = currentWorkflow?.steps ?? [];
+  const proposalStep = steps.find(({ name }) => name === 'Proposal');
 
   const user = studentData?.result.filter(
     ({ username }) => profile?.result?.username === username
@@ -83,7 +86,7 @@ export default function UploadResearchSheet() {
     : STUDENT_DEFAULT_OPTIONS;
 
   const facultyList: ComboboxOptions[] = facultyData
-    ? facultyData.result.map((data) => ({ label: data.name, value: data.id }))
+    ? adviserList.map((data) => ({ label: data.name, value: data.id }))
     : DEFAULT_OPTIONS;
 
   const create = useUploadResearch();
@@ -103,14 +106,18 @@ export default function UploadResearchSheet() {
   const { isSubmitting } = form.formState;
 
   useEffect(() => {
-    const hasUserId = authorsFields.some((field) => field.value === user?.id);
+    if (user) {
+      const idx = authorsFields.findIndex((field) => field.value === user.id);
 
-    if (user?.id && !hasUserId) {
-      appendAuthor({ value: user.id });
+      if (idx > -1) {
+        removeAuthor(idx);
+      } else {
+        appendAuthor({ value: user.id });
+      }
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, profile]);
+  }, [user]);
 
   async function onSubmit({
     file,
@@ -119,6 +126,15 @@ export default function UploadResearchSheet() {
   }: z.infer<typeof uploadResearchFormSchema>) {
     try {
       const file_path = await uploadFile({ file, fileName: file.name });
+
+      if (!proposalStep) {
+        toast({
+          title: 'Proposal upload failed; step not set by professors.',
+          variant: 'destructive',
+        });
+
+        return;
+      }
 
       if (!file_path) {
         toast({
@@ -131,13 +147,24 @@ export default function UploadResearchSheet() {
 
       const filteredAuthorIds: string[] = author_ids
         .filter((data) => Boolean(data.value))
-        .map(({ value }) => value);
+        .map(({ value }) => value)
+        .reduce((collection: string[], value) => {
+          const isExist = collection.some((data) => data === value);
+
+          if (!isExist) {
+            collection.push(value);
+          }
+
+          return collection;
+        }, []);
 
       const modifiedValues: UploadResearchPayload = {
         research_paper_data: {
           ...rest,
+          research_type: researchType,
           submitted_date: format(new Date(), 'dd-MM-yyyy'),
           file_path,
+          workflow_step_id: proposalStep.id,
         },
         author_ids: filteredAuthorIds,
       };
@@ -150,7 +177,6 @@ export default function UploadResearchSheet() {
 
       form.reset({
         title: '',
-        research_type: '',
         author_ids: [],
         research_adviser: '',
       });
@@ -173,12 +199,12 @@ export default function UploadResearchSheet() {
       open={open}
       toggle={toggle}
       ButtonTrigger={
-        <Button className="gap-2 text-white">
+        <Button className="gap-2 text-white capitalize">
           <IoCloudUploadOutline />
-          <span>Upload Proposal</span>
+          <span>Upload {researchType} Proposal</span>
         </Button>
       }
-      formTitle="Upload Proposal"
+      formTitle={`Upload ${researchType} Proposal`}
       formDescrition='Please provide all the necessary information in the designated
       fields, and click the "upload" button once you&apos;ve
       completed the form.'
@@ -204,7 +230,7 @@ export default function UploadResearchSheet() {
                 )}
               />
 
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="research_type"
                 render={({ field }) => (
@@ -233,7 +259,7 @@ export default function UploadResearchSheet() {
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
 
               <FileUploadInput
                 control={form.control}
