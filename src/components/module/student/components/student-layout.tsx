@@ -10,12 +10,13 @@ import { StudentSidebar } from './student-sidebar';
 
 export function StudentLayout({ children }: React.PropsWithChildren) {
   const [researchType, setResearchType] = useState<string>('');
+  const [workflowId, setWorkflowId] = useState<string>('');
 
   const { data: myWorkflow = [] } = useGetStudentMyWorkflow();
 
   const sidebars = useMemo<SidebarData[]>(() => {
-    const flows: SidebarData[] = myWorkflow.map(({ type }) => ({
-      key: type,
+    const flows: SidebarData[] = myWorkflow.map(({ type, id }) => ({
+      key: id,
       label: type,
       navigations: STUDENT_NAVIGATION1,
     }));
@@ -25,14 +26,17 @@ export function StudentLayout({ children }: React.PropsWithChildren) {
 
   useEffect(() => {
     if (sidebars.length > 0) {
-      setResearchType(sidebars[0].key);
+      const sidebar = sidebars[0];
+
+      setResearchType(sidebar.label);
+      setWorkflowId(sidebar.key);
     }
-  }, [sidebars, setResearchType]);
+  }, [sidebars, setResearchType, myWorkflow]);
 
   return (
     <div>
       <StudentWorkflowContext.Provider
-        value={{ researchType, setResearchType }}
+        value={{ researchType, setResearchType, workflowId, setWorkflowId }}
       >
         <StudentSidebar sidebars={sidebars} />
         <DashboardContent>{children}</DashboardContent>

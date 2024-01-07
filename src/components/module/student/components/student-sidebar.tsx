@@ -5,8 +5,8 @@ import { cn } from '@/lib/utils';
 import { SidebarData } from '@/types/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useId } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useId } from 'react';
 import {
   Accordion,
   AccordionContent,
@@ -30,17 +30,29 @@ export interface StudentSidebarProps {
   sidebars?: SidebarData[];
 }
 
-export function StudentSidebar({ className, sidebars = [] }: StudentSidebarProps) {
+export function StudentSidebar({
+  className,
+  sidebars = [],
+}: StudentSidebarProps) {
   const parentId = useId();
   const childrenId = useId();
   const labelId = useId();
   const pathname = usePathname();
+  const router = useRouter();
 
-  const { researchType, setResearchType } = useStudentWorkflowContext();
+  const { researchType, setResearchType, workflowId, setWorkflowId } =
+    useStudentWorkflowContext();
 
   const options = sidebars.map(({ label }) => label);
 
-  const currentSidebar = sidebars.find(({ key }) => key === researchType);
+  const currentSidebar = sidebars.find(({ label }) => label === researchType);
+
+  useEffect(() => {
+    if (!pathname.startsWith('/student/progress')) {
+      router.push('/student/progress');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [researchType, workflowId]);
 
   return (
     <div
@@ -61,7 +73,8 @@ export function StudentSidebar({ className, sidebars = [] }: StudentSidebarProps
               const data = sidebars.find(({ label }) => label === value);
 
               if (data) {
-                setResearchType(data.key);
+                setResearchType(data.label);
+                setWorkflowId(data.key);
               }
             }}
           >

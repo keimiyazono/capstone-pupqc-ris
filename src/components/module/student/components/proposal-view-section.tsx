@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { IoChevronBackSharp } from 'react-icons/io5';
 import { Stepper } from '../../stepper';
+import { useStudentWorkflowContext } from './context/student-workflow';
 
 export interface ProposalViewSectionProps {
   id: string;
@@ -12,6 +13,12 @@ export interface ProposalViewSectionProps {
 
 export function ProposalViewSection({ id }: ProposalViewSectionProps) {
   const router = useRouter();
+
+  const { researchType, workflowId } = useStudentWorkflowContext();
+
+  console.log({ researchType, workflowId });
+
+  
 
   return (
     <section className="py-10 space-y-10 h-fit">

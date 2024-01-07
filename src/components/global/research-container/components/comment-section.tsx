@@ -27,9 +27,7 @@ import { BiLoaderAlt } from 'react-icons/bi';
 import * as z from 'zod';
 import { messageFormSchema } from '../validation';
 
-export type GetCommentsQueryResponse = Array<
-  Omit<ProposalComment, 'modified_at'>
->;
+export type GetCommentsQueryResponse = ProposalComment[];
 
 export interface CommentSectionProps {
   id: string;
@@ -166,56 +164,69 @@ export function CommentSection({ id, className }: CommentSectionProps) {
     <div className={cn('border-t', className)}>
       <div className="text-sm font-bold py-6">Comments</div>
       <div>
-        {comments &&
-          comments.map(({ id: commentId, text, user_id, created_at, name }) => (
-            <div key={commentId} className="space-y-1 py-3 relative">
-              <div className="flex gap-2">
-                <div>
-                  <Image
-                    src={profileImage}
-                    alt="User profile placeholder"
-                    height={40}
-                    width={40}
-                  />
-                </div>
-                <div className="flex flex-col gap-1 w-fit max-w-2xl">
-                  <div className="rounded-2xl p-3 prose prose-sm w-fit max-w-none bg-muted">
-                    <h4>{name}</h4>
-                    {parse(text)}
+        {comments && comments.length > 0 ? (
+          comments.map(
+            ({
+              id: commentId,
+              text,
+              user_id,
+              created_at,
+              user_info: { name },
+            }) => (
+              <div key={commentId} className="space-y-1 py-3 relative">
+                <div className="flex gap-2">
+                  <div>
+                    <Image
+                      src={profileImage}
+                      alt="User profile placeholder"
+                      height={40}
+                      width={40}
+                    />
                   </div>
-                  <div className="text-[9px] font-medium text-muted-foreground">
-                    {moment(moment.utc(created_at).toDate())
-                      .local(true)
-                      .fromNow()}
+                  <div className="flex flex-col gap-1 w-fit max-w-2xl">
+                    <div className="rounded-2xl p-3 prose prose-sm w-fit max-w-none bg-muted">
+                      <h4>{name}</h4>
+                      {parse(text)}
+                    </div>
+                    <div className="text-[9px] font-medium text-muted-foreground">
+                      {moment(moment.utc(created_at).toDate())
+                        .local(true)
+                        .fromNow()}
+                    </div>
                   </div>
+                  {user_id === profile?.result.id && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className="flex h-8 w-8 p-0 data-[state=open]:bg-muted rounded-full"
+                        >
+                          <DotsHorizontalIcon className="h-4 w-4" />
+                          <span className="sr-only">Open menu</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="start"
+                        side="right"
+                        className="w-[160px] h-fit"
+                      >
+                        <DropdownMenuItem
+                          onClick={() => deleteCommentHandler(commentId)}
+                        >
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
                 </div>
-                {user_id === profile?.result.id && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        className="flex h-8 w-8 p-0 data-[state=open]:bg-muted rounded-full"
-                      >
-                        <DotsHorizontalIcon className="h-4 w-4" />
-                        <span className="sr-only">Open menu</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      align="start"
-                      side="right"
-                      className="w-[160px] h-fit"
-                    >
-                      <DropdownMenuItem
-                        onClick={() => deleteCommentHandler(commentId)}
-                      >
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
               </div>
-            </div>
-          ))}
+            )
+          )
+        ) : (
+          <div className="text-sm text-muted-foreground text-center">
+            No comments found.
+          </div>
+        )}
       </div>
 
       <Form {...form}>
