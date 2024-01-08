@@ -48,9 +48,8 @@ export function StudentSidebar({
   const currentSidebar = sidebars.find(({ label }) => label === researchType);
 
   useEffect(() => {
-    if (!pathname.startsWith('/student/progress')) {
-      router.push('/student/progress');
-    }
+    router.push('/student/progress');
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [researchType, workflowId]);
 

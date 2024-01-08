@@ -2,10 +2,15 @@
 
 import { ResearchView } from '@/components/global/research-container';
 import { Button } from '@/components/ui/button';
+import { useGetStudentFlowInfoStatus } from '@/hooks/use-student-query';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { IoChevronBackSharp } from 'react-icons/io5';
-import { Stepper } from '../../stepper';
+import { StepStatus, Stepper } from '../../stepper';
 import { useStudentWorkflowContext } from './context/student-workflow';
+import { CopyrightDocumentsSection } from './copyright-documents-section';
+import { EthicsProtocolSection } from './ethics-protocol-section';
+import { FullManuscriptSection } from './full-manuscript-section';
 
 export interface ProposalViewSectionProps {
   id: string;
@@ -14,11 +19,18 @@ export interface ProposalViewSectionProps {
 export function ProposalViewSection({ id }: ProposalViewSectionProps) {
   const router = useRouter();
 
-  const { researchType, workflowId } = useStudentWorkflowContext();
+  const [currentStep, setCurrentStep] = useState<number>(0);
 
-  console.log({ researchType, workflowId });
+  const { workflowId } = useStudentWorkflowContext();
 
-  
+  const { data: flowInfoStatus = [] } = useGetStudentFlowInfoStatus({
+    research_paper_id: id,
+    workflow_id: workflowId,
+  });
+
+  const flowInfoSteps = flowInfoStatus[0]?.steps ?? [];
+
+  const step = flowInfoSteps[currentStep];
 
   return (
     <section className="py-10 space-y-10 h-fit">
@@ -33,21 +45,30 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
       </Button>
 
       <Stepper
-        steps={[
-          'Proposal',
-          'Pre-Oral Defense',
-          'Ethics',
-          'Full Manuscript',
-          'Final Defense',
-          'Copyright',
-        ]}
-        currentStep={0}
+        steps={flowInfoSteps.map(({ name, info }) => ({
+          name,
+          status: info['whole-info'][0]?.status as StepStatus,
+        }))}
+        currentStep={currentStep}
         className="justify-center"
+        onChange={(value) => setCurrentStep(value)}
       />
 
-      <div className="border rounded p-10">
-        <ResearchView id={id} showUpdateSheet />
-      </div>
+      {step && (
+        <>
+          {step.name === 'Proposal' && (
+            <div className="border rounded-2xl p-10">
+              <ResearchView id={id} showUpdateSheet />
+            </div>
+          )}
+
+          {step.name === 'Ethics' && <EthicsProtocolSection />}
+
+          {step.name === 'Full Manuscript' && <FullManuscriptSection />}
+
+          {step.name === 'Copyright' && <CopyrightDocumentsSection />}
+        </>
+      )}
     </section>
   );
 }

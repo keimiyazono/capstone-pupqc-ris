@@ -105,3 +105,65 @@ export function useGetMyAdviserList(type: string) {
     enabled: status === 'authenticated' && Boolean(type),
   });
 }
+
+export interface StudentFlowInfoStatus {
+  id: string;
+  type: string;
+  steps: StudentFlowInfoStep[];
+}
+
+export interface StudentFlowInfoStep {
+  id: string;
+  name: string;
+  description: string;
+  info: StudentFlowInfoInfo;
+}
+
+export interface StudentFlowInfoInfo {
+  'whole-info': StudentFlowInfoWholeInfo[];
+}
+
+export interface StudentFlowInfoWholeInfo {
+  modified_at: string;
+  created_at: string;
+  title: string;
+  submitted_date: string;
+  file_path: string;
+  status: string;
+  workflow_step_id: string;
+  id: string;
+  research_type: string;
+  research_adviser: string;
+}
+
+export function useGetStudentFlowInfoStatus({
+  workflow_id,
+  research_paper_id,
+}: {
+  workflow_id: string;
+  research_paper_id: string;
+}) {
+  const { data: session, status } = useSession();
+
+  const PATH_KEY = `/student/flow-info-status/${workflow_id}`;
+
+  return useQuery<StudentFlowInfoStatus[]>({
+    queryKey: [PATH_KEY],
+    queryFn: async () => {
+      const res = await risApi.get<StudentFlowInfoStatus[]>(PATH_KEY, {
+        headers: {
+          Authorization: `Bearer ${session?.user?.authToken}`,
+        },
+        params: { research_paper_id },
+      });
+      return res.data;
+    },
+    enabled:
+      status === 'authenticated' &&
+      Boolean(workflow_id) &&
+      Boolean(research_paper_id),
+  });
+}
+
+
+

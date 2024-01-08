@@ -26,7 +26,7 @@ export const uploadResearchFormSchema = z.object({
 
 export const updateResearchFormSchema = z.object({
   title: z.string({ required_error: 'This field is required.' }),
-  research_type: z.string({ required_error: 'This field is required.' }),
+  // research_type: z.string({ required_error: 'This field is required.' }),
   submitted_date: z.string({ required_error: 'This field is required.' }),
   file: z.custom<File>(),
   research_adviser: z.string({ required_error: 'This field is required.' }),

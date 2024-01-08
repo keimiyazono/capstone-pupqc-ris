@@ -7,6 +7,7 @@ import { useEffect, useMemo } from 'react';
 import { BiLoaderAlt } from 'react-icons/bi';
 import { columns } from './ethics-protocol-section-table/columns';
 import { DataTable } from './ethics-protocol-section-table/data-table';
+import UploadEthicProtocolSheet from './upload-ethics-protocol-sheet';
 
 export function EthicsProtocolSection() {
   const { data: ethics, error } = useGetUserEthics();
@@ -40,7 +41,11 @@ export function EthicsProtocolSection() {
   return (
     <>
       <section>
-        <Card>
+        <div className="border bg-muted rounded shadow flex justify-center items-center h-96">
+          <UploadEthicProtocolSheet />
+        </div>
+
+        {/* <Card>
           <CardContent className="py-5 space-y-10">
             <DataTable data={researches} columns={columns} />
           </CardContent>
@@ -55,7 +60,7 @@ export function EthicsProtocolSection() {
               </span>
             </div>
           </div>
-        )}
+        )} */}
       </section>
     </>
   );

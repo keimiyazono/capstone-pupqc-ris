@@ -26,13 +26,13 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
 import { useGetFaculties } from '@/hooks/use-faculty-query';
 import { useUpdateResearch } from '@/hooks/use-research-query';
@@ -47,6 +47,7 @@ import { useForm } from 'react-hook-form';
 import { BiLoaderAlt, BiSolidEdit } from 'react-icons/bi';
 import * as z from 'zod';
 import { updateResearchFormSchema } from '../validation';
+import { useStudentWorkflowContext } from './context/student-workflow';
 
 export type StudentOptions = {
   student_number: string;
@@ -64,7 +65,8 @@ export default function UpdateResearchSheet({
   const [open, setOpen] = useState<boolean>(false);
   const [file, setFile] = useState<string>(research.file_path);
   const { toast } = useToast();
-
+  const { researchType } = useStudentWorkflowContext();
+  
   const { data: facultyData } = useGetFaculties();
 
   const facultyList: ComboboxOptions[] = facultyData
@@ -109,6 +111,7 @@ export default function UpdateResearchSheet({
       const modifiedValues: UpdateResearchPayload = {
         ...rest,
         file_path,
+        research_type: researchType
       };
 
       await update.mutateAsync(modifiedValues);
@@ -166,7 +169,7 @@ export default function UpdateResearchSheet({
                 )}
               />
 
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="research_type"
                 render={({ field }) => (
@@ -195,7 +198,7 @@ export default function UpdateResearchSheet({
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
 
               <FileUploadInput
                 control={form.control}

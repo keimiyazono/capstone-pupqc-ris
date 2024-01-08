@@ -68,7 +68,7 @@ export function DataTableRowActions<TData>({
       <DropdownMenuContent align="end" className="w-[160px]">
         <DropdownMenuItem asChild>
           <Link
-            href={`/student/proposal/${id}`}
+            href={`/student/progress/${id}`}
             className="px-0 py-0 mx-0 my-0 h-9"
           >
             <Button
