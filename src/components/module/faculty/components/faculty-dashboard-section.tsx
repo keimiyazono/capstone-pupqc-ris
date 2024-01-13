@@ -97,7 +97,7 @@ export function FacultyDashboardSection() {
       </div>
 
       <div className="space-y-10">
-        {fundingOpportunities && (
+        {fundingOpportunities instanceof Array && (
           <>
             <h2 className="text-xl font-semibold mb-6 text-center">
               Funding And Opportunity
@@ -123,7 +123,7 @@ export function FacultyDashboardSection() {
           </>
         )}
 
-        {trainingAndWorkshops && (
+        {trainingAndWorkshops instanceof Array && (
           <>
             <h2 className="text-xl font-semibold mb-6 text-center">
               Training And Workshops

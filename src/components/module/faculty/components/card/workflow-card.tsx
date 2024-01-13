@@ -23,7 +23,7 @@ export function WorkflowCard({ research_type }: WorkflowCardProps) {
 
           <Separator className="col-span-2" />
 
-          <FacultyWorkflowRow research_type={research_type} />
+          {/* <FacultyWorkflowRow research_type={research_type} /> */}
         </div>
       </CardContent>
     </Card>

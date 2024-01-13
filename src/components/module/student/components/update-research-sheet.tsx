@@ -36,6 +36,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/components/ui/use-toast';
 import { useGetFaculties } from '@/hooks/use-faculty-query';
 import { useUpdateResearch } from '@/hooks/use-research-query';
+import { useGetMyAdviserList } from '@/hooks/use-student-query';
 import { uploadFile } from '@/lib/upload-file';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -66,11 +67,12 @@ export default function UpdateResearchSheet({
   const [file, setFile] = useState<string>(research.file_path);
   const { toast } = useToast();
   const { researchType } = useStudentWorkflowContext();
-  
+
   const { data: facultyData } = useGetFaculties();
+  const { data: adviserList = [] } = useGetMyAdviserList(researchType);
 
   const facultyList: ComboboxOptions[] = facultyData
-    ? facultyData.result.map((data) => ({ label: data.name, value: data.id }))
+    ? adviserList.map((data) => ({ label: data.name, value: data.id }))
     : DEFAULT_OPTIONS;
 
   const update = useUpdateResearch({ research_id: research.id });
@@ -111,7 +113,7 @@ export default function UpdateResearchSheet({
       const modifiedValues: UpdateResearchPayload = {
         ...rest,
         file_path,
-        research_type: researchType
+        research_type: researchType,
       };
 
       await update.mutateAsync(modifiedValues);

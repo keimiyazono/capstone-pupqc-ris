@@ -9,6 +9,7 @@ import { IoChevronBackSharp } from 'react-icons/io5';
 import { StepStatus, Stepper } from '../../stepper';
 import { useStudentWorkflowContext } from './context/student-workflow';
 import { CopyrightDocumentsSection } from './copyright-documents-section';
+import { DefenseSection } from './defense-section';
 import { EthicsProtocolSection } from './ethics-protocol-section';
 import { FullManuscriptSection } from './full-manuscript-section';
 
@@ -67,6 +68,14 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
           {step.name === 'Full Manuscript' && <FullManuscriptSection />}
 
           {step.name === 'Copyright' && <CopyrightDocumentsSection />}
+
+          {step.name === 'Pre-Oral Defense' && (
+            <DefenseSection label="Pre-Oral Defense" />
+          )}
+
+          {step.name === 'Final Defense' && (
+            <DefenseSection label="Final Defense" />
+          )}
         </>
       )}
     </section>

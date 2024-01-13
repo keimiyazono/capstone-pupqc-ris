@@ -52,6 +52,14 @@ export const uploadFullManuscriptFormSchema = z.object({
   file: z.custom<File>((val) => val instanceof File, 'This field is required.'),
 });
 
+export const uploadDefenseFormSchema = z.object({
+  research_paper_id: z.string({ required_error: 'This field is required.' }),
+  type: z.string({ required_error: 'This field is required.' }),
+  date: z.string({ required_error: 'This field is required.' }),
+  time: z.string({ required_error: 'This field is required.' }),
+  workflow_step_id: z.string({ required_error: 'This field is required.' }),
+});
+
 export const uploadCopyrightDocumentsFormSchema = z.object({
   research_paper_id: z.string({ required_error: 'This field is required.' }),
   co_authorship: z.custom<File>(

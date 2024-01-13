@@ -75,7 +75,7 @@ export function WorkflowSections() {
   } = useFieldArray({ control: form.control, name: 'sections' });
 
   // prettier-ignore
-  const { data: studentWorkflows = [] } = useGetStudentWorkflows(research_type);
+  const { data: studentWorkflows } = useGetStudentWorkflows(research_type);
 
   const createSWF = useCreateStudentWorkflowV2();
   const deleteSWFClass = useDeleteStudentWorkflowClass();
@@ -84,7 +84,7 @@ export function WorkflowSections() {
   const courseList = useMemo<SectionComboboxOptions[]>(() => {
     return classRooms?.result
       ? classRooms.result.map(({ Class: { id, course, section } }) => {
-          const workflows = studentWorkflows ?? [];
+          const workflows = studentWorkflows instanceof Array ? studentWorkflows : [];
           const workflow = workflows[0];
 
           const item = workflow?.class_.find(({ class_id }) => class_id === id);
@@ -103,9 +103,9 @@ export function WorkflowSections() {
   );
 
   useEffect(() => {
-    const workflow = studentWorkflows[0];
+    const workflow = studentWorkflows instanceof Array ? studentWorkflows[0] : null;
 
-    if (workflow) {
+    if (workflow !== null) {
       const collection = workflow.class_
         .map(({ class_id }) => {
           const data = courseList.find(({ value }) => value === class_id);

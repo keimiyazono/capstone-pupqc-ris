@@ -1,12 +1,12 @@
 'use client';
 
-import { Card, CardContent } from '@/components/ui/card';
+// import { Card, CardContent } from '@/components/ui/card';
 import { useGetUserEthics } from '@/hooks/use-ethics-query';
 import { useGetUserResearchPapersData } from '@/hooks/use-research-query';
 import { useEffect, useMemo } from 'react';
-import { BiLoaderAlt } from 'react-icons/bi';
-import { columns } from './ethics-protocol-section-table/columns';
-import { DataTable } from './ethics-protocol-section-table/data-table';
+// import { BiLoaderAlt } from 'react-icons/bi';
+// import { columns } from './ethics-protocol-section-table/columns';
+// import { DataTable } from './ethics-protocol-section-table/data-table';
 import UploadEthicProtocolSheet from './upload-ethics-protocol-sheet';
 
 export function EthicsProtocolSection() {
