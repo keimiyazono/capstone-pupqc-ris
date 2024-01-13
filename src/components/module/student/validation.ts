@@ -53,11 +53,8 @@ export const uploadFullManuscriptFormSchema = z.object({
 });
 
 export const uploadDefenseFormSchema = z.object({
-  research_paper_id: z.string({ required_error: 'This field is required.' }),
-  type: z.string({ required_error: 'This field is required.' }),
-  date: z.string({ required_error: 'This field is required.' }),
+  date: z.date({ required_error: 'This field is required.' }),
   time: z.string({ required_error: 'This field is required.' }),
-  workflow_step_id: z.string({ required_error: 'This field is required.' }),
 });
 
 export const uploadCopyrightDocumentsFormSchema = z.object({

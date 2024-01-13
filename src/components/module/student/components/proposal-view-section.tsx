@@ -29,6 +29,8 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
     workflow_id: workflowId,
   });
 
+  console.log({ flowInfoStatus });
+
   const flowInfoSteps = flowInfoStatus[0]?.steps ?? [];
 
   const step = flowInfoSteps[currentStep];
@@ -60,6 +62,19 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
           {step.name === 'Proposal' && (
             <div className="border rounded-2xl p-10">
               <ResearchView id={id} showUpdateSheet />
+
+              <div className="flex justify-end pt-6">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="w-40 text-lg"
+                  onClick={() => {
+                    setCurrentStep((prev) => prev + 1);
+                  }}
+                >
+                  Next
+                </Button>
+              </div>
             </div>
           )}
 
@@ -70,11 +85,25 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
           {step.name === 'Copyright' && <CopyrightDocumentsSection />}
 
           {step.name === 'Pre-Oral Defense' && (
-            <DefenseSection label="Pre-Oral Defense" />
+            <DefenseSection
+              label="Pre-Oral Defense"
+              step={step}
+              researchPaperId={id}
+              updateStepCallback={() => {
+                setCurrentStep((prev) => prev + 1);
+              }}
+            />
           )}
 
           {step.name === 'Final Defense' && (
-            <DefenseSection label="Final Defense" />
+            <DefenseSection
+              label="Final Defense"
+              step={step}
+              researchPaperId={id}
+              updateStepCallback={() => {
+                setCurrentStep((prev) => prev + 1);
+              }}
+            />
           )}
         </>
       )}
