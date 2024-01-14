@@ -31,6 +31,8 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
 
   console.log({ flowInfoStatus });
 
+  const researchType = flowInfoStatus[0]?.type ?? '';
+
   const flowInfoSteps = flowInfoStatus[0]?.steps ?? [];
 
   const step = flowInfoSteps[currentStep];
@@ -78,7 +80,16 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
             </div>
           )}
 
-          {step.name === 'Ethics' && <EthicsProtocolSection />}
+          {step.name === 'Ethics' && (
+            <EthicsProtocolSection
+              step={step}
+              researchPaperId={id}
+              research_type={researchType}
+              updateStepCallback={() => {
+                setCurrentStep((prev) => prev + 1);
+              }}
+            />
+          )}
 
           {step.name === 'Full Manuscript' && <FullManuscriptSection />}
 

@@ -148,9 +148,9 @@ export function DefenseSection({
       <CardHeader>
         <CardTitle>{label}</CardTitle>
         <CardDescription>
-          Only click the &ldquo;Done&ldquo; button after completing your
-          pre-oral defense presentation. Please refrain from clicking the button
-          if your presentation is not yet concluded.
+          Only click the &ldquo;Done&ldquo; button after completing your{' '}
+          {label.toLowerCase()} presentation. Please refrain from clicking the
+          button if your presentation is not yet concluded.
         </CardDescription>
       </CardHeader>
       <CardContent>

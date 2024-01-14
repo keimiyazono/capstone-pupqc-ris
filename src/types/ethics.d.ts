@@ -1,4 +1,5 @@
 declare interface UploadEthicsPayload {
+  workflow_step_id: string
   research_paper_id: string
   letter_of_intent?: string | null
   urec_9?: string | null

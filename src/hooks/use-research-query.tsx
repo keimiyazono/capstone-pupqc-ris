@@ -60,11 +60,15 @@ export function useDeleteResearch() {
   });
 }
 
-export function useGetUserResearchPapers() {
+export function useGetUserResearchPapers({
+  research_type,
+}: {
+  research_type: string;
+}) {
   const { data: session, status } = useSession();
 
   return useQuery<Research[]>({
-    queryKey: [RESEARCH_KEY],
+    queryKey: [RESEARCH_KEY, research_type],
     queryFn: async () => {
       const res = await risApi.get<Research[]>(RESEARCH_KEY + '/user', {
         headers: {

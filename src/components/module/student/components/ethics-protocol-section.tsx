@@ -1,67 +1,82 @@
 'use client';
 
-// import { Card, CardContent } from '@/components/ui/card';
-import { useGetUserEthics } from '@/hooks/use-ethics-query';
-import { useGetUserResearchPapersData } from '@/hooks/use-research-query';
-import { useEffect, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 // import { BiLoaderAlt } from 'react-icons/bi';
 // import { columns } from './ethics-protocol-section-table/columns';
 // import { DataTable } from './ethics-protocol-section-table/data-table';
-import UploadEthicProtocolSheet from './upload-ethics-protocol-sheet';
+import { Button } from '@/components/ui/button';
+import { StudentFlowInfoStep } from '@/hooks/use-student-query';
+import UpdateEthicsForm from './ethics/update-ethics-form';
+import UploadEthicsForm from './ethics/upload-ethics-form';
 
-export function EthicsProtocolSection() {
-  const { data: ethics, error } = useGetUserEthics();
+export interface EthicsData {
+  modified_at: string;
+  created_at: string;
+  research_paper_id: string;
+  urec_9: string;
+  urec_11: string;
+  certificate_of_validation: string;
+  status: string;
+  id: string;
+  letter_of_intent: string;
+  urec_10: string;
+  urec_12: string;
+  co_authorship: string;
+  workflow_step_id: string;
+}
 
-  const data = useMemo(() => {
-    if (!ethics || error) return [];
+export interface EthicsProtocolSectionProps {
+  research_type: string;
+  className?: string;
+  researchPaperId: string;
+  step: StudentFlowInfoStep;
+  updateStepCallback: () => void;
+}
 
-    return ethics.map(({ research_paper_id, id }) => {
-      return {
-        research_paper_id,
-        data_id: id ?? '',
-      };
-    });
-  }, [ethics, error]);
+export function EthicsProtocolSection({
+  research_type,
+  className,
+  researchPaperId,
+  step,
+  updateStepCallback,
+}: EthicsProtocolSectionProps) {
+  const wholeInfo = (step.info['whole-info'] ?? [])[0] as unknown as EthicsData;
 
-  const {
-    data: researches,
-    isLoading,
-    isRefetching,
-    refetch: refetchUserResearchPapersData,
-  } = useGetUserResearchPapersData({
-    data,
-    key: 'ETHICS',
-  });
+  const action = Boolean(wholeInfo?.id) ? 'update' : 'submit';
 
-  useEffect(() => {
-    refetchUserResearchPapersData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  const workflow_step_id = wholeInfo?.workflow_step_id ?? step?.id ?? '';
 
   return (
     <>
-      <section>
-        <div className="border bg-muted rounded shadow flex justify-center items-center h-96">
-          <UploadEthicProtocolSheet />
-        </div>
-
-        {/* <Card>
-          <CardContent className="py-5 space-y-10">
-            <DataTable data={researches} columns={columns} />
-          </CardContent>
-        </Card>
-
-        {(isLoading || isRefetching) && (
-          <div className="w-full h-40 relative flex items-center justify-center">
-            <div className="flex items-center gap-2 font-semibold">
-              The table is currently loading. Please wait for a moment.
-              <span className="h-fit w-fit text-2xl animate-spin">
-                <BiLoaderAlt />
-              </span>
-            </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Ethics/Protocol</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="border rounded p-6">
+            {action === 'submit' ? (
+              <UploadEthicsForm
+                workflow_step_id={workflow_step_id}
+                research_paper_id={researchPaperId}
+              />
+            ) : (
+              <UpdateEthicsForm ethics={wholeInfo} />
+            )}
           </div>
-        )} */}
-      </section>
+
+          <div className="flex justify-end pt-6">
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-40 text-lg"
+              onClick={updateStepCallback}
+              // disabled={isSubmitting}
+            >
+              Next
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </>
   );
 }

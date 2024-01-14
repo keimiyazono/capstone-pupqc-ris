@@ -33,7 +33,16 @@ export const updateResearchFormSchema = z.object({
 });
 
 export const uploadEthicsProtocolFormSchema = z.object({
-  research_paper_id: z.string({ required_error: 'This field is required.' }),
+  letter_of_intent: z.custom<File>(),
+  urec_9: z.custom<File>(),
+  urec_10: z.custom<File>(),
+  urec_11: z.custom<File>(),
+  urec_12: z.custom<File>(),
+  certificate_of_validation: z.custom<File>(),
+  co_authorship: z.custom<File>(),
+});
+
+export const updateEthicsProtocolFormSchema = z.object({
   letter_of_intent: z.custom<File>(),
   urec_9: z.custom<File>(),
   urec_10: z.custom<File>(),
