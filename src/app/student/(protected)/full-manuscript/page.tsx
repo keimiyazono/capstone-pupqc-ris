@@ -1,4 +1,4 @@
-import { FullManuscriptSection } from '@/components/module/student';
+// import { FullManuscriptSection } from '@/components/module/student';
 
 export default function StudentFullManusriptProtocol() {
   return (
@@ -7,7 +7,7 @@ export default function StudentFullManusriptProtocol() {
         <h1>Full Manuscript</h1>
       </div>
 
-      <FullManuscriptSection />
+      {/* <FullManuscriptSection /> */}
     </div>
   );
 }

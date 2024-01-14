@@ -13,6 +13,8 @@ import { DefenseSection } from './defense-section';
 import { EthicsProtocolSection } from './ethics-protocol-section';
 import { FullManuscriptSection } from './full-manuscript-section';
 
+const DEFENSE_LIST = ['Pre-Oral Defense', 'Final Defense'];
+
 export interface ProposalViewSectionProps {
   id: string;
 }
@@ -52,7 +54,11 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
       <Stepper
         steps={flowInfoSteps.map(({ name, info }) => ({
           name,
-          status: info['whole-info'][0]?.status as StepStatus,
+          status: DEFENSE_LIST.includes(name)
+            ? Boolean(info['whole-info'][0])
+              ? 'Approved'
+              : 'Pending'
+            : (info['whole-info'][0]?.status as StepStatus),
         }))}
         currentStep={currentStep}
         className="justify-center"
@@ -84,14 +90,21 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
             <EthicsProtocolSection
               step={step}
               researchPaperId={id}
-              research_type={researchType}
               updateStepCallback={() => {
                 setCurrentStep((prev) => prev + 1);
               }}
             />
           )}
 
-          {step.name === 'Full Manuscript' && <FullManuscriptSection />}
+          {step.name === 'Full Manuscript' && (
+            <FullManuscriptSection
+              step={step}
+              researchPaperId={id}
+              updateStepCallback={() => {
+                setCurrentStep((prev) => prev + 1);
+              }}
+            />
+          )}
 
           {step.name === 'Copyright' && <CopyrightDocumentsSection />}
 

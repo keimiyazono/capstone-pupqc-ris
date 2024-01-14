@@ -1,7 +1,7 @@
 // import { FormStepperSkeleton } from '@/components/module/dashboard';
 // import dynamic from 'next/dynamic';
 
-import { ResearchSection } from '@/components/module/student';
+// import { ResearchSection } from '@/components/module/student';
 
 // const FormStepper = dynamic(
 //   async () => import('@/components/module/dashboard/components/form-stepper'),
@@ -15,7 +15,7 @@ export default function StudentProposal() {
         <h1>Proposal</h1>
       </div>
 
-      <ResearchSection />
+      {/* <ResearchSection /> */}
     </div>
   );
 }

@@ -1,9 +1,6 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-// import { BiLoaderAlt } from 'react-icons/bi';
-// import { columns } from './ethics-protocol-section-table/columns';
-// import { DataTable } from './ethics-protocol-section-table/data-table';
 import { Button } from '@/components/ui/button';
 import { StudentFlowInfoStep } from '@/hooks/use-student-query';
 import UpdateEthicsForm from './ethics/update-ethics-form';
@@ -26,16 +23,12 @@ export interface EthicsData {
 }
 
 export interface EthicsProtocolSectionProps {
-  research_type: string;
-  className?: string;
   researchPaperId: string;
   step: StudentFlowInfoStep;
   updateStepCallback: () => void;
 }
 
 export function EthicsProtocolSection({
-  research_type,
-  className,
   researchPaperId,
   step,
   updateStepCallback,

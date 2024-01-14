@@ -53,12 +53,19 @@ export const updateEthicsProtocolFormSchema = z.object({
 });
 
 export const uploadFullManuscriptFormSchema = z.object({
-  research_paper_id: z.string({ required_error: 'This field is required.' }),
   content: z.string({ required_error: 'This field is required.' }),
   abstract: z.string({ required_error: 'This field is required.' }),
   keywords: z.string({ required_error: 'This field is required.' }),
   status: z.string({ required_error: 'This field is required.' }),
   file: z.custom<File>((val) => val instanceof File, 'This field is required.'),
+});
+
+export const updateFullManuscriptFormSchema = z.object({
+  content: z.string({ required_error: 'This field is required.' }),
+  abstract: z.string({ required_error: 'This field is required.' }),
+  keywords: z.string({ required_error: 'This field is required.' }),
+  status: z.string({ required_error: 'This field is required.' }),
+  file: z.custom<File>(),
 });
 
 export const uploadDefenseFormSchema = z.object({

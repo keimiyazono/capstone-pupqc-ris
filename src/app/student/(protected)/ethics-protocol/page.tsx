@@ -1,4 +1,4 @@
-import { EthicsProtocolSection } from '@/components/module/student';
+// import { EthicsProtocolSection } from '@/components/module/student';
 
 export default function StudentEthicsProtocol() {
   return (
@@ -7,7 +7,7 @@ export default function StudentEthicsProtocol() {
         <h1>Ethics/Protocol</h1>
       </div>
 
-      <EthicsProtocolSection />
+      {/* <EthicsProtocolSection /> */}
     </div>
   );
 }

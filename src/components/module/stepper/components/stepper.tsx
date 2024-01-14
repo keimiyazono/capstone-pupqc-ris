@@ -46,9 +46,11 @@ export function Stepper({
             'text-white',
             'transition-all',
 
-            !Boolean(status) && 'bg-gray-500 hover:bg-gray-500/80 cursor-not-allowed',
+            !Boolean(status) &&
+              'bg-gray-500 hover:bg-gray-500/80 cursor-not-allowed',
 
-            status === 'Approve' && 'bg-green-500 hover:bg-green-500/80',
+            (status === 'Approve' || status === 'Approved') &&
+              'bg-green-500 hover:bg-green-500/80',
             status === 'Rejected' && 'bg-red-500 hover:bg-red-500/80',
             status === 'Pending' && 'bg-[#d4af37] hover:bg-[#d4af37]/80',
             status === 'Revise' && 'bg-blue-500 hover:bg-blue-500/80',
@@ -58,7 +60,6 @@ export function Stepper({
 
             stepClassName
           )}
-
           // disabled={!Boolean(status)}
 
           onClick={() => onChange(idx)}

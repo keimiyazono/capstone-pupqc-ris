@@ -3,7 +3,7 @@ import { FULL_MANUSCRIPT_KEY } from '@/lib/constants';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 
-export function useUploadFullManusript() {
+export function useUploadFullManusript({ workflowId }: { workflowId: string }) {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
 
@@ -15,8 +15,41 @@ export function useUploadFullManusript() {
         },
       });
     },
-    onSuccess() {
-      queryClient.invalidateQueries({ queryKey: [FULL_MANUSCRIPT_KEY] });
+
+    async onSuccess() {
+      await queryClient.invalidateQueries({
+        queryKey: [`/student/flow-info-status/${workflowId}`],
+      });
+    },
+  });
+}
+
+export interface UpdateFullManuscriptPayload {
+  manuscript_id: string
+  content: string
+  keywords: string
+  file: string
+  abstract: string
+  status: string
+}
+
+export function useUpdateFullManuscript({ workflowId }: { workflowId: string }) {
+  const { data: session } = useSession();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ manuscript_id, ...payload }: UpdateFullManuscriptPayload) => {
+      return risApi.put(`${FULL_MANUSCRIPT_KEY}/update/${manuscript_id}`, payload, {
+        headers: {
+          Authorization: `Bearer ${session?.user.authToken}`,
+        },
+      });
+    },
+
+    async onSuccess() {
+      await queryClient.invalidateQueries({
+        queryKey: [`/student/flow-info-status/${workflowId}`],
+      });
     },
   });
 }

@@ -12,6 +12,7 @@ declare interface FullManuscript {
 
 declare interface UploadFullManuscriptPayload {
   research_paper_id: string;
+  workflow_step_id: string;
   content: string;
   keywords: string;
   abstract: string;
