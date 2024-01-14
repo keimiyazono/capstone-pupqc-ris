@@ -1,4 +1,4 @@
-import { CopyrightDocumentsSection } from '@/components/module/student';
+// import { CopyrightDocumentsSection } from '@/components/module/student';
 
 export default function StudentCopyrightDocuments() {
   return (
@@ -7,7 +7,7 @@ export default function StudentCopyrightDocuments() {
         <h1>Copyright Documents</h1>
       </div>
 
-      <CopyrightDocumentsSection />
+      {/* <CopyrightDocumentsSection /> */}
     </div>
   );
 }
