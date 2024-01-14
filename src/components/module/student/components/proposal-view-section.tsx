@@ -31,13 +31,15 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
     workflow_id: workflowId,
   });
 
-  console.log({ flowInfoStatus });
-
-  const researchType = flowInfoStatus[0]?.type ?? '';
-
   const flowInfoSteps = flowInfoStatus[0]?.steps ?? [];
 
   const step = flowInfoSteps[currentStep];
+
+  const status = step?.info?.['whole-info']?.[0]?.status ?? '';
+
+  const APPROVE_LIST = ['Approve', 'Approved'];
+
+  const isApproved = APPROVE_LIST.includes(status);
 
   return (
     <section className="py-10 space-y-10 h-fit">
@@ -76,8 +78,11 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
                   type="button"
                   variant="secondary"
                   className="w-40 text-lg"
+                  disabled={!isApproved}
                   onClick={() => {
-                    setCurrentStep((prev) => prev + 1);
+                    setCurrentStep((prev) =>
+                      flowInfoSteps.length - 1 > prev ? prev + 1 : prev
+                    );
                   }}
                 >
                   Next
@@ -91,7 +96,9 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
               step={step}
               researchPaperId={id}
               updateStepCallback={() => {
-                setCurrentStep((prev) => prev + 1);
+                setCurrentStep((prev) =>
+                  flowInfoSteps.length - 1 > prev ? prev + 1 : prev
+                );
               }}
             />
           )}
@@ -101,12 +108,24 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
               step={step}
               researchPaperId={id}
               updateStepCallback={() => {
-                setCurrentStep((prev) => prev + 1);
+                setCurrentStep((prev) =>
+                  flowInfoSteps.length - 1 > prev ? prev + 1 : prev
+                );
               }}
             />
           )}
 
-          {step.name === 'Copyright' && <CopyrightDocumentsSection />}
+          {step.name === 'Copyright' && (
+            <CopyrightDocumentsSection
+              step={step}
+              researchPaperId={id}
+              updateStepCallback={() => {
+                setCurrentStep((prev) =>
+                  flowInfoSteps.length - 1 > prev ? prev + 1 : prev
+                );
+              }}
+            />
+          )}
 
           {step.name === 'Pre-Oral Defense' && (
             <DefenseSection
@@ -114,7 +133,9 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
               step={step}
               researchPaperId={id}
               updateStepCallback={() => {
-                setCurrentStep((prev) => prev + 1);
+                setCurrentStep((prev) =>
+                  flowInfoSteps.length - 1 > prev ? prev + 1 : prev
+                );
               }}
             />
           )}
@@ -125,7 +146,9 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
               step={step}
               researchPaperId={id}
               updateStepCallback={() => {
-                setCurrentStep((prev) => prev + 1);
+                setCurrentStep((prev) =>
+                  flowInfoSteps.length - 1 > prev ? prev + 1 : prev
+                );
               }}
             />
           )}

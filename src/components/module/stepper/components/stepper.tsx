@@ -1,6 +1,10 @@
+'use client';
+
 import { cn } from '@/lib/utils';
 import _ from 'lodash';
-import { useId } from 'react';
+import { useEffect, useId, useState } from 'react';
+
+export const APPROVE_LIST = ['Approve', 'Approved'];
 
 export interface StepperProps {
   steps: Step[];
@@ -35,45 +39,78 @@ export function Stepper({
 }: StepperProps) {
   const stepperId = useId();
 
+  const [pendingIndex, setPendingIndex] = useState<number>(0);
+
+  useEffect(() => {
+    for (let i = 0; i < steps.length; i++) {
+      const status = steps[0]?.status ?? '';
+
+      if (!APPROVE_LIST.includes(status)) {
+        setPendingIndex(i);
+
+        break;
+      }
+    }
+  }, [steps]);
+
   return (
     <div className={cn('flex items-center', className)}>
-      {steps.map(({ name, status }, idx) => (
-        <button
-          key={stepperId + idx}
-          className={cn(
-            'stepper-shape h-10 w-36',
-            'flex items-center justify-center',
-            'text-white',
-            'transition-all',
+      {steps.map(({ name, status }, idx) => {
+        const notAvailableStep = pendingIndex <= idx && idx > 0;
 
-            !Boolean(status) &&
-              'bg-gray-500 hover:bg-gray-500/80 cursor-not-allowed',
-
-            (status === 'Approve' || status === 'Approved') &&
-              'bg-green-500 hover:bg-green-500/80',
-            status === 'Rejected' && 'bg-red-500 hover:bg-red-500/80',
-            status === 'Pending' && 'bg-[#d4af37] hover:bg-[#d4af37]/80',
-            status === 'Revise' && 'bg-blue-500 hover:bg-blue-500/80',
-            status === 'Revised' && 'bg-purple-500 hover:bg-purple-500/80',
-
-            idx === currentStep && 'scale-110 animate-pulse hover:animate-none',
-
-            stepClassName
-          )}
-          // disabled={!Boolean(status)}
-
-          onClick={() => onChange(idx)}
-        >
-          <span
+        return (
+          <button
+            key={stepperId + idx}
+            disabled={notAvailableStep}
             className={cn(
-              'max-w-[56px] text-xs tracking-wide',
-              idx === currentStep && 'font-medium'
+              'stepper-shape h-10 w-36',
+              'flex items-center justify-center',
+              'text-white',
+              'transition-all',
+              'bg-[#d4af37] hover:bg-[#d4af37]/80',
+
+              notAvailableStep &&
+                'bg-gray-500 hover:bg-gray-500/80 cursor-not-allowed',
+
+              !notAvailableStep &&
+                APPROVE_LIST.includes(status ?? '') &&
+                'bg-green-500 hover:bg-green-500/80',
+
+              !notAvailableStep &&
+                status === 'Rejected' &&
+                'bg-red-500 hover:bg-red-500/80',
+
+              !notAvailableStep &&
+                status === 'Pending' &&
+                'bg-[#d4af37] hover:bg-[#d4af37]/80',
+
+              !notAvailableStep &&
+                status === 'Revise' &&
+                'bg-blue-500 hover:bg-blue-500/80',
+
+              !notAvailableStep &&
+                status === 'Revised' &&
+                'bg-purple-500 hover:bg-purple-500/80',
+
+              !notAvailableStep &&
+                idx === currentStep &&
+                'scale-110 animate-pulse hover:animate-none',
+
+              stepClassName
             )}
+            onClick={() => onChange(idx)}
           >
-            {_.truncate(name, { length: 18 })}
-          </span>
-        </button>
-      ))}
+            <span
+              className={cn(
+                'max-w-[56px] text-xs tracking-wide',
+                idx === currentStep && 'font-medium'
+              )}
+            >
+              {_.truncate(name, { length: 18 })}
+            </span>
+          </button>
+        );
+      })}
     </div>
   );
 }

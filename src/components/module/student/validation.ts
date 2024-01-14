@@ -74,7 +74,6 @@ export const uploadDefenseFormSchema = z.object({
 });
 
 export const uploadCopyrightDocumentsFormSchema = z.object({
-  research_paper_id: z.string({ required_error: 'This field is required.' }),
   co_authorship: z.custom<File>(
     (val) => val instanceof File,
     'This field is required.'
@@ -123,4 +122,19 @@ export const uploadCopyrightDocumentsFormSchema = z.object({
     (val) => val instanceof File,
     'This field is required.'
   ),
+});
+
+export const updateCopyrightDocumentsFormSchema = z.object({
+  co_authorship: z.custom<File>(),
+  affidavit_co_ownership: z.custom<File>(),
+  joint_authorship: z.custom<File>(),
+  approval_sheet: z.custom<File>(),
+  receipt_payment: z.custom<File>(),
+  recordal_slip: z.custom<File>(),
+  acknowledgement_receipt: z.custom<File>(),
+  certificate_copyright: z.custom<File>(),
+  recordal_template: z.custom<File>(),
+  ureb_18: z.custom<File>(),
+  journal_publication: z.custom<File>(),
+  copyright_manuscript: z.custom<File>(),
 });

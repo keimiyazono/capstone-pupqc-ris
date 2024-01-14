@@ -1,7 +1,13 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { StudentFlowInfoStep } from '@/hooks/use-student-query';
 import UpdateFullManuscript from './full-manuscript/update-full-manuscript';
 import UploadFullManuscript from './full-manuscript/upload-full-manuscript';
@@ -37,11 +43,22 @@ export function FullManuscriptSection({
 
   const workflow_step_id = wholeInfo?.workflow_step_id ?? step?.id ?? '';
 
+  const status = step?.info?.['whole-info']?.[0]?.status ?? '';
+
+  const APPROVE_LIST = ['Approve', 'Approved'];
+
+  const isApproved = APPROVE_LIST.includes(status);
+
   return (
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Ethics/Protocol</CardTitle>
+          <CardTitle>Full Manuscript</CardTitle>
+          <CardDescription>
+            Please provide all the necessary information in the designated
+            fields, and click the &quot;upload&quot; button once you&apos;ve
+            completed the form.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="border rounded p-6">
@@ -51,7 +68,7 @@ export function FullManuscriptSection({
                 research_paper_id={researchPaperId}
               />
             ) : (
-              <UpdateFullManuscript manuscript={wholeInfo}/>
+              <UpdateFullManuscript manuscript={wholeInfo} />
             )}
           </div>
 
@@ -61,6 +78,7 @@ export function FullManuscriptSection({
               variant="secondary"
               className="w-40 text-lg"
               onClick={updateStepCallback}
+              disabled={!isApproved}
             >
               Next
             </Button>

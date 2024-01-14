@@ -91,6 +91,12 @@ export function DefenseSection({
 
   const { isSubmitting } = form.formState;
 
+  const status = step?.info?.['whole-info']?.[0]?.status ?? '';
+
+  const APPROVE_LIST = ['Approve', 'Approved'];
+
+  const isApproved = APPROVE_LIST.includes(status);
+
   const onSubmit = async (values: z.infer<typeof uploadDefenseFormSchema>) => {
     if (action === 'submit') {
       try {
@@ -235,7 +241,7 @@ export function DefenseSection({
             variant="secondary"
             className="w-40 text-lg"
             onClick={updateStepCallback}
-            // disabled={isSubmitting}
+            disabled={!isApproved}
           >
             Next
           </Button>

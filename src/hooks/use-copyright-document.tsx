@@ -1,9 +1,13 @@
-import { risApi } from "@/lib/api";
-import { COPYRIGHT_DOCUMENTS_KEY } from "@/lib/constants";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
+import { risApi } from '@/lib/api';
+import { COPYRIGHT_DOCUMENTS_KEY } from '@/lib/constants';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useSession } from 'next-auth/react';
 
-export function useUploadCopyrightDocument() {
+export function useUploadCopyrightDocument({
+  workflowId,
+}: {
+  workflowId: string;
+}) {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
 
@@ -15,8 +19,59 @@ export function useUploadCopyrightDocument() {
         },
       });
     },
-    onSuccess() {
-      queryClient.invalidateQueries({ queryKey: [COPYRIGHT_DOCUMENTS_KEY] });
+
+    async onSuccess() {
+      await queryClient.invalidateQueries({
+        queryKey: [`/student/flow-info-status/${workflowId}`],
+      });
+    },
+  });
+}
+
+export interface UpdateCopyrightDocumentPayload {
+  copyright_id: string;
+  co_authorship: string;
+  affidavit_co_ownership: string;
+  joint_authorship: string;
+  approval_sheet: string;
+  receipt_payment: string;
+  recordal_slip: string;
+  acknowledgement_receipt: string;
+  certificate_copyright: string;
+  recordal_template: string;
+  ureb_18: string;
+  journal_publication: string;
+  copyright_manuscript: string;
+}
+
+export function useUpdateCopyrightDocument({
+  workflowId,
+}: {
+  workflowId: string;
+}) {
+  const { data: session } = useSession();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      copyright_id,
+      ...payload
+    }: UpdateCopyrightDocumentPayload) => {
+      return risApi.put(
+        `${COPYRIGHT_DOCUMENTS_KEY}/update/${copyright_id}`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.user.authToken}`,
+          },
+        }
+      );
+    },
+
+    async onSuccess() {
+      await queryClient.invalidateQueries({
+        queryKey: [`/student/flow-info-status/${workflowId}`],
+      });
     },
   });
 }

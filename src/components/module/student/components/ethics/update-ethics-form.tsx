@@ -187,11 +187,11 @@ export default function UpdateEthicsForm({ ethics }: UpdateEthicsFormProps) {
       await update.mutateAsync(modifiedValues);
 
       toast({
-        title: 'Upload Ethics Success',
+        title: 'Update Ethics Success',
       });
     } catch (error) {
       toast({
-        title: 'Upload Ethics Failed',
+        title: 'Update Ethics Failed',
         variant: 'destructive',
       });
     }

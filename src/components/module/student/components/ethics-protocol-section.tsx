@@ -1,7 +1,13 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { StudentFlowInfoStep } from '@/hooks/use-student-query';
 import UpdateEthicsForm from './ethics/update-ethics-form';
 import UploadEthicsForm from './ethics/upload-ethics-form';
@@ -39,11 +45,22 @@ export function EthicsProtocolSection({
 
   const workflow_step_id = wholeInfo?.workflow_step_id ?? step?.id ?? '';
 
+  const status = step?.info?.['whole-info']?.[0]?.status ?? '';
+
+  const APPROVE_LIST = ['Approve', 'Approved'];
+
+  const isApproved = APPROVE_LIST.includes(status);
+
   return (
     <>
       <Card>
         <CardHeader>
           <CardTitle>Ethics/Protocol</CardTitle>
+          <CardDescription>
+            Please provide all the necessary information in the designated
+            fields, and click the &quot;upload&quot; button once you&apos;ve
+            completed the form.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="border rounded p-6">
@@ -63,7 +80,7 @@ export function EthicsProtocolSection({
               variant="secondary"
               className="w-40 text-lg"
               onClick={updateStepCallback}
-              // disabled={isSubmitting}
+              disabled={!isApproved}
             >
               Next
             </Button>

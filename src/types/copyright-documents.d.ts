@@ -19,6 +19,7 @@ declare interface CopyrightDocument {
 
 declare interface UploadCopyrightDocumentsPayload {
   research_paper_id: string;
+  workflow_step_id: string;
   co_authorship?: string | null;
   affidavit_co_ownership?: string | null;
   joint_authorship?: string | null;

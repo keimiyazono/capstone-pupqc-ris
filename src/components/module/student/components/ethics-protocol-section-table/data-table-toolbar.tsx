@@ -6,7 +6,6 @@ import { Table } from '@tanstack/react-table';
 import { DataTableFacetedFilter } from '@/components/global';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import UploadEthicProtocolSheet from '../upload-ethics-protocol-sheet';
 
 export const statuses = [
   {
@@ -65,8 +64,6 @@ export function DataTableToolbar<TData>({
           </Button>
         )}
       </div>
-
-      <UploadEthicProtocolSheet />
     </div>
   );
 }
