@@ -15,7 +15,7 @@ export function StudentWorkflowRow({ research_type }: StudentWorkflowRowProps) {
         research_type,
       }}
     >
-      <div className="grid grid-cols-2 gap-x-10 p-6">
+      <div className="grid grid-cols-2 gap-x-10">
         <div className="col-span-1">
           <WorkflowSections />
         </div>

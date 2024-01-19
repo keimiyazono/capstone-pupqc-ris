@@ -81,12 +81,12 @@ export function FacultyWorkflow({ label, role }: FacultyWorkflowProps) {
   }, [facultyWorkflowPickedValues]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
         {label}
       </div>
       <Form {...form}>
-        <form className="space-y-3 px-6">
+        <form className="space-y-3">
           <FormField
             control={form.control}
             name="has_submitted_proposal"
