@@ -96,3 +96,8 @@ export const updateFacultyAssignedProcessFormSchema = z.object({
   has_set_final_defense_date: z.boolean(),
   has_submitted_copyright: z.boolean()
 })
+
+export const sidebarSelectFormSchema = z.object({
+  researchType: z.string(),
+  course_and_section: z.string(),
+})
