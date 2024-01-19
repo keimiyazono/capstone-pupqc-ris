@@ -1,9 +1,8 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { FacultyWorkflowRow } from './faculty-workflow-row';
 import { StudentWorkflowRow } from './student-workflow-row';
+import { FacultyWorkflowRow } from './faculty-workflow-row';
 
 export interface WorkflowCardProps {
   research_type: string;
@@ -17,13 +16,13 @@ export function WorkflowCard({ research_type }: WorkflowCardProps) {
           {research_type}
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2 gap-x-10 border rounded">
+      <CardContent className="space-y-6">
+        <div className="border rounded">
           <StudentWorkflowRow research_type={research_type} />
+        </div>
 
-          <Separator className="col-span-2" />
-
-          {/* <FacultyWorkflowRow research_type={research_type} /> */}
+        <div className="border rounded">
+          <FacultyWorkflowRow research_type={research_type} />
         </div>
       </CardContent>
     </Card>

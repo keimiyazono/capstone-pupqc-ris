@@ -83,16 +83,12 @@ export function useCreateFacultyWorkflow() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payloads: CreateFacultyWorkflowPayload[]) => {
-      return Promise.allSettled(
-        payloads.map((payload) => {
-          return risApi.post('/faculty_process/assign-process/', payload, {
-            headers: {
-              Authorization: `Bearer ${session?.user.authToken}`,
-            },
-          });
-        })
-      );
+    mutationFn: (payload: CreateFacultyWorkflowPayload[]) => {
+      return risApi.post('/faculty_process/assign-process/', payload, {
+        headers: {
+          Authorization: `Bearer ${session?.user.authToken}`,
+        },
+      });
     },
 
     async onSuccess(_, [{ type }]) {
@@ -156,7 +152,7 @@ export function useAddFacultyWorkflowClass() {
 
   return useMutation({
     mutationFn: (payloads: AddFacultyWorkflowClassPayload[]) => {
-      return Promise.allSettled(
+      return Promise.all(
         payloads.map(({ id, classes }) => {
           return risApi.post(`/faculty_process/add-more-class/${id}`, classes, {
             headers: {
@@ -211,7 +207,7 @@ export function useDeleteFacultyWorkflowClass() {
 
   return useMutation({
     mutationFn: (payloads: DeleteFacultyWorkflowClassPayload[]) => {
-      return Promise.allSettled(
+      return Promise.all(
         payloads.map(({ id }) => {
           return risApi.delete(`/faculty_process/delete-assigned-class/${id}`, {
             headers: {

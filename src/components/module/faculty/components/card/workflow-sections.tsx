@@ -131,7 +131,7 @@ export function WorkflowSections() {
             name="sections"
             render={() => (
               <FormItem className="col-span-2 flex flex-col">
-                <FormLabel>Sections</FormLabel>
+                <FormLabel>Student Sections</FormLabel>
                 {sectionsFields.map(
                   (sectionsField, idx, sectionsFieldsCopy) => (
                     <div

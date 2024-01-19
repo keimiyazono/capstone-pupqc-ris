@@ -81,8 +81,6 @@ export function UserAndResponsibilityCard({
     research_type: selectedResearchType,
   });
 
-  console.log({ selected_research_types });
-
   const data = useMemo<TableData>(() => {
     const facultys = facultyData?.result ?? [];
 

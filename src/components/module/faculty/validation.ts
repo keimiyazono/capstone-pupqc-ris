@@ -88,3 +88,11 @@ export const updateResearchProcessFormSchema = z.object({
     .array(),
 });
 
+export const updateFacultyAssignedProcessFormSchema = z.object({
+  has_submitted_proposal: z.boolean(),
+  has_pre_oral_defense_date: z.boolean(),
+  has_submitted_ethics_protocol: z.boolean(),
+  has_submitted_full_manuscript: z.boolean(),
+  has_set_final_defense_date: z.boolean(),
+  has_submitted_copyright: z.boolean()
+})

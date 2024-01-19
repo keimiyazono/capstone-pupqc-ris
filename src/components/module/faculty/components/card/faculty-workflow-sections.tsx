@@ -192,7 +192,6 @@ export function FacultyWorkflowSections() {
                                             id: workflow.id,
                                             classes: [option.value],
                                           }))
-                                          .filter(({ id }) => Boolean(id));
 
                                       addFWFClass
                                         .mutateAsync(payloads)
@@ -210,7 +209,7 @@ export function FacultyWorkflowSections() {
                                           });
                                         });
                                     } else {
-                                      const payloads: CreateFacultyWorkflowPayload[] =
+                                      const payload: CreateFacultyWorkflowPayload[] =
                                         RESEARCH_TYPES.map((role) => ({
                                           type: research_type,
                                           role,
@@ -221,10 +220,10 @@ export function FacultyWorkflowSections() {
                                           has_submitted_full_manuscript: false,
                                           has_set_final_defense_date: false,
                                           has_submitted_copyright: false,
-                                        })).filter(({ role }) => Boolean(role));
+                                        }));
 
                                       createFWF
-                                        .mutateAsync(payloads)
+                                        .mutateAsync(payload)
                                         .then(() => {
                                           toast({
                                             title:

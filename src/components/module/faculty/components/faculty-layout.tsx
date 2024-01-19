@@ -53,41 +53,6 @@ export function FacultyLayout({ children }: React.PropsWithChildren) {
             ],
           },
           {
-            label: 'Students Documents',
-            nodeList: [
-              {
-                label: 'Submitted Proposal',
-                Icon: BsGraphUpArrow,
-                href: '/faculty/submitted-proposal',
-              },
-              {
-                label: 'Set Pre-Oral Defense Date',
-                Icon: TbCalendarStats,
-                href: '/faculty/set-pre-oral-defense',
-              },
-              {
-                label: 'Submitted Ethics/Protocol',
-                Icon: IoShieldHalf,
-                href: '/faculty/submitted-ethics-protocol',
-              },
-              {
-                label: 'Submitted Full Manuscript',
-                Icon: GiFeather,
-                href: '/faculty/submitted-full-manuscript',
-              },
-              {
-                label: 'Set Final Defense Date',
-                Icon: TbCalendarStats,
-                href: '/faculty/set-final-defense',
-              },
-              {
-                label: 'Submitted Copyright Documents',
-                Icon: FaCopyright,
-                href: '/faculty/submitted-copyright-documents',
-              },
-            ],
-          },
-          {
             label: 'Collaboration',
             Icon: HiMiniUserGroup,
             href: '/faculty/collaboration',

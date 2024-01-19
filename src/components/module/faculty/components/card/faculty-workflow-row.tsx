@@ -1,4 +1,5 @@
 import { FacultyProcessContext } from '../context/process';
+import { FacultyWorkflow } from './faculty-workflow';
 import { FacultyWorkflowSections } from './faculty-workflow-sections';
 
 export interface FacultyWorkflowRowProps {
@@ -17,7 +18,10 @@ export function FacultyWorkflowRow({ research_type }: FacultyWorkflowRowProps) {
           <FacultyWorkflowSections />
         </div>
 
-        <div className="col-span-1">{/* <StudentWorkflow /> */}</div>
+        <div className="col-span-1 space-y-10">
+          <FacultyWorkflow label="Professor Process" role="research professor" />
+          <FacultyWorkflow label="Adviser Process" role="research adviser" />
+        </div>
       </div>
     </FacultyProcessContext.Provider>
   );
