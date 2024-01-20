@@ -26,11 +26,10 @@ export type StepStatus =
   | 'Pending'
   | 'Revise'
   | 'Revised'
-  | 'Approved'
-  | '';
+  | 'Approved';
 
 export function Stepper({
-  steps,
+  steps = [],
   currentStep = 0,
   className,
   stepClassName,
@@ -43,12 +42,12 @@ export function Stepper({
 
   useEffect(() => {
     for (let i = 0; i < steps.length; i++) {
-      const status = steps[0]?.status ?? '';
+      const step = steps[i];
 
-      if (!APPROVE_LIST.includes(status)) {
+      // prettier-ignore
+      if (typeof step.status === 'undefined' || !APPROVE_LIST.includes(step.status)) {
         setPendingIndex(i);
-
-        break;
+        break
       }
     }
   }, [steps]);
@@ -56,7 +55,7 @@ export function Stepper({
   return (
     <div className={cn('flex items-center', className)}>
       {steps.map(({ name, status }, idx) => {
-        const notAvailableStep = pendingIndex <= idx && idx > 0;
+        const notAvailableStep = pendingIndex < idx && idx > 0;
 
         return (
           <button

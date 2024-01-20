@@ -4,22 +4,23 @@ import { Unauthorized } from '@/components/global';
 import { Card, CardContent } from '@/components/ui/card';
 import { useEffect } from 'react';
 import { BiLoaderAlt } from 'react-icons/bi';
-import { useGetFacultyResearchPapers } from '../hooks/use-research-paper-query';
+import { useGetFacultyDefense } from '../hooks/use-faculty-defense-query';
 import { useFacultyWorkflowContext } from './context/faculty-workflow';
-import { columns } from './submitted-proposal-table/columns';
-import { DataTable } from './submitted-proposal-table/data-table';
+import { columns } from './set-pre-oral-defense-table/columns';
+import { DataTable } from './set-pre-oral-defense-table/data-table';
 
-export function SubmittedProposalSection() {
+export function SetFinalDefenseSection() {
   const { researchType, selectedProcess } = useFacultyWorkflowContext();
 
   const {
-    data: researchPapers = [],
+    data: facultyDefense = [],
     isLoading,
     refetch,
-  } = useGetFacultyResearchPapers({
+  } = useGetFacultyDefense({
     course: selectedProcess?.course,
     section: selectedProcess?.section,
     research_type: researchType,
+    defense_type: 'final',
   });
 
   useEffect(() => {
@@ -31,7 +32,7 @@ export function SubmittedProposalSection() {
 
   return (
     <section>
-      {selectedProcess?.process?.[0]?.has_submitted_proposal ? (
+      {selectedProcess?.process?.[0]?.has_pre_oral_defense_date ? (
         <Card>
           <CardContent className="py-5 space-y-10">
             {isLoading && (
@@ -45,7 +46,7 @@ export function SubmittedProposalSection() {
               </div>
             )}
             {!isLoading && (
-              <DataTable data={researchPapers} columns={columns} />
+              <DataTable data={facultyDefense} columns={columns} />
             )}
           </CardContent>
         </Card>

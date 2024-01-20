@@ -41,6 +41,8 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
 
   const isApproved = APPROVE_LIST.includes(status);
 
+  console.log({ flowInfoSteps });
+
   return (
     <section className="py-10 space-y-10 h-fit">
       <Button
@@ -54,14 +56,16 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
       </Button>
 
       <Stepper
-        steps={flowInfoSteps.map(({ name, info }) => ({
-          name,
-          status: DEFENSE_LIST.includes(name)
-            ? Boolean(info['whole-info'][0])
-              ? 'Approved'
-              : 'Pending'
-            : (info['whole-info'][0]?.status as StepStatus),
-        }))}
+        steps={flowInfoSteps.map(({ name, info }) => {
+          const isDefense = DEFENSE_LIST.includes(name)
+          const wholeInfo = info['whole-info'][0]
+          const hasWholeInfo = Boolean(wholeInfo)
+
+          return {
+            name,
+            status: isDefense ? hasWholeInfo ? 'Approved' : 'Pending' : wholeInfo?.status as StepStatus
+          }
+        })}
         currentStep={currentStep}
         className="justify-center"
         onChange={(value) => setCurrentStep(value)}

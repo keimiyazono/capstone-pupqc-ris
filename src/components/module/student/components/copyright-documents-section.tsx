@@ -51,7 +51,7 @@ export function CopyrightDocumentsSection({
 
   const workflow_step_id = wholeInfo?.workflow_step_id ?? step?.id ?? '';
 
-  const status = step?.info?.['whole-info']?.[0]?.status ?? '';
+  const status = wholeInfo.status ?? '';
 
   const APPROVE_LIST = ['Approve', 'Approved'];
 

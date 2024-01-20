@@ -84,8 +84,6 @@ export function FacultySidebar() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [researchType, selectedProcess]);
 
-  console.log({ researchType, selectedProcess });
-
   return (
     <div
       className={cn(

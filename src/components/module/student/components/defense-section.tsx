@@ -91,11 +91,8 @@ export function DefenseSection({
 
   const { isSubmitting } = form.formState;
 
-  const status = step?.info?.['whole-info']?.[0]?.status ?? '';
 
-  const APPROVE_LIST = ['Approve', 'Approved'];
-
-  const isApproved = APPROVE_LIST.includes(status);
+  const isApproved = Boolean(wholeInfo);
 
   const onSubmit = async (values: z.infer<typeof uploadDefenseFormSchema>) => {
     if (action === 'submit') {

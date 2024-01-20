@@ -2,6 +2,7 @@
 
 import UpdateResearchSheet from '@/components/module/student/components/update-research-sheet';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { risApi } from '@/lib/api';
 import { RESEARCH_KEY } from '@/lib/constants';
@@ -12,6 +13,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useId } from 'react';
 import { BsFillPersonFill } from 'react-icons/bs';
+import { IoChevronBackSharp } from 'react-icons/io5';
 import { ApproveDialog } from './approve-dialog';
 import { CommentSection } from './comment-section';
 import { RejectDialog } from './reject-dialog';
@@ -45,6 +47,7 @@ export interface ResearchViewProps {
   showUpdateSheet?: boolean;
   showApproveDialog?: boolean;
   showRejectDialog?: boolean;
+  showBackButton?: boolean;
 }
 
 export function ResearchView({
@@ -52,6 +55,7 @@ export function ResearchView({
   showUpdateSheet = false,
   showApproveDialog = false,
   showRejectDialog = false,
+  showBackButton = false,
 }: ResearchViewProps) {
   const router = useRouter();
   const researchId = useId();
@@ -90,9 +94,23 @@ export function ResearchView({
 
   return (
     <>
-      <div className="flex items-center justify-end">
+      <div className="flex items-center">
+        {showBackButton && (
+          <div>
+            <Button
+              type="button"
+              variant="secondary"
+              className="gap-2"
+              onClick={() => router.back()}
+            >
+              <IoChevronBackSharp />
+              <span>Back</span>
+            </Button>
+          </div>
+        )}
+
         {research && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center ml-auto gap-2">
             {showUpdateSheet && <UpdateResearchSheet research={research} />}
 
             {showApproveDialog && (
