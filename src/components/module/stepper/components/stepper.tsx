@@ -62,6 +62,8 @@ export function Stepper({
         setPendingIndex(i);
         break
       }
+
+      setPendingIndex(i)
     }
   }, [steps]);
 
