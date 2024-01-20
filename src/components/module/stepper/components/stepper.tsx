@@ -10,6 +10,33 @@ import { cn } from '@/lib/utils';
 import _ from 'lodash';
 import { useEffect, useId, useState } from 'react';
 
+const LISTING = [
+  {
+    number: 1,
+    name: 'Proposal',
+  },
+  {
+    number: 2,
+    name: 'Pre-Oral Defense',
+  },
+  {
+    number: 3,
+    name: 'Ethics',
+  },
+  {
+    number: 4,
+    name: 'Full Manuscript',
+  },
+  {
+    number: 5,
+    name: 'Final Defense',
+  },
+  {
+    number: 6,
+    name: 'Copyright',
+  },
+];
+
 export const APPROVE_LIST = ['Approve', 'Approved'];
 export const INCOMPLETE_LIST = [
   'Pending',
@@ -51,11 +78,18 @@ export function Stepper({
 }: StepperProps) {
   const stepperId = useId();
 
+  const stepsSorting = steps.sort((a, b) => {
+    const aNumber = LISTING.find(({name}) => name === a.name)?.number ?? 0
+    const bNumber = LISTING.find(({name}) => name === b.name)?.number ?? 0
+
+    return aNumber - bNumber
+  })
+
   const [pendingIndex, setPendingIndex] = useState<number>(0);
 
   useEffect(() => {
-    for (let i = 0; i < steps.length; i++) {
-      const step = steps[i];
+    for (let i = 0; i < stepsSorting.length; i++) {
+      const step = stepsSorting[i];
 
       // prettier-ignore
       if (typeof step.status === 'undefined' || INCOMPLETE_LIST.includes(step.status)) {
@@ -63,13 +97,13 @@ export function Stepper({
         break
       }
 
-      setPendingIndex(i)
+      setPendingIndex(i);
     }
-  }, [steps]);
+  }, [stepsSorting]);
 
   return (
     <div className={cn('flex items-center', className)}>
-      {steps.map(({ name, status = 'Pending' }, idx) => {
+      {stepsSorting.map(({ name, status = 'Pending' }, idx) => {
         const notAvailableStep = pendingIndex < idx && idx > 0;
 
         return (
