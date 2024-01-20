@@ -23,4 +23,5 @@ export type TiptapProps = PropsWithChildren & {
   value: string;
   onChange?: (...event: any[]) => void;
   placeholder?: string
+  disabled?: boolean
 };

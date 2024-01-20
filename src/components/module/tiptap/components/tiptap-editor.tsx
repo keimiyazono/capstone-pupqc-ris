@@ -15,6 +15,7 @@ export const TiptapEditor = ({
   containerClassName,
   children,
   placeholder = 'Write here...',
+  disabled
 }: TiptapProps) => {
   const editor = useEditor({
     extensions: [
@@ -58,7 +59,7 @@ export const TiptapEditor = ({
         )}
       >
         <Toolbar editor={editor} />
-        <EditorContent editor={editor} className="bg-card" />
+        <EditorContent editor={editor} className="bg-card" disabled />
       </div>
       {children}
     </>
