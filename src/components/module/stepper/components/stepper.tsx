@@ -1,10 +1,23 @@
 'use client';
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import _ from 'lodash';
 import { useEffect, useId, useState } from 'react';
 
 export const APPROVE_LIST = ['Approve', 'Approved'];
+export const INCOMPLETE_LIST = [
+  'Pending',
+  'Revise',
+  'Revised',
+  'Rejected',
+  'Reject',
+];
 
 export interface StepperProps {
   steps: Step[];
@@ -45,7 +58,7 @@ export function Stepper({
       const step = steps[i];
 
       // prettier-ignore
-      if (typeof step.status === 'undefined' || !APPROVE_LIST.includes(step.status)) {
+      if (typeof step.status === 'undefined' || INCOMPLETE_LIST.includes(step.status)) {
         setPendingIndex(i);
         break
       }
@@ -54,60 +67,68 @@ export function Stepper({
 
   return (
     <div className={cn('flex items-center', className)}>
-      {steps.map(({ name, status }, idx) => {
+      {steps.map(({ name, status = 'Pending' }, idx) => {
         const notAvailableStep = pendingIndex < idx && idx > 0;
 
         return (
-          <button
-            key={stepperId + idx}
-            disabled={notAvailableStep}
-            className={cn(
-              'stepper-shape h-10 w-36',
-              'flex items-center justify-center',
-              'text-white',
-              'transition-all',
-              'bg-[#d4af37] hover:bg-[#d4af37]/80',
+          <TooltipProvider key={stepperId + idx}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  disabled={notAvailableStep}
+                  className={cn(
+                    'stepper-shape h-10 w-36',
+                    'flex items-center justify-center',
+                    'text-white',
+                    'transition-all',
+                    'bg-[#d4af37] hover:bg-[#d4af37]/80',
 
-              notAvailableStep &&
-                'bg-gray-500 hover:bg-gray-500/80 cursor-not-allowed',
+                    notAvailableStep &&
+                      'bg-gray-500 hover:bg-gray-500/80 cursor-not-allowed',
 
-              !notAvailableStep &&
-                APPROVE_LIST.includes(status ?? '') &&
-                'bg-green-500 hover:bg-green-500/80',
+                    !notAvailableStep &&
+                      APPROVE_LIST.includes(status ?? '') &&
+                      'bg-green-500 hover:bg-green-500/80',
 
-              !notAvailableStep &&
-                status === 'Rejected' &&
-                'bg-red-500 hover:bg-red-500/80',
+                    !notAvailableStep &&
+                      status === 'Rejected' &&
+                      'bg-red-500 hover:bg-red-500/80',
 
-              !notAvailableStep &&
-                status === 'Pending' &&
-                'bg-[#d4af37] hover:bg-[#d4af37]/80',
+                    !notAvailableStep &&
+                      status === 'Pending' &&
+                      'bg-[#d4af37] hover:bg-[#d4af37]/80',
 
-              !notAvailableStep &&
-                status === 'Revise' &&
-                'bg-blue-500 hover:bg-blue-500/80',
+                    !notAvailableStep &&
+                      status === 'Revise' &&
+                      'bg-blue-500 hover:bg-blue-500/80',
 
-              !notAvailableStep &&
-                status === 'Revised' &&
-                'bg-purple-500 hover:bg-purple-500/80',
+                    !notAvailableStep &&
+                      status === 'Revised' &&
+                      'bg-purple-500 hover:bg-purple-500/80',
 
-              !notAvailableStep &&
-                idx === currentStep &&
-                'scale-110 animate-pulse hover:animate-none',
+                    !notAvailableStep &&
+                      idx === currentStep &&
+                      'scale-110 animate-pulse hover:animate-none',
 
-              stepClassName
-            )}
-            onClick={() => onChange(idx)}
-          >
-            <span
-              className={cn(
-                'max-w-[56px] text-xs tracking-wide',
-                idx === currentStep && 'font-medium'
-              )}
-            >
-              {_.truncate(name, { length: 18 })}
-            </span>
-          </button>
+                    stepClassName
+                  )}
+                  onClick={() => onChange(idx)}
+                >
+                  <span
+                    className={cn(
+                      'max-w-[56px] text-xs tracking-wide',
+                      idx === currentStep && 'font-medium'
+                    )}
+                  >
+                    {_.truncate(name, { length: 18 })}
+                  </span>
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                {notAvailableStep ? 'Step not available.' : status}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         );
       })}
     </div>
