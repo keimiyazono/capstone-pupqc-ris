@@ -25,6 +25,7 @@ export interface FileUploadInputProps {
   accept?: string;
   defaultFile?: string;
   defaultFileName?: string;
+  hideDeleteButton?: boolean;
 }
 
 export function FileUploadInput({
@@ -36,6 +37,7 @@ export function FileUploadInput({
   description,
   defaultFile,
   defaultFileName,
+  hideDeleteButton = false,
 }: FileUploadInputProps) {
   const fileUploadId = useId();
   const [file, setFile] = useState<string>(defaultFile ?? '');
@@ -62,16 +64,18 @@ export function FileUploadInput({
                     )}
                     className="flex flex-1"
                   />
-                  <Button
-                    variant="destructive"
-                    type="button"
-                    onClick={() => {
-                      field.onChange(null);
-                      setFile('');
-                    }}
-                  >
-                    <FaRegTrashAlt />
-                  </Button>
+                  {!hideDeleteButton && (
+                    <Button
+                      variant="destructive"
+                      type="button"
+                      onClick={() => {
+                        field.onChange(null);
+                        setFile('');
+                      }}
+                    >
+                      <FaRegTrashAlt />
+                    </Button>
+                  )}
                 </>
               ) : (
                 <label

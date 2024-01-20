@@ -1,4 +1,4 @@
-import { SubmittedProposalSection } from '@/components/module/faculty/components/submitted-proposal-section';
+import { SubmittedEthicsProtocolSection } from '@/components/module/faculty/components/submitted-ethics-protocol-section';
 
 export default function FacultySubmittedEthicsProtocol() {
   return (
@@ -7,7 +7,7 @@ export default function FacultySubmittedEthicsProtocol() {
         <h1>Submitted Ethics/Protocol</h1>
       </div>
 
-      <SubmittedProposalSection />
+      <SubmittedEthicsProtocolSection />
     </div>
   );
 }

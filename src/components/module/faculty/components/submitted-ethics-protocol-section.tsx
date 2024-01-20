@@ -4,19 +4,19 @@ import { Unauthorized } from '@/components/global';
 import { Card, CardContent } from '@/components/ui/card';
 import { useEffect } from 'react';
 import { BiLoaderAlt } from 'react-icons/bi';
-import { useGetFacultyResearchPapers } from '../hooks/use-research-paper-query';
+import { useGetFacultyEthicsProtocols } from '../hooks/use-faculty-ethics-protocol-query';
 import { useFacultyWorkflowContext } from './context/faculty-workflow';
-import { columns } from './submitted-proposal-table/columns';
-import { DataTable } from './submitted-proposal-table/data-table';
+import { columns } from './submitted-ethics-protocol-table/columns';
+import { DataTable } from './submitted-ethics-protocol-table/data-table';
 
 export function SubmittedEthicsProtocolSection() {
   const { researchType, selectedProcess } = useFacultyWorkflowContext();
 
   const {
-    data: researchPapers = [],
+    data: ethicsProtocols = [],
     isLoading,
     refetch,
-  } = useGetFacultyResearchPapers({
+  } = useGetFacultyEthicsProtocols({
     course: selectedProcess?.course,
     section: selectedProcess?.section,
     research_type: researchType,
@@ -45,7 +45,7 @@ export function SubmittedEthicsProtocolSection() {
               </div>
             )}
             {!isLoading && (
-              <DataTable data={researchPapers} columns={columns} />
+              <DataTable data={ethicsProtocols} columns={columns} />
             )}
           </CardContent>
         </Card>
