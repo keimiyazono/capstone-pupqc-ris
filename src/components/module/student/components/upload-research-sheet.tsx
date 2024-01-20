@@ -106,18 +106,19 @@ export default function UploadResearchSheet() {
   const { isSubmitting } = form.formState;
 
   useEffect(() => {
-    if (user) {
-      const idx = authorsFields.findIndex((field) => field.value === user.id);
+    if (profile) {
+      const profileId = profile.result.id;
+      const idx = authorsFields.findIndex((field) => field.value === profileId);
 
       if (idx > -1) {
         removeAuthor(idx);
       } else {
-        appendAuthor({ value: user.id });
+        appendAuthor({ value: profileId });
       }
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [profile]);
 
   async function onSubmit({
     file,
