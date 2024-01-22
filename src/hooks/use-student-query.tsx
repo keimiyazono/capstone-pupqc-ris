@@ -162,8 +162,6 @@ export function useGetStudentFlowInfoStatus({
       status === 'authenticated' &&
       Boolean(workflow_id) &&
       Boolean(research_paper_id),
+    refetchOnMount: true,
   });
 }
-
-
-

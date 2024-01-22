@@ -40,5 +40,6 @@ export function useGetFacultyResearchPapers({
       Boolean(research_type) &&
       Boolean(course) &&
       Boolean(section),
+    refetchOnMount: true,
   });
 }

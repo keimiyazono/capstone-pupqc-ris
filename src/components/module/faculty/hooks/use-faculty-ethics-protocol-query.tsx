@@ -74,5 +74,6 @@ export function useGetFacultyEthicsProtocolsById({ id }: { id?: string }) {
       return res.data;
     },
     enabled: status === 'authenticated' && Boolean(id),
+    refetchOnMount: true
   });
 }

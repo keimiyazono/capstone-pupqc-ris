@@ -53,5 +53,6 @@ export function useGetShowFacultyProcess() {
       return res.data;
     },
     enabled: status === 'authenticated',
+    refetchOnMount: true,
   });
 }

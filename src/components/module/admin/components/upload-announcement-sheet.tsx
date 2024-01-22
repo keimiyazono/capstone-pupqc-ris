@@ -47,16 +47,16 @@ export default function UploadAnnouncementForm() {
   const { isSubmitting } = form.formState;
 
   async function onSubmit({
-    upload_image,
+    image,
     ...rest
   }: z.infer<typeof announcementFormSchema>) {
     try {
       let file_path = '';
 
-      if (upload_image) {
+      if (image) {
         const uploaded_image_path = await uploadFile({
-          file: upload_image,
-          fileName: upload_image.name,
+          file: image,
+          fileName: image.name,
         });
 
         if (uploaded_image_path) {
@@ -66,7 +66,7 @@ export default function UploadAnnouncementForm() {
 
       const modifiedValues: UploadAnnouncementPayload = {
         ...rest,
-        upload_image: file_path,
+        image: file_path,
       };
 
       await create.mutateAsync(modifiedValues);
@@ -224,7 +224,7 @@ export default function UploadAnnouncementForm() {
 
               <FileUploadInput
                 control={form.control}
-                name="upload_image"
+                name="image"
                 label="Upload image"
                 placeholder="Upload image"
                 isImage
