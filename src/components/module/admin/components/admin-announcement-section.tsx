@@ -15,16 +15,14 @@ import { BiLoaderAlt } from 'react-icons/bi';
 export function AdminAnnouncementSection() {
   const { data: announcementList, isLoading } = useGetAnnouncementList();
 
-  console.log({ announcementList });
-
   return (
     <section>
       <Card>
         <CardHeader>
           <CardTitle>Announcement</CardTitle>
           <CardDescription>
-            Fill in the subject and body of the announcement and press announce.
-            Students or Faculty will receive a notification on their devices.
+            Fill in the subject and body of the announcement and press publish.
+            {/* Students or Faculty will receive a notification on their devices. */}
           </CardDescription>
         </CardHeader>
         <CardContent className="py-5 space-y-10">

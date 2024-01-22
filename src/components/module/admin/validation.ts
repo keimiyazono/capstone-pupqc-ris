@@ -52,4 +52,5 @@ export const announcementFormSchema = z.object({
   title: z.string({ required_error: 'This field is required.' }),
   content: z.string({ required_error: 'This field is required.' }),
   other_details: z.string({ required_error: 'This field is required.' }),
+  upload_image: z.custom<File>(),
 });

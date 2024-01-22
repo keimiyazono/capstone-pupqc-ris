@@ -2,6 +2,7 @@
 
 import { FormSheetWrapper } from '@/components/global/wrappers/form-sheet-wrapper';
 import { Button } from '@/components/ui/button';
+import { FileUploadInput } from '@/components/ui/file-upload-input';
 import {
   Form,
   FormControl,
@@ -21,6 +22,7 @@ import {
 } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
 import { useUploadAnnouncement } from '@/hooks/use-announcement-query';
+import { uploadFile } from '@/lib/upload-file';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -44,16 +46,33 @@ export default function UploadAnnouncementForm() {
 
   const { isSubmitting } = form.formState;
 
-  async function onSubmit(values: z.infer<typeof announcementFormSchema>) {
+  async function onSubmit({
+    upload_image,
+    ...rest
+  }: z.infer<typeof announcementFormSchema>) {
     try {
+      let file_path = '';
+
+      if (upload_image) {
+        const uploaded_image_path = await uploadFile({
+          file: upload_image,
+          fileName: upload_image.name,
+        });
+
+        if (uploaded_image_path) {
+          file_path = uploaded_image_path;
+        }
+      }
+
       const modifiedValues: UploadAnnouncementPayload = {
-        ...values,
+        ...rest,
+        upload_image: file_path,
       };
 
       await create.mutateAsync(modifiedValues);
 
       toast({
-        title: 'Upload Announcement Success',
+        title: 'Publish Announcement Success',
       });
 
       form.reset({
@@ -67,7 +86,7 @@ export default function UploadAnnouncementForm() {
       setOpen(false);
     } catch (error) {
       toast({
-        title: 'Upload Announcement Failed',
+        title: 'Publish Announcement Failed',
         variant: 'destructive',
       });
     }
@@ -84,12 +103,12 @@ export default function UploadAnnouncementForm() {
       ButtonTrigger={
         <Button className="gap-2 text-white">
           <IoCloudUploadOutline />
-          <span>Upload Announcement</span>
+          <span>Create Announcement</span>
         </Button>
       }
-      formTitle="Upload Announcement"
+      formTitle="Publish Announcement"
       formDescrition='Please provide all the necessary information in the designated
-      fields, and click the "upload" button once you&apos;ve
+      fields, and click the "Publish" button once you&apos;ve
       completed the form.'
     >
       <Form {...form}>
@@ -202,6 +221,14 @@ export default function UploadAnnouncementForm() {
                   </FormItem>
                 )}
               />
+
+              <FileUploadInput
+                control={form.control}
+                name="upload_image"
+                label="Upload image"
+                placeholder="Upload image"
+                isImage
+              />
             </div>
           </ScrollArea>
 
@@ -212,7 +239,7 @@ export default function UploadAnnouncementForm() {
                   <BiLoaderAlt />
                 </span>
               ) : (
-                'Upload'
+                'Publish'
               )}
             </Button>
           </div>

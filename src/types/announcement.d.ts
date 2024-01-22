@@ -21,6 +21,7 @@ declare interface UploadAnnouncementPayload {
   title: string;
   content: string;
   other_details: string;
+  upload_image?: string
 }
 
 declare interface GetAnnouncementByIdResponse {

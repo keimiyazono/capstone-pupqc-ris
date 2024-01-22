@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { useId, useState } from 'react';
 import { Control } from 'react-hook-form';
 import { FaRegTrashAlt } from 'react-icons/fa';
-import { FaRegFilePdf } from 'react-icons/fa6';
+import { FaRegFileImage, FaRegFilePdf } from 'react-icons/fa6';
 import { ViewFileDialog } from '../global/view-file-dialog';
 import { Button } from './button';
 import {
@@ -26,6 +26,7 @@ export interface FileUploadInputProps {
   defaultFile?: string;
   defaultFileName?: string;
   hideDeleteButton?: boolean;
+  isImage?: boolean;
 }
 
 export function FileUploadInput({
@@ -38,6 +39,7 @@ export function FileUploadInput({
   defaultFile,
   defaultFileName,
   hideDeleteButton = false,
+  isImage = false,
 }: FileUploadInputProps) {
   const fileUploadId = useId();
   const [file, setFile] = useState<string>(defaultFile ?? '');
@@ -82,7 +84,7 @@ export function FileUploadInput({
                   htmlFor={fileUploadId}
                   className="flex flex-1 border rounded cursor-pointer gap-2 items-center text-base justify-center bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 h-9 px-4 py-2"
                 >
-                  <FaRegFilePdf />
+                  {isImage ? <FaRegFileImage /> : <FaRegFilePdf />}
                   <span>{placeholder}</span>
 
                   <input
@@ -92,7 +94,7 @@ export function FileUploadInput({
                     onChange={(e) =>
                       field.onChange(e.target.files ? e.target.files[0] : null)
                     }
-                    accept={accept}
+                    accept={isImage ? 'image/*' : accept}
                   />
                 </label>
               )}
