@@ -88,7 +88,7 @@ export function FacultySidebar() {
           }}
         >
           <SelectTrigger className="bg-primary text-white [&>svg]:hidden text-center rounded-xl justify-center font-semibold">
-            <SelectValue placeholder="Select a research type" />
+            <SelectValue placeholder="Select Role" />
           </SelectTrigger>
 
           <SelectContent>

@@ -78,7 +78,7 @@ export function ResearchProfessorsDropdowns({
         }}
       >
         <SelectTrigger className="bg-primary text-white [&>svg]:hidden text-center rounded-xl justify-center font-semibold">
-          <SelectValue placeholder="Select a section" />
+          <SelectValue placeholder="Select Section" />
         </SelectTrigger>
 
         <SelectContent>
@@ -103,7 +103,7 @@ export function ResearchProfessorsDropdowns({
         }}
       >
         <SelectTrigger className="bg-primary text-white [&>svg]:hidden text-center rounded-xl justify-center font-semibold">
-          <SelectValue placeholder="Select a section" />
+          <SelectValue placeholder="Select Research Type" />
         </SelectTrigger>
 
         <SelectContent>

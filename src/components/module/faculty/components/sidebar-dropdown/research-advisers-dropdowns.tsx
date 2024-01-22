@@ -59,7 +59,7 @@ export function ResearchAdvisersDropdowns({
         }}
       >
         <SelectTrigger className="bg-primary text-white [&>svg]:hidden text-center rounded-xl justify-center font-semibold">
-          <SelectValue placeholder="Select a section" />
+          <SelectValue placeholder="Select Section" />
         </SelectTrigger>
 
         <SelectContent>
