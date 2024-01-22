@@ -10,7 +10,10 @@ import { columns } from './submitted-proposal-table/columns';
 import { DataTable } from './submitted-proposal-table/data-table';
 
 export function SubmittedProposalSection() {
-  const { researchType, selectedProcess } = useFacultyWorkflowContext();
+  const { researchType, selectedProcess, selectedProcessIndex } =
+    useFacultyWorkflowContext();
+
+  const process = selectedProcess?.process?.[selectedProcessIndex];
 
   const {
     data: researchPapers = [],
@@ -19,7 +22,7 @@ export function SubmittedProposalSection() {
   } = useGetFacultyResearchPapers({
     course: selectedProcess?.course,
     section: selectedProcess?.section,
-    research_type: researchType,
+    research_type: process?.type,
   });
 
   useEffect(() => {
@@ -31,7 +34,7 @@ export function SubmittedProposalSection() {
 
   return (
     <section>
-      {selectedProcess?.process?.[0]?.has_submitted_proposal ? (
+      {process?.has_submitted_proposal ? (
         <Card>
           <CardContent className="py-5 space-y-10">
             {isLoading && (

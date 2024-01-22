@@ -10,7 +10,10 @@ import { columns } from './set-pre-oral-defense-table/columns';
 import { DataTable } from './set-pre-oral-defense-table/data-table';
 
 export function SetFinalDefenseSection() {
-  const { researchType, selectedProcess } = useFacultyWorkflowContext();
+  const { researchType, selectedProcess, selectedProcessIndex } =
+    useFacultyWorkflowContext();
+
+  const process = selectedProcess?.process?.[selectedProcessIndex];
 
   const {
     data: facultyDefense = [],
@@ -19,7 +22,7 @@ export function SetFinalDefenseSection() {
   } = useGetFacultyDefense({
     course: selectedProcess?.course,
     section: selectedProcess?.section,
-    research_type: researchType,
+    research_type: process?.type,
     defense_type: 'final',
   });
 
@@ -32,7 +35,7 @@ export function SetFinalDefenseSection() {
 
   return (
     <section>
-      {selectedProcess?.process?.[0]?.has_pre_oral_defense_date ? (
+      {process?.has_pre_oral_defense_date ? (
         <Card>
           <CardContent className="py-5 space-y-10">
             {isLoading && (

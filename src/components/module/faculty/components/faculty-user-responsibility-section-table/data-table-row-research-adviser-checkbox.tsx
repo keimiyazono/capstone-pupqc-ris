@@ -72,7 +72,7 @@ export function DataTableRowResearchAdviserCheckbox<TData>({
           });
         } else {
           await removeAssignedAdviserResearchType.mutateAsync({
-            research_type_id,
+            user_id: id,
             research_type,
           });
         }

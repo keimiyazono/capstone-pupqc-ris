@@ -10,7 +10,9 @@ import { columns } from './submitted-full-manuscript-table/columns';
 import { DataTable } from './submitted-full-manuscript-table/data-table';
 
 export function SubmittedFullManuscriptSection() {
-  const { researchType, selectedProcess } = useFacultyWorkflowContext();
+  const { researchType, selectedProcess, selectedProcessIndex } = useFacultyWorkflowContext();
+
+  const process = selectedProcess?.process?.[selectedProcessIndex];
 
   const {
     data: fullManuscripts = [],
@@ -19,7 +21,7 @@ export function SubmittedFullManuscriptSection() {
   } = useGetFacultyManuscript({
     course: selectedProcess?.course,
     section: selectedProcess?.section,
-    research_type: researchType,
+    research_type: process?.type,
   });
 
   useEffect(() => {
@@ -31,7 +33,7 @@ export function SubmittedFullManuscriptSection() {
 
   return (
     <section>
-      {selectedProcess?.process?.[0]?.has_submitted_full_manuscript ? (
+      {process?.has_submitted_full_manuscript ? (
         <Card>
           <CardContent className="py-5 space-y-10">
             {isLoading && (

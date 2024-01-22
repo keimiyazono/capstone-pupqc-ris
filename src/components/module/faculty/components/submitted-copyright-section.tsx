@@ -10,7 +10,9 @@ import { columns } from './submitted-copyright-table/columns';
 import { DataTable } from './submitted-copyright-table/data-table';
 
 export function SubmittedCopyrightSection() {
-  const { researchType, selectedProcess } = useFacultyWorkflowContext();
+  const { researchType, selectedProcess, selectedProcessIndex } = useFacultyWorkflowContext();
+
+  const process = selectedProcess?.process?.[selectedProcessIndex];
 
   const {
     data: facultyCopyright = [],
@@ -19,7 +21,7 @@ export function SubmittedCopyrightSection() {
   } = useGetFacultyCopyrights({
     course: selectedProcess?.course,
     section: selectedProcess?.section,
-    research_type: researchType,
+    research_type: process?.type,
   });
 
   useEffect(() => {
@@ -31,7 +33,7 @@ export function SubmittedCopyrightSection() {
 
   return (
     <section>
-      {selectedProcess?.process?.[0]?.has_submitted_copyright ? (
+      {process?.has_submitted_copyright ? (
         <Card>
           <CardContent className="py-5 space-y-10">
             {isLoading && (

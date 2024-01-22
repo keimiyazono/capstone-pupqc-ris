@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 
 export interface ShowFacultyProcess {
   role: string[];
-  assigned_sections_as_prof: any;
+  assigned_sections_as_prof: Assignsection[];
   assigned_sections_as_adviser: AssignedSectionsAsAdviser[];
 }
 

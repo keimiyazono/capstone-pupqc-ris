@@ -11,10 +11,12 @@ export interface FullManuscriptViewSectionProps {
 export function FullManuscriptViewSection({
   id,
 }: FullManuscriptViewSectionProps) {
-  const { selectedProcess } = useFacultyWorkflowContext();
+  const { selectedProcess, selectedProcessIndex } = useFacultyWorkflowContext();
+  const process = selectedProcess?.process?.[selectedProcessIndex];
+
   return (
     <section className="py-10 space-y-10 h-fit">
-      {selectedProcess?.process?.[0]?.has_submitted_full_manuscript ? (
+      {process?.has_submitted_full_manuscript ? (
         <FullManuscriptView
           id={id}
           showApproveDialog

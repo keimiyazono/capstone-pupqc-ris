@@ -9,6 +9,9 @@ export type FacultyWorkflowContextProps = {
 
   selectedProcess: Assignsection | null;
   setSelectedProcess: Dispatch<SetStateAction<Assignsection | null>>;
+
+  selectedProcessIndex: number;
+  setSelectedProcessIndex: Dispatch<SetStateAction<number>>
 };
 
 export const FacultyWorkflowContext =
@@ -18,6 +21,9 @@ export const FacultyWorkflowContext =
 
     selectedProcess: null,
     setSelectedProcess: () => {},
+
+    selectedProcessIndex: 0,
+    setSelectedProcessIndex: () => {}
   });
 
 export const useFacultyWorkflowContext = () =>

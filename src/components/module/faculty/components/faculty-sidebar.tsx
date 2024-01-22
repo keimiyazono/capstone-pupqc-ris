@@ -33,6 +33,10 @@ import {
 } from '../../../ui/select';
 import { useGetShowFacultyProcess } from '../hooks/use-faculty-process';
 import { useFacultyWorkflowContext } from './context/faculty-workflow';
+import { ResearchAdvisersDropdowns } from './sidebar-dropdown/research-advisers-dropdowns';
+import { ResearchProfessorsDropdowns } from './sidebar-dropdown/research-professors-dropdowns';
+
+const RESEARCH_PROFESSOR = 'research professor';
 
 type CourseSectionComboboxOptions = {
   class_id: string;
@@ -43,40 +47,22 @@ export function FacultySidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const { researchType, setResearchType, selectedProcess, setSelectedProcess } =
-    useFacultyWorkflowContext();
+  const {
+    researchType,
+    setResearchType,
+    selectedProcess,
+    selectedProcessIndex,
+    setSelectedProcess,
+  } = useFacultyWorkflowContext();
 
   const { data: facultyProcess } = useGetShowFacultyProcess();
 
-  const process = useMemo(() => {
-    const collection = facultyProcess?.assigned_sections_as_adviser ?? [];
-
-    const data = collection.find(
-      ({ research_type_name }) => research_type_name === researchType
-    );
-
-    return data;
-  }, [facultyProcess, researchType]);
+  console.log({ selectedProcess, selectedProcessIndex });
 
   const researchTypes = useMemo(() => {
     const collection = facultyProcess?.assigned_sections_as_adviser ?? [];
-
-    const data = collection.map(({ research_type_name }) => research_type_name);
-
-    return data;
+    return collection.map(({ research_type_name }) => research_type_name);
   }, [facultyProcess]);
-
-  const coursesAndSections: CourseSectionComboboxOptions[] = (
-    process?.assignsection ?? []
-  ).reduce((collection, { id, class_id, course, section }) => {
-    const isExist = collection.some(({ value }) => value === class_id);
-
-    if (!isExist) {
-      collection.push({ value: id, class_id, label: `${course} - ${section}` });
-    }
-
-    return collection;
-  }, [] as CourseSectionComboboxOptions[]);
 
   useEffect(() => {
     router.push('/faculty/dashboard');
@@ -98,6 +84,7 @@ export function FacultySidebar() {
         <Select
           onValueChange={(e) => {
             setResearchType(e);
+            setSelectedProcess(null);
           }}
         >
           <SelectTrigger className="bg-primary text-white [&>svg]:hidden text-center rounded-xl justify-center font-semibold">
@@ -105,8 +92,8 @@ export function FacultySidebar() {
           </SelectTrigger>
 
           <SelectContent>
-            {facultyProcess?.role?.includes('research professor') && (
-              <SelectItem value="research professor" className="capitalize">
+            {facultyProcess?.role?.includes(RESEARCH_PROFESSOR) && (
+              <SelectItem value={RESEARCH_PROFESSOR} className="capitalize">
                 Professor
               </SelectItem>
             )}
@@ -123,32 +110,18 @@ export function FacultySidebar() {
           </SelectContent>
         </Select>
 
-        {researchTypes && researchType !== 'research professor' && (
-          <Select
-            onValueChange={(e) => {
-              const assigned = process?.assignsection?.find(
-                ({ id }) => id === e
-              );
+        {researchType !== RESEARCH_PROFESSOR && facultyProcess && (
+          <ResearchAdvisersDropdowns
+            assignedSectionsAsAdviser={
+              facultyProcess?.assigned_sections_as_adviser ?? []
+            }
+          />
+        )}
 
-              setSelectedProcess(assigned ?? null);
-            }}
-          >
-            <SelectTrigger className="bg-primary text-white [&>svg]:hidden text-center rounded-xl justify-center font-semibold">
-              <SelectValue placeholder="Select a course/section" />
-            </SelectTrigger>
-
-            <SelectContent>
-              {coursesAndSections.map((option, idx) => (
-                <SelectItem
-                  key={labelId + idx + 'course'}
-                  value={option.value}
-                  className="capitalize"
-                >
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        {researchType === RESEARCH_PROFESSOR && facultyProcess && (
+          <ResearchProfessorsDropdowns
+            assignedSections={facultyProcess?.assigned_sections_as_prof ?? []}
+          />
         )}
       </div>
 
@@ -167,7 +140,7 @@ export function FacultySidebar() {
           </Button>
         </Link>
 
-        {researchType === 'research professor' && (
+        {researchType === RESEARCH_PROFESSOR && (
           <Accordion type="single" collapsible>
             <AccordionItem value="Faculty Roles">
               <AccordionTrigger
@@ -230,7 +203,7 @@ export function FacultySidebar() {
           </Accordion>
         )}
 
-        {researchType !== 'research professor' && Boolean(selectedProcess) && (
+        {Boolean(selectedProcess) && (
           <Accordion type="single" collapsible>
             <AccordionItem value="Students Documents">
               <AccordionTrigger
@@ -239,7 +212,8 @@ export function FacultySidebar() {
                 Students Documents
               </AccordionTrigger>
               <AccordionContent className="p-0">
-                {selectedProcess?.process[0]?.has_submitted_proposal && (
+                {selectedProcess?.process[selectedProcessIndex]
+                  ?.has_submitted_proposal && (
                   <Link href="/faculty/submitted-proposal">
                     <Button
                       variant="ghost"
@@ -257,7 +231,8 @@ export function FacultySidebar() {
                   </Link>
                 )}
 
-                {selectedProcess?.process[0]?.has_pre_oral_defense_date && (
+                {selectedProcess?.process[selectedProcessIndex]
+                  ?.has_pre_oral_defense_date && (
                   <Link href="/faculty/set-pre-oral-defense">
                     <Button
                       variant="ghost"
@@ -275,7 +250,8 @@ export function FacultySidebar() {
                   </Link>
                 )}
 
-                {selectedProcess?.process[0]?.has_submitted_ethics_protocol && (
+                {selectedProcess?.process[selectedProcessIndex]
+                  ?.has_submitted_ethics_protocol && (
                   <Link href="/faculty/submitted-ethics-protocol">
                     <Button
                       variant="ghost"
@@ -295,7 +271,8 @@ export function FacultySidebar() {
                   </Link>
                 )}
 
-                {selectedProcess?.process[0]?.has_submitted_full_manuscript && (
+                {selectedProcess?.process[selectedProcessIndex]
+                  ?.has_submitted_full_manuscript && (
                   <Link href="/faculty/submitted-full-manuscript">
                     <Button
                       variant="ghost"
@@ -315,7 +292,8 @@ export function FacultySidebar() {
                   </Link>
                 )}
 
-                {selectedProcess?.process[0]?.has_set_final_defense_date && (
+                {selectedProcess?.process[selectedProcessIndex]
+                  ?.has_set_final_defense_date && (
                   <Link href="/faculty/set-final-defense">
                     <Button
                       variant="ghost"
@@ -333,7 +311,8 @@ export function FacultySidebar() {
                   </Link>
                 )}
 
-                {selectedProcess?.process[0]?.has_submitted_copyright && (
+                {selectedProcess?.process[selectedProcessIndex]
+                  ?.has_submitted_copyright && (
                   <Link href="/faculty/submitted-copyright-documents">
                     <Button
                       variant="ghost"

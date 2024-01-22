@@ -245,13 +245,14 @@ export function useAdminRemoveAssignResearchAdviser() {
 
   return useMutation({
     mutationFn: ({
-      research_type_id,
+      user_id,
+      research_type
     }: {
-      research_type_id: string;
+      user_id: string;
       research_type: string;
     }) => {
       return risApi.delete(
-        `/researchprof/delete-assigned-research-type/${research_type_id}`,
+        `/researchprof/delete-type-and-role/${user_id}/${research_type}`,
         {
           headers: {
             Authorization: `Bearer ${session?.user.authToken}`,

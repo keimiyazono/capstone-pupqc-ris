@@ -10,7 +10,9 @@ import { columns } from './submitted-ethics-protocol-table/columns';
 import { DataTable } from './submitted-ethics-protocol-table/data-table';
 
 export function SubmittedEthicsProtocolSection() {
-  const { researchType, selectedProcess } = useFacultyWorkflowContext();
+  const { researchType, selectedProcess, selectedProcessIndex } = useFacultyWorkflowContext();
+
+  const process = selectedProcess?.process?.[selectedProcessIndex];
 
   const {
     data: ethicsProtocols = [],
@@ -19,7 +21,7 @@ export function SubmittedEthicsProtocolSection() {
   } = useGetFacultyEthicsProtocols({
     course: selectedProcess?.course,
     section: selectedProcess?.section,
-    research_type: researchType,
+    research_type: process?.type,
   });
 
   useEffect(() => {
@@ -31,7 +33,7 @@ export function SubmittedEthicsProtocolSection() {
 
   return (
     <section>
-      {selectedProcess?.process?.[0]?.has_submitted_proposal ? (
+      {process?.has_submitted_proposal ? (
         <Card>
           <CardContent className="py-5 space-y-10">
             {isLoading && (

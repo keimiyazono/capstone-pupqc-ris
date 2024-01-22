@@ -11,10 +11,13 @@ export interface EthicsProtocolViewSectionProps {
 export function EthicsProtocolViewSection({
   id,
 }: EthicsProtocolViewSectionProps) {
-  const { selectedProcess } = useFacultyWorkflowContext();
+  const { selectedProcess, selectedProcessIndex } = useFacultyWorkflowContext();
+
+  const process = selectedProcess?.process?.[selectedProcessIndex];
+
   return (
     <section className="py-10 space-y-10 h-fit">
-      {selectedProcess?.process?.[0]?.has_submitted_ethics_protocol ? (
+      {process?.has_submitted_ethics_protocol ? (
         <EthicsProtocolView
           id={id}
           showApproveDialog

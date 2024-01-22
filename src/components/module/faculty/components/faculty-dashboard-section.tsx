@@ -18,8 +18,6 @@ export function FacultyDashboardSection() {
   const { data: trainingAndWorkshops } =
     useGetFacultyAnnouncementTrainingAndWorkshop();
 
-  console.log({ fundingOpportunities, trainingAndWorkshops });
-
   return (
     <section className="space-y-10">
       <div className="flex flex-wrap items-center gap-4">
