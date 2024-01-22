@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { FileUploadInput } from '@/components/ui/file-upload-input';
 import {
   Form,
   FormControl,
@@ -22,6 +23,7 @@ import {
   useGetAnnouncementById,
   useUpdateAnnouncement,
 } from '@/hooks/use-announcement-query';
+import { uploadFile } from '@/lib/upload-file';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -65,7 +67,7 @@ export interface AnnouncementViewSectionFormProps {
 }
 
 export function AnnouncementViewSectionForm({
-  announcement,
+  announcement: { image, ...announcement },
   id,
 }: AnnouncementViewSectionFormProps) {
   const { toast } = useToast();
@@ -84,8 +86,21 @@ export function AnnouncementViewSectionForm({
 
   async function onSubmit(values: z.infer<typeof announcementFormSchema>) {
     try {
+      let file_path = image ?? '';
+
+      if (values.image) {
+        const uploaded_image_path = await uploadFile({
+          file: values.image,
+          fileName: values.image.name,
+        });
+
+        if (uploaded_image_path) {
+          file_path = uploaded_image_path;
+        }
+      }
       const modifiedValues: UpdateAnnouncementPayload = {
         ...values,
+        image: file_path,
       };
 
       await update.mutateAsync(modifiedValues);
@@ -207,6 +222,16 @@ export function AnnouncementViewSectionForm({
                 <FormMessage />
               </FormItem>
             )}
+          />
+
+          <FileUploadInput
+            control={form.control}
+            name="image"
+            label="Image"
+            placeholder="Image"
+            defaultFile={image}
+            defaultFileName="View File"
+            isImage
           />
         </div>
 

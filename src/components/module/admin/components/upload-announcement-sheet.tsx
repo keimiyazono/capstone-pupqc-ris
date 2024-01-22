@@ -225,8 +225,8 @@ export default function UploadAnnouncementForm() {
               <FileUploadInput
                 control={form.control}
                 name="image"
-                label="Upload image"
-                placeholder="Upload image"
+                label="Image"
+                placeholder="Image"
                 isImage
               />
             </div>

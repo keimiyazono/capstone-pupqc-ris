@@ -30,6 +30,7 @@ declare interface GetAnnouncementByIdResponse {
   title: string
   content: string
   other_details: string
+  image: string
 }
 
 declare interface UpdateAnnouncementPayload {
@@ -38,6 +39,7 @@ declare interface UpdateAnnouncementPayload {
   title: string
   content: string
   other_details: string
+  image?: string
 }
 
 
