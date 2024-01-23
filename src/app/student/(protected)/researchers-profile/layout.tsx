@@ -2,8 +2,8 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Collaboration',
-    default: 'Collaboration',
+    template: '%s | Researchers Profile',
+    default: 'Researchers Profile',
   },
 };
 

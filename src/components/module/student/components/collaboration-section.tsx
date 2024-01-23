@@ -38,10 +38,12 @@ export function CollaborationSection() {
       .sort((a, b) => b.students.length - a.students.length);
   }, [studentData]);
 
+  console.log({ studentList });
+
   return (
     <>
       <div className="prose dark:prose-h1:text-white prose-h1:m-0 max-w-none flex justify-between items-center">
-        <h1>Collaboration</h1>
+        <h1>Researchers Profile</h1>
 
         <Link
           href="#"
@@ -53,8 +55,7 @@ export function CollaborationSection() {
 
       <section>
         <p className="text-muted-foreground">
-          Find and follow researchers to grow your network and keep up with
-          their work.
+          Find researchers and keep up with their work.
         </p>
 
         <div className="grid grid-cols-2 gap-10 mt-10">

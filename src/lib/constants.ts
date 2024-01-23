@@ -78,9 +78,9 @@ export const STUDENT_NAVIGATION1: NavigationParent = [
   //   ],
   // },
   {
-    label: 'Collaboration',
+    label: 'Researchers Profile',
     Icon: HiMiniUserGroup,
-    href: '/student/collaboration',
+    href: '/student/researchers-profile',
   },
   {
     label: 'Research Manual',
