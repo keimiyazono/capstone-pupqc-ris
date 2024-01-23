@@ -4,7 +4,6 @@ import type {
   NavigationParent,
 } from '@/types/navigation';
 import { BiSolidDashboard } from 'react-icons/bi';
-import { BsGraphUpArrow } from 'react-icons/bs';
 import {
   FaBalanceScaleLeft,
   FaBook,
@@ -18,10 +17,8 @@ import {
   FaUsersCog,
 } from 'react-icons/fa';
 import { FaRegCircleCheck } from 'react-icons/fa6';
-import { GiFeather } from 'react-icons/gi';
 import { HiMiniUserGroup } from 'react-icons/hi2';
 import { IoMdMegaphone } from 'react-icons/io';
-import { IoShieldHalf } from 'react-icons/io5';
 import { SlBookOpen } from 'react-icons/sl';
 
 export const STUDENT_NAVIGATION1: NavigationParent = [
@@ -55,46 +52,71 @@ export const STUDENT_NAVIGATION1: NavigationParent = [
   //     },
   //   ],
   // },
+  // {
+  //   label: 'Pages',
+  //   nodeList: [
+  //     {
+  //       label: 'Collaboration',
+  //       Icon: HiMiniUserGroup,
+  //       href: '/student/collaboration',
+  //     },
+  //     {
+  //       label: 'Research Manual',
+  //       Icon: FaFolder,
+  //       href: '/student/research-manual',
+  //     },
+  //     {
+  //       label: 'Ethics and Compliance',
+  //       Icon: FaBalanceScaleLeft,
+  //       href: '/student/ethics-and-compliance',
+  //     },
+  //     {
+  //       label: 'Repository',
+  //       Icon: SlBookOpen,
+  //       href: '/student/repository',
+  //     },
+  //   ],
+  // },
   {
-    label: 'Pages',
-    nodeList: [
-      {
-        label: 'Collaboration',
-        Icon: HiMiniUserGroup,
-        href: '/student/collaboration',
-      },
-      {
-        label: 'Research Manual',
-        Icon: FaFolder,
-        href: '/student/research-manual',
-      },
-      {
-        label: 'Ethics and Compliance',
-        Icon: FaBalanceScaleLeft,
-        href: '/student/ethics-and-compliance',
-      },
-      {
-        label: 'Repository',
-        Icon: SlBookOpen,
-        href: '/student/repository',
-      },
-    ],
+    label: 'Collaboration',
+    Icon: HiMiniUserGroup,
+    href: '/student/collaboration',
   },
   {
-    label: 'Announcement',
-    nodeList: [
-      {
-        label: 'Funding',
-        Icon: FaCoins,
-        href: '/student/funding-opportunities',
-      },
-      {
-        label: 'Training and Workshops',
-        Icon: FaCalendar,
-        href: '/student/training-and-workshop',
-      },
-    ],
+    label: 'Research Manual',
+    Icon: FaFolder,
+    href: '/student/research-manual',
   },
+  {
+    label: 'Ethics and Compliance',
+    Icon: FaBalanceScaleLeft,
+    href: '/student/ethics-and-compliance',
+  },
+  {
+    label: 'Repository',
+    Icon: SlBookOpen,
+    href: '/student/repository',
+  },
+  {
+    label: 'Announcements',
+    Icon: IoMdMegaphone,
+    href: '/student/announcements',
+  },
+  // {
+  //   label: 'Announcement',
+  //   nodeList: [
+  //     {
+  //       label: 'Funding',
+  //       Icon: FaCoins,
+  //       href: '/student/funding-opportunities',
+  //     },
+  //     {
+  //       label: 'Training and Workshops',
+  //       Icon: FaCalendar,
+  //       href: '/student/training-and-workshop',
+  //     },
+  //   ],
+  // },
 ];
 
 export const FACULTY_NAVIGATION: NavigationParent = [
@@ -301,7 +323,7 @@ export const FACULTY_ANNOUNCEMENTS_TRAINING_AND_WORKSHOP =
 export const WORKFLOW_LIST_NAME_PROCESS_STUDENT =
   '/workflow/workflows-list-name-process-student';
 
-export const STUDENT_MY_WORKFLOW = '/student/myflow'
+export const STUDENT_MY_WORKFLOW = '/student/myflow';
 
 export const STATUS_STYLE = {
   pending: 'bg-[#ffff00] text-black hover:bg-[#ffff00]/90',

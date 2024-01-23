@@ -1,6 +1,7 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AnnouncementContainer } from '@/components/global/announcement-container';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   useGetFacultyAnnouncementFundingOpportunity,
   useGetFacultyAnnouncementTrainingAndWorkshop,
@@ -9,7 +10,6 @@ import { IoCloudUploadOutline } from 'react-icons/io5';
 import { LuCheckCircle, LuShield, LuXCircle } from 'react-icons/lu';
 import { MdOutlinePending } from 'react-icons/md';
 import { PiChalkboardTeacherLight } from 'react-icons/pi';
-import { TiptapRenderer } from '../../tiptap/components/tiptap-renderer';
 
 export function FacultyDashboardSection() {
   const { data: fundingOpportunities } =
@@ -102,20 +102,11 @@ export function FacultyDashboardSection() {
             </h2>
 
             <div className="space-y-6">
-              {fundingOpportunities.map(({ announcement }) => (
-                <Card key={announcement.id}>
-                  <CardHeader>
-                    <CardTitle>{announcement.title}</CardTitle>
-
-                    <TiptapRenderer
-                      html={announcement.other_details}
-                      className="text-sm text-muted-foreground"
-                    />
-                  </CardHeader>
-                  <CardContent>
-                    <TiptapRenderer html={announcement.content} />
-                  </CardContent>
-                </Card>
+              {fundingOpportunities.map((announcement) => (
+                <AnnouncementContainer
+                  key={announcement.announcement.id}
+                  data={announcement}
+                />
               ))}
             </div>
           </>
@@ -128,19 +119,11 @@ export function FacultyDashboardSection() {
             </h2>
 
             <div className="space-y-6">
-              {trainingAndWorkshops.map(({ announcement }) => (
-                <Card key={announcement.id}>
-                  <CardHeader>
-                    <CardTitle>{announcement.title}</CardTitle>
-                    <TiptapRenderer
-                      html={announcement.other_details}
-                      className="text-sm text-muted-foreground"
-                    />
-                  </CardHeader>
-                  <CardContent>
-                    <TiptapRenderer html={announcement.content} />
-                  </CardContent>
-                </Card>
+              {trainingAndWorkshops.map((announcement) => (
+                <AnnouncementContainer
+                  key={announcement.announcement.id}
+                  data={announcement}
+                />
               ))}
             </div>
           </>

@@ -11,6 +11,22 @@ const nextConfig = {
     config.resolve.alias.encoding = false;
     return config;
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'placehold.co',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'ik.imagekit.io',
+        port: '',
+        pathname: '/**',
+      },
+    ],
+  },
   experimental: {
     webpackBuildWorker: true,
   },

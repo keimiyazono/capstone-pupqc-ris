@@ -49,12 +49,12 @@ export const HASHTAG_SUGGESTIONS: MentionProps[] = [
   { id: Math.floor(Math.random() * 1000), label: 'development' },
   { id: Math.floor(Math.random() * 1000), label: 'test' },
   { id: Math.floor(Math.random() * 1000), label: 'frontend' },
-  { id: Math.floor(Math.random() * 1000), label: 'postgeek' },
   { id: Math.floor(Math.random() * 1000), label: 'backend' },
   { id: Math.floor(Math.random() * 1000), label: 'webdevelopment' },
   { id: Math.floor(Math.random() * 1000), label: 'lezgoo' },
   { id: Math.floor(Math.random() * 1000), label: 'testing' },
   { id: Math.floor(Math.random() * 1000), label: 'youcandoit' },
+  { id: Math.floor(Math.random() * 1000), label: 'hakdog' },
 ];
 
 export const extensions: Extensions = [

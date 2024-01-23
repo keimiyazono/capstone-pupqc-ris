@@ -58,4 +58,5 @@ declare interface Announcement {
   modified_at: string
   user_role_target: string
   content: string
+  image: string
 }
