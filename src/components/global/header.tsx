@@ -2,10 +2,14 @@
 
 import { ProfileGear } from './profile-gear';
 
-export function Header() {
+export interface HeaderProps {
+  role: string;
+}
+
+export function Header({ role }: HeaderProps) {
   return (
     <div className="flex items-center justify-end bg-card px-2 xl:px-6 transition-transform border-b z-20">
-      <ProfileGear />
+      <ProfileGear role={role} />
     </div>
   );
 }

@@ -14,17 +14,18 @@ import { useSidebarStore } from '@/store/sidebar-store';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
-import { useId, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { Badge } from '../ui/badge';
 
-export function ProfileGear() {
+export interface ProfileGearProps {
+  role: string;
+}
+
+export function ProfileGear({ role }: ProfileGearProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const router = useRouter();
-
-  const roleId = useId();
-
-  const pathname = usePathname();
 
   const { data: session } = useSession();
 
@@ -62,7 +63,8 @@ export function ProfileGear() {
               <div className="text-xs font-semibold max-w-[150px] truncate">
                 {profile?.name}
               </div>
-              <div className="text-[10px] font-semibold">{profile?.email}</div>
+
+              <Badge className="text-[10px] font-semibold">{role}</Badge>
             </div>
 
             <ChevronDownIcon

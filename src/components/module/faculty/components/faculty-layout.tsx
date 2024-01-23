@@ -26,7 +26,7 @@ export function FacultyLayout({ children }: React.PropsWithChildren) {
         }}
       >
         <FacultySidebar />
-        <DashboardContent>{children}</DashboardContent>
+        <DashboardContent role="Faculty">{children}</DashboardContent>
       </FacultyWorkflowContext.Provider>
     </div>
   );

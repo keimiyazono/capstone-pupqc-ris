@@ -28,7 +28,7 @@ export function AdminLayout({ children }: React.PropsWithChildren) {
   return (
     <div>
       <Sidebar sidebars={sidebars} />
-      <DashboardContent>{children}</DashboardContent>
+      <DashboardContent role="Admin">{children}</DashboardContent>
     </div>
   );
 }
