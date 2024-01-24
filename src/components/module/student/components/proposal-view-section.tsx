@@ -32,6 +32,7 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
   });
 
   const flowInfoSteps = flowInfoStatus[0]?.steps ?? [];
+  const facultySetDefenseList = flowInfoStatus[0]?.set_defense ?? [];
 
   const step = flowInfoSteps[currentStep];
 
@@ -40,6 +41,7 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
   const APPROVE_LIST = ['Approve', 'Approved'];
 
   const isApproved = APPROVE_LIST.includes(status);
+
 
   console.log({ flowInfoSteps });
 
@@ -57,14 +59,18 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
 
       <Stepper
         steps={flowInfoSteps.map(({ name, info }) => {
-          const isDefense = DEFENSE_LIST.includes(name)
-          const wholeInfo = info['whole-info'][0]
-          const hasWholeInfo = Boolean(wholeInfo)
+          const isDefense = DEFENSE_LIST.includes(name);
+          const wholeInfo = info['whole-info'][0];
+          const hasWholeInfo = Boolean(wholeInfo);
 
           return {
             name,
-            status: isDefense ? hasWholeInfo ? 'Approved' : 'Pending' : wholeInfo?.status as StepStatus
-          }
+            status: isDefense
+              ? hasWholeInfo
+                ? 'Approved'
+                : 'Pending'
+              : (wholeInfo?.status as StepStatus),
+          };
         })}
         currentStep={currentStep}
         className="justify-center"
@@ -75,7 +81,7 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
         <>
           {step.name === 'Proposal' && (
             <div className="border rounded-2xl p-10">
-              <ResearchView id={id} showUpdateSheet />
+              <ResearchView id={id} showUpdateSheet hideExtensionDropdown />
 
               <div className="flex justify-end pt-6">
                 <Button
@@ -141,6 +147,9 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
                   flowInfoSteps.length - 1 > prev ? prev + 1 : prev
                 );
               }}
+              facultySetDefense={facultySetDefenseList.find(
+                ({ defense_type }) => defense_type === 'pre-oral'
+              )}
             />
           )}
 
@@ -154,6 +163,9 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
                   flowInfoSteps.length - 1 > prev ? prev + 1 : prev
                 );
               }}
+              facultySetDefense={facultySetDefenseList.find(
+                ({ defense_type }) => defense_type === 'final'
+              )}
             />
           )}
         </>

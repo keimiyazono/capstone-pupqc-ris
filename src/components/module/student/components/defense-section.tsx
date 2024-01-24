@@ -30,12 +30,13 @@ import {
   useUpdateDefense,
   useUploadDefense,
 } from '@/hooks/use-defense-query';
-import { StudentFlowInfoStep } from '@/hooks/use-student-query';
+import { SetDefense, StudentFlowInfoStep } from '@/hooks/use-student-query';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CalendarIcon } from '@radix-ui/react-icons';
 import { format } from 'date-fns';
 import moment from 'moment';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { BiLoaderAlt } from 'react-icons/bi';
 import * as z from 'zod';
@@ -59,6 +60,7 @@ export interface DefenseSectionProps {
   researchPaperId: string;
   step: StudentFlowInfoStep;
   updateStepCallback: () => void;
+  facultySetDefense?: SetDefense;
 }
 
 export function DefenseSection({
@@ -67,6 +69,7 @@ export function DefenseSection({
   step,
   researchPaperId,
   updateStepCallback,
+  facultySetDefense,
 }: DefenseSectionProps) {
   const wholeInfo = (step.info['whole-info'] ??
     [])[0] as unknown as DefenseData;
@@ -79,8 +82,10 @@ export function DefenseSection({
     resolver: zodResolver(uploadDefenseFormSchema),
     shouldFocusError: false,
     defaultValues: {
-      date: wholeInfo?.date ? new Date(wholeInfo.date) : undefined,
-      time: wholeInfo?.time ?? undefined,
+      date: facultySetDefense?.date
+        ? new Date(facultySetDefense.date)
+        : undefined,
+      time: facultySetDefense?.time ?? undefined,
     },
   });
 
@@ -89,8 +94,26 @@ export function DefenseSection({
   const upload = useUploadDefense({ workflowId });
   const update = useUpdateDefense({ workflowId });
 
-  const { isSubmitting } = form.formState;
+  const {
+    formState: { isSubmitting },
+    reset,
+  } = form;
 
+  useEffect(() => {
+    if (typeof facultySetDefense !== 'undefined') {
+      reset({
+        date: facultySetDefense?.date
+          ? new Date(facultySetDefense.date)
+          : undefined,
+        time: facultySetDefense?.time ?? undefined,
+      });
+    } else {
+      reset({
+        date: undefined,
+        time: '',
+      });
+    }
+  }, [facultySetDefense, reset]);
 
   const isApproved = Boolean(wholeInfo);
 
@@ -116,6 +139,8 @@ export function DefenseSection({
           title: `Submit ${label} Failed`,
           variant: 'destructive',
         });
+      } finally {
+        updateStepCallback();
       }
     }
 
@@ -142,6 +167,8 @@ export function DefenseSection({
           title: `Update ${label} Failed`,
           variant: 'destructive',
         });
+      } finally {
+        updateStepCallback();
       }
     }
   };
@@ -157,92 +184,85 @@ export function DefenseSection({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="border rounded p-6">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="date"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Date</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={'outline'}
-                            className={cn(
-                              'pl-3 text-left font-normal',
-                              !field.value && 'text-muted-foreground'
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, 'PPP')
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="date"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Date</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          disabled
+                          variant={'outline'}
+                          className={cn(
+                            'pl-3 text-left font-normal',
+                            !field.value && 'text-muted-foreground'
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, 'PPP')
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="time"
+              disabled
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Time</FormLabel>
+                  <FormControl>
+                    <Input type="time" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="pt-4 flex justify-end">
+              <Button
+                type="submit"
+                variant="secondary"
+                className="w-48 text-lg capitalize"
+                disabled={
+                  isSubmitting || !Boolean(facultySetDefense) || !isApproved
+                }
+              >
+                {isSubmitting ? (
+                  <span className="h-fit w-fit animate-spin">
+                    <BiLoaderAlt />
+                  </span>
+                ) : action === 'update' ? (
+                  'next'
+                ) : (
+                  'done'
                 )}
-              />
-
-              <FormField
-                control={form.control}
-                name="time"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Time</FormLabel>
-                    <FormControl>
-                      <Input type="time" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="pt-4">
-                <Button
-                  type="submit"
-                  className="w-full text-lg capitalize"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
-                    <span className="h-fit w-fit animate-spin">
-                      <BiLoaderAlt />
-                    </span>
-                  ) : (
-                    action
-                  )}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </div>
-
-        <div className="flex justify-end pt-6">
-          <Button
-            type="button"
-            variant="secondary"
-            className="w-40 text-lg"
-            onClick={updateStepCallback}
-            disabled={!isApproved}
-          >
-            Next
-          </Button>
-        </div>
+              </Button>
+            </div>
+          </form>
+        </Form>
       </CardContent>
     </Card>
   );

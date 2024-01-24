@@ -69,8 +69,8 @@ export const updateFullManuscriptFormSchema = z.object({
 });
 
 export const uploadDefenseFormSchema = z.object({
-  date: z.date({ required_error: 'This field is required.' }),
-  time: z.string({ required_error: 'This field is required.' }),
+  date: z.date().optional(),
+  time: z.string().optional(),
 });
 
 export const uploadCopyrightDocumentsFormSchema = z.object({
