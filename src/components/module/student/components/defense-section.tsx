@@ -148,13 +148,15 @@ export function DefenseSection({
       try {
         const timeRegex = /^\d{2}\:\d{2}\:\d{2}$/;
 
-        const isValidTime = timeRegex.test(values.time);
+        const { time = '', date = '' } = values;
+
+        const isValidTime = timeRegex.test(time);
 
         const payload: UpdateDefensePayload = {
           defense_id: wholeInfo?.id,
           type: label === 'Pre-Oral Defense' ? 'pre-oral' : 'final',
-          time: isValidTime ? values.time : values.time + ':00',
-          date: moment(values.date).format('YYYY-MM-DD'),
+          time: isValidTime ? time : time + ':00',
+          date: moment(date).format('YYYY-MM-DD'),
         };
 
         await update.mutateAsync(payload);
