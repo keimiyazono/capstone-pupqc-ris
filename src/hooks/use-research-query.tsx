@@ -103,10 +103,10 @@ export function useGetUserResearchPapersByType(type: string) {
 export function useGetAllResearchPapersWithAuthors() {
   const { data: session, status } = useSession();
 
-  return useQuery<ResearchWithAuthors[]>({
+  return useQuery<ResearchWithAuthorsV2[]>({
     queryKey: [RESEARCH_KEY, 'ALL_WITH_AUTHORS'],
     queryFn: async () => {
-      const res = await risApi.get<ResearchWithAuthors[]>(
+      const res = await risApi.get<ResearchWithAuthorsV2[]>(
         RESEARCH_KEY + '/all_with_authors',
         {
           headers: {

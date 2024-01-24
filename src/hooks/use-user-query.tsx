@@ -73,13 +73,17 @@ export function useGetAllUser() {
   });
 }
 
+export interface CourseListData {
+  courses: string[]
+}
+
 export function useGetCourseList() {
   const { data: session, status } = useSession();
 
-  return useQuery<Record<string, string>>({
+  return useQuery<CourseListData>({
     queryKey: [COURSE_LIST_KEY],
     queryFn: async () => {
-      const res = await risApi.get<Record<string, string>>(COURSE_LIST_KEY, {
+      const res = await risApi.get<CourseListData>(COURSE_LIST_KEY, {
         headers: {
           Authorization: `Bearer ${session?.user?.authToken}`,
         },

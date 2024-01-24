@@ -36,10 +36,6 @@ const SORT_BY = [
     label: 'By Issue Date',
     value: 'submitted_date',
   },
-  {
-    label: 'By Author',
-    value: 'authors',
-  },
 ];
 
 const CHARACTERS = Array.from({ length: 26 }, function (_, idx) {
@@ -52,8 +48,7 @@ export function RepositorySection() {
   const [activeChars, setActiveChars] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<string>('');
   const [search, setSearch] = useState<string>('');
-  const [years, setYears] = useState<string[]>([]);
-  const [selectedYear, setSelectedYear] = useState<string>('');
+  const [selectedResearch, setSelectedResearch] = useState<ResearchPaperV2>();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { data: courseList, isLoading: courseListLoading } = useGetCourseList();
@@ -65,14 +60,12 @@ export function RepositorySection() {
   const researchId = useId();
   const courseId = useId();
 
-  const filteredResearches = useMemo<ResearchWithAuthors[]>(() => {
-    let filter: ResearchWithAuthors[] = researches ?? [];
+  const filteredResearches = useMemo<ResearchWithAuthorsV2[]>(() => {
+    let filter: ResearchWithAuthorsV2[] = [...(researches ?? [])];
 
     if (activeCourses.length > 0) {
       filter = filter.filter(({ authors }) =>
-        authors.some(({ student_course }) =>
-          activeCourses.includes(student_course)
-        )
+        authors.some(({ course }) => activeCourses.includes(course))
       );
     }
 
@@ -115,18 +108,6 @@ export function RepositorySection() {
       });
     }
 
-    if (Boolean(sortBy) && sortBy === 'authors') {
-      filter = filter.sort((a, b) =>
-        b.authors.some((bAuthor) =>
-          a.authors.some((aAuthor) =>
-            Boolean(bAuthor.student_name.localeCompare(aAuthor.student_name))
-          )
-        )
-          ? 0
-          : -1
-      );
-    }
-
     return filter;
   }, [
     researches,
@@ -136,6 +117,14 @@ export function RepositorySection() {
     search,
     sortBy,
   ]);
+
+  console.log({
+    activeCourses,
+    activeProposalTypes,
+    activeChars,
+    search,
+    sortBy,
+  });
 
   function toggleHandler(prev: string[], value: string) {
     const cloned = [...prev];
@@ -164,17 +153,17 @@ export function RepositorySection() {
       <div className="space-y-5">
         {courseList && (
           <div className="flex items-center gap-3 flex-wrap">
-            {Object.entries(courseList).map(([key]) => (
+            {courseList.courses.map((course, idx) => (
               <Toggle
-                key={coursesId + key}
+                key={coursesId + idx}
                 size="sm"
                 variant="outline"
                 className="capitalize data-[state=on]:bg-primary data-[state=on]:text-white rounded-2xl"
                 onClick={() => {
-                  setActiveCourses((prev) => toggleHandler(prev, key));
+                  setActiveCourses((prev) => toggleHandler(prev, course));
                 }}
               >
-                {key}
+                {course}
               </Toggle>
             ))}
           </div>
@@ -206,7 +195,7 @@ export function RepositorySection() {
                 value={value}
                 className="capitalize data-[state=on]:bg-primary data-[state=on]:text-white rounded-none"
                 onClick={() => {
-                  setSortBy(value);
+                  setSortBy((prev) => (prev === value ? '' : value));
                 }}
                 unselectable="on"
               >
@@ -269,7 +258,9 @@ export function RepositorySection() {
           !isLoading &&
           filteredResearches.map(({ research_paper, authors }, idx) => {
             const courses = authors
-              ? authors.map(({ student_course }) => student_course)
+              ? authors.map(
+                  ({ course, year_section }) => `${course} ${year_section}`
+                )
               : [];
 
             const filteredCourses = Array.from(new Set(courses));
@@ -280,6 +271,9 @@ export function RepositorySection() {
                   <div
                     role="button"
                     className="border bg-card rounded p-3 transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1"
+                    onClick={() => {
+                      setSelectedResearch(research_paper);
+                    }}
                   >
                     <h2 className="font-bold">{research_paper.title}</h2>
                     <div className="flex items-center gap-2 text-sm my-4">
@@ -297,46 +291,48 @@ export function RepositorySection() {
                     <div className="flex items-center gap-4">
                       <div className="flex flex-1 flex-wrap gap-3">
                         {authors &&
-                          authors.map(({ user_id, student_name }) => (
+                          authors.map(({ id, name }) => (
                             <div
-                              key={user_id}
+                              key={id}
                               className="flex items-center gap-2 capitalize text-sm"
                             >
                               <BsFillPersonFill />
-                              <span>{student_name}</span>
+                              <span>{name}</span>
                             </div>
                           ))}
                       </div>
-                      {/* <div className="flex flex-wrap flex-0 gap-2">
-                        <Badge>Science</Badge>
-                        <Badge>Math</Badge>
-                      </div> */}
                     </div>
                   </div>
                 </DialogTrigger>
                 <DialogContent className="max-w-4xl">
-                  <DialogHeader>
-                    <DialogTitle>
-                      The Impact Of Artificial Intelligence On Healthcare
-                      Systems
-                    </DialogTitle>
-                  </DialogHeader>
-                  <article className="prose prose-sm max-w-none">
-                    <h4>Content</h4>
-                    <p>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Rerum error quidem nisi neque optio incidunt quas, aliquam
-                      quibusdam accusantium fugit repudiandae necessitatibus
-                      odit id. Molestiae corporis voluptatem nesciunt non quo!
-                    </p>
-                    <h4>Abstract</h4>
-                    <p>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Rerum error quidem nisi neque optio incidunt quas, aliquam
-                      quibusdam accusantium fugit repudiandae necessitatibus
-                      odit id. Molestiae corporis voluptatem nesciunt non quo!
-                    </p>
-                  </article>
+                  {selectedResearch && (
+                    <div>
+                      <DialogHeader>
+                        <DialogTitle>
+                          The Impact Of Artificial Intelligence On Healthcare
+                          Systems
+                        </DialogTitle>
+                      </DialogHeader>
+                      <article className="prose prose-sm max-w-none">
+                        <h4>Content</h4>
+                        <p>
+                          Lorem ipsum dolor sit amet consectetur adipisicing
+                          elit. Rerum error quidem nisi neque optio incidunt
+                          quas, aliquam quibusdam accusantium fugit repudiandae
+                          necessitatibus odit id. Molestiae corporis voluptatem
+                          nesciunt non quo!
+                        </p>
+                        <h4>Abstract</h4>
+                        <p>
+                          Lorem ipsum dolor sit amet consectetur adipisicing
+                          elit. Rerum error quidem nisi neque optio incidunt
+                          quas, aliquam quibusdam accusantium fugit repudiandae
+                          necessitatibus odit id. Molestiae corporis voluptatem
+                          nesciunt non quo!
+                        </p>
+                      </article>
+                    </div>
+                  )}
                 </DialogContent>
               </Dialog>
             );

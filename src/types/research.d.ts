@@ -53,3 +53,31 @@ declare interface Author {
   student_number: string;
   student_phone_number: string;
 }
+
+declare interface ResearchWithAuthorsV2 {
+  research_paper: ResearchPaperV2
+  authors: AuthorV2[]
+}
+
+declare interface ResearchPaperV2 {
+  modified_at: string
+  title: string
+  submitted_date: string
+  file_path: string
+  extension: any
+  created_at: string
+  id: string
+  research_type: string
+  status: string
+  research_adviser: string
+  workflow_step_id: string
+}
+
+declare interface AuthorV2 {
+  id: string
+  name: string
+  student_number: string
+  course: string
+  status: string
+  year_section: string
+}

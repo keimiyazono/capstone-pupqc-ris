@@ -23,9 +23,11 @@ import { useToast } from '@/components/ui/use-toast';
 import { uploadFile } from '@/lib/upload-file';
 import { zodResolver } from '@hookform/resolvers/zod';
 import moment from 'moment';
+import { useRouter } from 'next/navigation';
 import { useId } from 'react';
 import { useForm } from 'react-hook-form';
 import { BiLoaderAlt } from 'react-icons/bi';
+import { IoChevronBackSharp } from 'react-icons/io5';
 import * as z from 'zod';
 import { TiptapEditor } from '../../tiptap';
 import {
@@ -48,6 +50,7 @@ export function CopyrightedResearchSubmissionsViewSection({
   const publisherId = useId();
 
   const { toast } = useToast();
+  const router = useRouter();
 
   const { data: researchPaper } = useGetFacultyMyResearchPaperById({
     research_paper_id: id,
@@ -126,6 +129,18 @@ export function CopyrightedResearchSubmissionsViewSection({
 
   return (
     <section>
+      <div className="p-6">
+        <Button
+          type="button"
+          variant="secondary"
+          className="gap-2"
+          onClick={() => router.back()}
+        >
+          <IoChevronBackSharp />
+          <span>Back</span>
+        </Button>
+      </div>
+
       {Boolean(researchPaper) && (
         <Form {...form}>
           <form
