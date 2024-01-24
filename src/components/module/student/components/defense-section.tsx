@@ -115,8 +115,6 @@ export function DefenseSection({
     }
   }, [facultySetDefense, reset]);
 
-  const isApproved = Boolean(wholeInfo);
-
   const onSubmit = async (values: z.infer<typeof uploadDefenseFormSchema>) => {
     if (action === 'submit') {
       try {
@@ -125,7 +123,7 @@ export function DefenseSection({
             wholeInfo?.research_paper_id ?? researchPaperId ?? '',
           type: label === 'Pre-Oral Defense' ? 'pre-oral' : 'final',
           workflow_step_id: wholeInfo?.workflow_step_id ?? step.id ?? '',
-          time: values.time + ':00',
+          time: values.time ?? '',
           date: moment(values.date).format('YYYY-MM-DD'),
         };
 
