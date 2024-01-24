@@ -23,8 +23,12 @@ export function ResearchAdvisersDropdowns({
 }: ResearchAdvisersDropdownsProps) {
   const sectionId = useId();
 
-  const { researchType, setSelectedProcess, setSelectedProcessIndex } =
-    useFacultyWorkflowContext();
+  const {
+    researchType,
+    setSelectedProcess,
+    selectedProcessIndex,
+    setSelectedProcessIndex,
+  } = useFacultyWorkflowContext();
 
   const process =
     researchType !== RESEARCH_PROFESSOR
@@ -49,6 +53,7 @@ export function ResearchAdvisersDropdowns({
   return (
     <div className="space-y-4">
       <Select
+        defaultValue=""
         disabled={sections.length < 1}
         onValueChange={(e) => {
           if (researchType !== RESEARCH_PROFESSOR) {

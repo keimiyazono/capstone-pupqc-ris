@@ -22,6 +22,7 @@ declare interface StudentProfile {
   course: string;
   student_number: string;
   phone_number: string;
+  status: string
 }
 
 declare interface FacultyProfile {

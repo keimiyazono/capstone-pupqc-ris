@@ -6,7 +6,6 @@ import { useGetStudents } from '@/hooks/use-student-query';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo } from 'react';
-import { BsPersonPlusFill } from 'react-icons/bs';
 import { v4 as uuidv4 } from 'uuid';
 
 export function CollaborationSection() {
@@ -86,7 +85,7 @@ export function CollaborationSection() {
                           {course} {section}
                         </p>
                         <Button className="gap-2 h-6 rounded-2xl mt-3">
-                          <BsPersonPlusFill /> <span>Follow</span>
+                          <span>Information</span>
                         </Button>
                       </div>
                     </div>

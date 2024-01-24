@@ -95,6 +95,7 @@ export function ResearchProfessorsDropdowns({
       </Select>
 
       <Select
+      defaultValue=''
         disabled={sectionsResearchTypes.length < 1}
         onValueChange={(e) => {
           if (researchType === RESEARCH_PROFESSOR) {

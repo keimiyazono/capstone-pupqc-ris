@@ -24,6 +24,7 @@ declare interface Research {
   status: string;
   file_path: string;
   research_adviser: string;
+  extension: string | null
 }
 
 declare type ResearchWithDataId = {

@@ -110,6 +110,7 @@ export interface StudentFlowInfoStatus {
   id: string;
   type: string;
   steps: StudentFlowInfoStep[];
+  set_defense: SetDefense[]
 }
 
 export interface StudentFlowInfoStep {
@@ -117,6 +118,16 @@ export interface StudentFlowInfoStep {
   name: string;
   description: string;
   info: StudentFlowInfoInfo;
+}
+
+export interface SetDefense {
+  id: string
+  created_at: string
+  defense_type: string
+  time: string
+  research_type: string
+  modified_at: string
+  date: string
 }
 
 export interface StudentFlowInfoInfo {

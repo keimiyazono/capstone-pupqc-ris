@@ -101,3 +101,17 @@ export const sidebarSelectFormSchema = z.object({
   researchType: z.string(),
   course_and_section: z.string(),
 })
+
+export interface Root {
+  research_type: string
+  defense_type: string
+  date: string
+  time: string
+}
+
+export const uploadDefenseFormSchema = z.object({
+  // research_type: z.string({ required_error: 'This field is required.' }),
+  // defense_type: z.string({ required_error: 'This field is required.' }),
+  date: z.date({ required_error: 'This field is required.' }),
+  time: z.string({ required_error: 'This field is required.' }),
+})

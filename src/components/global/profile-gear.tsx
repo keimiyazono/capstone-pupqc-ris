@@ -34,6 +34,9 @@ export function ProfileGear({ role }: ProfileGearProps) {
   const profile =
     session?.user?.studentProfile ?? session?.user?.facultyProfile;
 
+  const profileHasStudentNumber =
+    typeof profile !== 'undefined' && 'student_number' in profile;
+
   async function logOutHandler() {
     await signOut({ redirect: false });
 
@@ -64,7 +67,13 @@ export function ProfileGear({ role }: ProfileGearProps) {
                 {profile?.name}
               </div>
 
-              <Badge className="text-[10px] font-semibold">{role}</Badge>
+              {profileHasStudentNumber ? (
+                <Badge className="text-[10px] font-semibold">
+                  {profile.status ?? 'Student'}
+                </Badge>
+              ) : (
+                <Badge className="text-[10px] font-semibold">{role}</Badge>
+              )}
             </div>
 
             <ChevronDownIcon

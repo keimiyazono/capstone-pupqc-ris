@@ -11,11 +11,11 @@ import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useId } from 'react';
 import { BsFillPersonFill } from 'react-icons/bs';
 import { IoChevronBackSharp } from 'react-icons/io5';
 import { ApproveDialog } from './approve-dialog';
 import { CommentSection } from './comment-section';
+import { ExtensionDropdown } from './extension-dropdown';
 import { RejectDialog } from './reject-dialog';
 
 export interface ResearchPaperDetails {
@@ -32,6 +32,7 @@ export interface ResearchPaper {
   research_adviser: string;
   faculty_name: string;
   research_type: string;
+  extension: string | null;
 }
 
 export interface Author {
@@ -48,6 +49,7 @@ export interface ResearchViewProps {
   showApproveDialog?: boolean;
   showRejectDialog?: boolean;
   showBackButton?: boolean;
+  hideExtensionDropdown?: boolean;
 }
 
 export function ResearchView({
@@ -56,32 +58,28 @@ export function ResearchView({
   showApproveDialog = false,
   showRejectDialog = false,
   showBackButton = false,
+  hideExtensionDropdown = false,
 }: ResearchViewProps) {
   const router = useRouter();
-  const researchId = useId();
 
   const { data: session, status } = useSession();
 
-  const {
-    data: researchWithAuthors,
-    isFetching,
-    isLoading,
-    isRefetching,
-  } = useQuery<ResearchPaperDetails>({
-    queryKey: [RESEARCH_KEY, id],
-    queryFn: async () => {
-      const res = await risApi.get<ResearchPaperDetails>(
-        `${RESEARCH_KEY}/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${session?.user?.authToken}`,
-          },
-        }
-      );
-      return res.data;
-    },
-    enabled: status === 'authenticated',
-  });
+  const { data: researchWithAuthors, isLoading } =
+    useQuery<ResearchPaperDetails>({
+      queryKey: [RESEARCH_KEY, id],
+      queryFn: async () => {
+        const res = await risApi.get<ResearchPaperDetails>(
+          `${RESEARCH_KEY}/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${session?.user?.authToken}`,
+            },
+          }
+        );
+        return res.data;
+      },
+      enabled: status === 'authenticated',
+    });
 
   const research = researchWithAuthors?.research_paper[0];
   const authors = researchWithAuthors?.authors ?? [];
@@ -94,7 +92,7 @@ export function ResearchView({
 
   return (
     <>
-      <div className="flex items-center">
+      <div className="flex items-start">
         {showBackButton && (
           <div>
             <Button
@@ -110,8 +108,15 @@ export function ResearchView({
         )}
 
         {research && (
-          <div className="flex items-center ml-auto gap-2">
+          <div className="flex items-start ml-auto gap-2">
             {showUpdateSheet && <UpdateResearchSheet research={research} />}
+
+            {!hideExtensionDropdown && (
+              <ExtensionDropdown
+                id={research.id}
+                extension={research?.extension ?? ''}
+              />
+            )}
 
             {showApproveDialog && (
               <ApproveDialog
