@@ -41,12 +41,6 @@ export function AnnouncementContainer({
         </div>
       )}
 
-      {announcement?.other_details && (
-        <div className="prose max-w-none p-6">
-          {parse(announcement?.other_details)}
-        </div>
-      )}
-
       {announcement?.image && (
         <div className="h-96 relative bg-gray-200">
           <Image
@@ -56,6 +50,12 @@ export function AnnouncementContainer({
             quality={100}
             className="object-contain"
           />
+        </div>
+      )}
+
+      {announcement?.other_details && (
+        <div className="prose max-w-none p-6">
+          {parse(announcement?.other_details)}
         </div>
       )}
     </div>

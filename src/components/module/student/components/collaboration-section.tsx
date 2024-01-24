@@ -65,7 +65,7 @@ export function CollaborationSection() {
                   <h3 className="font-bold text-xl text-[#44465B]">
                     People you may know from {course}
                   </h3>
-                  {students.map(({ id, name, section, course }) => (
+                  {students.map(({ user_id, name, year_section, course }) => (
                     <div
                       key={id}
                       className="bg-[#F1F5F9] flex items-end gap-4 border-2 p-4"
@@ -82,7 +82,7 @@ export function CollaborationSection() {
                           {name}
                         </h4>
                         <p className="text-xl font-normal text-[#44465B]">
-                          {course} {section}
+                          {course} {year_section}
                         </p>
                         <Button className="gap-2 h-6 rounded-2xl mt-3">
                           <span>Information</span>
