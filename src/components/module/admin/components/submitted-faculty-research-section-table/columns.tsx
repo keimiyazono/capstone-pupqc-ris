@@ -1,19 +1,29 @@
 'use client';
 
-import { ColumnDef } from '@tanstack/react-table';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { ColumnDef } from '@tanstack/react-table';
+import { FacultyResearchTableData } from '../submitted-faculty-research-section';
 import { DataTableColumnHeader } from './data-table-column-header';
 import { DataTableRowActions } from './data-table-row-actions';
 
-export const columns: ColumnDef<Research>[] = [
+export const columns: ColumnDef<FacultyResearchTableData>[] = [
   {
-    accessorKey: 'submitted_date',
+    accessorKey: 'date_publish',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Submitted Date" />
+      <DataTableColumnHeader column={column} title="Date Publish" />
     ),
     cell: ({ row }) => (
-      <div className="w-[100px]">{row.getValue('submitted_date')}</div>
+      <div className="w-[100px]">{row.getValue('date_publish')}</div>
+    ),
+  },
+  {
+    accessorKey: 'faculty_name',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Faculty" />
+    ),
+    cell: ({ row }) => (
+      <div className="w-[120px]">{row.getValue('faculty_name')}</div>
     ),
   },
   {
@@ -23,19 +33,28 @@ export const columns: ColumnDef<Research>[] = [
     ),
     cell: ({ row }) => {
       return (
-        <div className="max-w-[400px] truncate font-medium">
+        <div className="max-w-[300px] truncate font-medium">
           {row.getValue('title')}
         </div>
       );
     },
   },
   {
-    accessorKey: 'research_type',
+    accessorKey: 'publisher',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Research Type" />
+      <DataTableColumnHeader column={column} title="Publisher" />
     ),
     cell: ({ row }) => (
-      <div className="w-[100px]">{row.getValue('research_type')}</div>
+      <div className="w-[180px]">{row.getValue('publisher')}</div>
+    ),
+  },
+  {
+    accessorKey: 'category',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Category" />
+    ),
+    cell: ({ row }) => (
+      <div className="w-[180px]">{row.getValue('category')}</div>
     ),
   },
   {
@@ -44,7 +63,7 @@ export const columns: ColumnDef<Research>[] = [
       <DataTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => {
-      const status = row.getValue('status') as string;
+      const status = (row.getValue('status') ?? 'Pending') as string;
 
       return (
         <Badge
