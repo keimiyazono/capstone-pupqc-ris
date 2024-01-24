@@ -22,8 +22,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/components/ui/use-toast';
-import { useDeleteResearch } from '@/hooks/use-research-query';
 import Link from 'next/link';
+import { useFacultyDeleteCopyrightResearch } from '../../hooks/use-faculty-research-paper-query';
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -36,18 +36,18 @@ export function DataTableRowActions<TData>({
   const id = row.getValue('id') as string;
   const title = row.getValue('title') as string;
 
-  const remove = useDeleteResearch();
+  const remove = useFacultyDeleteCopyrightResearch();
 
   async function deleteResearchHandler() {
     try {
-      await remove.mutateAsync({ research_id: id });
+      await remove.mutateAsync({ research_paper_id: id });
 
       toast({
-        title: 'Delete Research Success',
+        title: 'Delete Copyrighted Research Success',
       });
     } catch (error: any) {
       toast({
-        title: 'Delete Research Failed',
+        title: 'Delete Copyrighted Research Failed',
         variant: 'destructive',
         description: error?.message,
       });
@@ -95,8 +95,8 @@ export function DataTableRowActions<TData>({
                   Delete {title}?
                 </AlertDialogTitle>
                 <AlertDialogDescription>
-                  This will permanently delete your proposal. You cannot undo
-                  this action.
+                  This will permanently delete your copyrighted research. You
+                  cannot undo this action.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>

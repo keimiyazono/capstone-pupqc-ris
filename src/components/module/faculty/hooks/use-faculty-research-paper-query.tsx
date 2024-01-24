@@ -38,7 +38,7 @@ export function useGetFacultyMyResearchPapers() {
   });
 }
 
-export interface FacultyUploadCopyrightResearch {
+export interface FacultyUploadCopyrightResearchPayload {
   title: string;
   content: string;
   abstract: string;
@@ -53,12 +53,36 @@ export function useFacultyUploadCopyrightResearch() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: FacultyUploadCopyrightResearch) => {
+    mutationFn: (payload: FacultyUploadCopyrightResearchPayload) => {
       return risApi.post('/faculty/upload-my-papers', payload, {
         headers: {
           Authorization: `Bearer ${session?.user.authToken}`,
         },
       });
+    },
+
+    async onSuccess() {
+      await queryClient.invalidateQueries({
+        queryKey: [FACULTY_MY_RESEARCH_PAPERS_KEY],
+      });
+    },
+  });
+}
+
+export function useFacultyDeleteCopyrightResearch() {
+  const { data: session } = useSession();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ research_paper_id }: { research_paper_id: string }) => {
+      return risApi.delete(
+        `/faculty/delete-my-research-papers/${research_paper_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.user.authToken}`,
+          },
+        }
+      );
     },
 
     async onSuccess() {
@@ -95,11 +119,10 @@ export function useFacultyCopyrightCategoryList() {
   });
 }
 
-
 export const FACULTY_COPYRIGHT_PUBLISHERS_LIST_KEY = '/faculty/publisher_list';
 
 export interface FacultyCopyrightPublishersList {
-  publishers: string[]
+  publishers: string[];
 }
 
 export function useFacultyCopyrightPublishersList() {

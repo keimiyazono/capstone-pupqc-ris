@@ -3,13 +3,6 @@
 import { FormSheetWrapper } from '@/components/global/wrappers/form-sheet-wrapper';
 import { Button } from '@/components/ui/button';
 import { ComboboxOptions } from '@/components/ui/combobox';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from '@/components/ui/command';
 import { FileUploadInput } from '@/components/ui/file-upload-input';
 import {
   Form,
@@ -20,100 +13,110 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useToast } from '@/components/ui/use-toast';
-import { useGetFaculties } from '@/hooks/use-faculty-query';
-import { useUploadResearch } from '@/hooks/use-research-query';
 import {
-  useGetMyAdviserList,
-  useGetStudentMyWorkflow,
-  useGetStudentProfile,
-  useGetStudents,
-} from '@/hooks/use-student-query';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useToast } from '@/components/ui/use-toast';
 import { uploadFile } from '@/lib/upload-file';
-import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
-import { format } from 'date-fns';
-import _ from 'lodash';
-import { useEffect, useState } from 'react';
-import { useFieldArray, useForm } from 'react-hook-form';
+import moment from 'moment';
+import { useId, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { BiLoaderAlt } from 'react-icons/bi';
-import { FaRegTrashAlt } from 'react-icons/fa';
-import { IoAdd, IoCloudUploadOutline } from 'react-icons/io5';
+import { IoCloudUploadOutline } from 'react-icons/io5';
 import * as z from 'zod';
+import { TiptapEditor } from '../../tiptap';
+import {
+  FacultyUploadCopyrightResearchPayload,
+  useFacultyCopyrightCategoryList,
+  useFacultyCopyrightPublishersList,
+  useFacultyUploadCopyrightResearch,
+} from '../hooks/use-faculty-research-paper-query';
 import { copyrightResearchSubsFormSchema } from '../validation';
-
-
-export type StudentOptions = {
-  student_number: string;
-} & ComboboxOptions;
-
-const DEFAULT_OPTIONS: ComboboxOptions[] = [];
-const STUDENT_DEFAULT_OPTIONS: StudentOptions[] = [];
 
 export default function UploadCopyrightResearchSheet() {
   const [open, setOpen] = useState<boolean>(false);
+  const categoryId = useId();
+  const publisherId = useId();
 
   const { toast } = useToast();
+
+  const { data: categoryData } = useFacultyCopyrightCategoryList();
+  const { data: publishersData } = useFacultyCopyrightPublishersList();
+
+  const categoryList = categoryData?.categories ?? [];
+  const publisherList = publishersData?.publishers ?? [];
+
+  const create = useFacultyUploadCopyrightResearch();
+
+  const categoryOptions: ComboboxOptions[] = categoryList.map((category) => ({
+    value: category,
+    label: category,
+  }));
+
+  const publisherOptions: ComboboxOptions[] = publisherList.map(
+    (publisher) => ({
+      value: publisher,
+      label: publisher,
+    })
+  );
 
   const form = useForm<z.infer<typeof copyrightResearchSubsFormSchema>>({
     resolver: zodResolver(copyrightResearchSubsFormSchema),
     shouldFocusError: false,
   });
 
+  const {
+    formState: { isSubmitting },
+    reset,
+  } = form;
 
-
-  const { isSubmitting } = form.formState;
-
-
-
-  async function onSubmit(values: z.infer<typeof copyrightResearchSubsFormSchema>) {
+  async function onSubmit({
+    file,
+    ...rest
+  }: z.infer<typeof copyrightResearchSubsFormSchema>) {
     try {
-      // const file_path = await uploadFile({ file, fileName: file.name });
+      const file_path = await uploadFile({ file, fileName: file.name });
 
+      if (!file_path) {
+        toast({
+          title: 'Upload File Failed',
+          variant: 'destructive',
+        });
 
-      // if (!file_path) {
-      //   toast({
-      //     title: 'Upload File Failed',
-      //     variant: 'destructive',
-      //   });
+        return;
+      }
 
-      //   return;
-      // }
+      const modifiedValues: FacultyUploadCopyrightResearchPayload = {
+        ...rest,
+        file_path,
+        date_publish: moment().format('DD-MM-YYYY'),
+      };
 
-      // const modifiedValues: UploadResearchPayload = {
-      //   research_paper_data: {
-      //     ...rest,
-      //     research_type: researchType,
-      //     submitted_date: format(new Date(), 'dd-MM-yyyy'),
-      //     file_path,
-      //     workflow_step_id: proposalStep.id,
-      //   },
-      //   author_ids: filteredAuthorIds,
-      // };
-
-      // await create.mutateAsync(modifiedValues);
+      await create.mutateAsync(modifiedValues);
 
       toast({
-        title: 'Upload Proposal Success',
+        title: 'Upload Copyrighted Research Submission Success',
       });
 
-      // form.reset({
-      //   title: '',
-      //   author_ids: [],
-      //   research_adviser: '',
-      // });
+      reset({
+        title: '',
+        content: '',
+        abstract: '',
+        file: undefined,
+        category: '',
+        publisher: '',
+      });
 
       setOpen(false);
     } catch (error) {
       toast({
-        title: 'Upload Proposal Failed',
+        title: 'Upload Copyrighted Research Submission Failed',
         variant: 'destructive',
       });
     }
@@ -159,88 +162,103 @@ export default function UploadCopyrightResearchSheet() {
                 )}
               />
 
-              <FileUploadInput
+              <FormField
                 control={form.control}
-                name="file"
-                label="File input"
-              />
-
-              
-
-              {/* <FormField
-                control={form.control}
-                name="research_adviser"
+                name="content"
                 render={({ field }) => (
-                  <FormItem className="col-span-2 flex flex-col">
-                    <FormLabel>Research adviser</FormLabel>
+                  <FormItem className="col-span-2">
+                    <FormLabel>Content</FormLabel>
                     <FormControl>
-                      <Popover modal>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              className={cn(
-                                'flex-1 justify-between',
-                                !field.value && 'text-muted-foreground'
-                              )}
-                            >
-                              {_.truncate(
-                                field.value
-                                  ? facultyList.find(
-                                      (option) => option.value === field.value
-                                    )?.label
-                                  : 'Select research adviser',
-                                { length: 60 }
-                              )}
-                              <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="p-0 w-fit">
-                          <Command className="popover-content-width-same-as-its-trigger">
-                            <ScrollArea
-                              className="flex max-h-80 flex-col"
-                              type="always"
-                            >
-                              <CommandInput
-                                placeholder="Search research adviser..."
-                                className="h-9"
-                              />
-                              <CommandEmpty>
-                                No research adviser found.
-                              </CommandEmpty>
-
-                              <CommandGroup>
-                                {facultyList.map((option) => (
-                                  <CommandItem
-                                    value={option.label}
-                                    key={option.value}
-                                    onSelect={() => {
-                                      field.onChange(option.value);
-                                    }}
-                                  >
-                                    {option.label}
-                                    <CheckIcon
-                                      className={cn(
-                                        'ml-auto h-4 w-4',
-                                        option.value === field.value
-                                          ? 'opacity-100'
-                                          : 'opacity-0'
-                                      )}
-                                    />
-                                  </CommandItem>
-                                ))}
-                              </CommandGroup>
-                            </ScrollArea>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
+                      <TiptapEditor
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Write content here..."
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
-              /> */}
+              />
+
+              <FormField
+                control={form.control}
+                name="abstract"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel>Abstract</FormLabel>
+                    <FormControl>
+                      <TiptapEditor
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Write abstract here..."
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="publisher"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel>Publisher</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Publisher" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {publisherOptions.map(({ value, label }, idx) => (
+                          <SelectItem key={publisherId + idx} value={value}>
+                            {label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel>Category</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Category" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categoryOptions.map(({ value, label }, idx) => (
+                          <SelectItem key={categoryId + idx} value={value}>
+                            {label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FileUploadInput
+                control={form.control}
+                name="file"
+                label="File Input"
+              />
             </div>
           </ScrollArea>
 

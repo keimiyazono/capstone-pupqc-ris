@@ -120,8 +120,7 @@ export const copyrightResearchSubsFormSchema = z.object({
   title: z.string({ required_error: 'This field is required.' }),
   content: z.string({ required_error: 'This field is required.' }),
   abstract: z.string({ required_error: 'This field is required.' }),
-  file_path: z.string({ required_error: 'This field is required.' }),
+  file: z.custom<File>((val) => val instanceof File, 'This field is required.'),
   category: z.string({ required_error: 'This field is required.' }),
   publisher: z.string({ required_error: 'This field is required.' }),
-  date_publish: z.string({ required_error: 'This field is required.' }),
 });

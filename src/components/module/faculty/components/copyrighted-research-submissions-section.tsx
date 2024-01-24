@@ -10,12 +10,17 @@ export function CopyrightedResearchSubmissionsSection() {
   const { data: myResearchPapers = [], isLoading } =
     useGetFacultyMyResearchPapers();
 
+  const myResearchPapersSorted = myResearchPapers.sort(
+    (a, b) =>
+      new Date(b.created_at).valueOf() - new Date(a.created_at).valueOf()
+  );
+
   return (
     <section>
       <Card>
         <CardContent className="py-5 space-y-10">
           {!isLoading && (
-            <DataTable data={myResearchPapers ?? []} columns={columns} />
+            <DataTable data={myResearchPapersSorted} columns={columns} />
           )}
 
           {isLoading && (
