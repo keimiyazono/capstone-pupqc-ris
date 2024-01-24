@@ -69,6 +69,42 @@ export function useFacultyUploadCopyrightResearch() {
   });
 }
 
+export interface FacultyUpdateCopyrightResearchPayload {
+  id: string;
+  title: string;
+  content: string;
+  abstract: string;
+  file_path: string;
+  category: string;
+  publisher: string;
+  date_publish: string;
+}
+
+export function useFacultyUpdateCopyrightResearch() {
+  const { data: session } = useSession();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, ...payload }: FacultyUpdateCopyrightResearchPayload) => {
+      return risApi.put(`/faculty/my-research-papers/${id}`, payload, {
+        headers: {
+          Authorization: `Bearer ${session?.user.authToken}`,
+        },
+      });
+    },
+
+    async onSuccess(_, { id }) {
+      await queryClient.invalidateQueries({
+        queryKey: [`/faculty/my-research-papers/${id}`],
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: [FACULTY_MY_RESEARCH_PAPERS_KEY],
+      });
+    },
+  });
+}
+
 export function useFacultyDeleteCopyrightResearch() {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
@@ -142,5 +178,42 @@ export function useFacultyCopyrightPublishersList() {
       return res.data;
     },
     enabled: status === 'authenticated',
+  });
+}
+
+export interface CopyrightedResearchData {
+  created_at: string;
+  user_id: string;
+  modified_at: string;
+  id: string;
+  title: string;
+  content: string;
+  abstract: string;
+  file_path: string;
+  date_publish: string;
+  category: string;
+  publisher: string;
+}
+
+export function useGetFacultyMyResearchPaperById({
+  research_paper_id,
+}: {
+  research_paper_id: string;
+}) {
+  const { data: session, status } = useSession();
+
+  const PATH_KEY = `/faculty/my-research-papers/${research_paper_id}`;
+
+  return useQuery<CopyrightedResearchData>({
+    queryKey: [PATH_KEY],
+    queryFn: async () => {
+      const res = await risApi.get<CopyrightedResearchData>(PATH_KEY, {
+        headers: {
+          Authorization: `Bearer ${session?.user?.authToken}`,
+        },
+      });
+      return res.data;
+    },
+    enabled: status === 'authenticated' && Boolean(research_paper_id),
   });
 }
