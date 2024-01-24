@@ -42,9 +42,6 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
 
   const isApproved = APPROVE_LIST.includes(status);
 
-
-  console.log({ flowInfoSteps });
-
   return (
     <section className="py-10 space-y-10 h-fit">
       <Button

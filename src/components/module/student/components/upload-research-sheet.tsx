@@ -74,13 +74,13 @@ export default function UploadResearchSheet() {
   const proposalStep = steps.find(({ name }) => name === 'Proposal');
 
   const user = studentData?.result.filter(
-    ({ username }) => profile?.result?.username === username
+    ({ user_id }) => profile?.result?.id === user_id
   )[0];
 
   const studentList: StudentOptions[] = studentData
     ? studentData.result.map((data) => ({
         label: data.name,
-        value: data.id,
+        value: data.user_id,
         student_number: data.student_number,
       }))
     : STUDENT_DEFAULT_OPTIONS;
@@ -282,7 +282,7 @@ export default function UploadResearchSheet() {
                         <Popover modal>
                           <PopoverTrigger
                             asChild
-                            disabled={user?.id === authorsField.value}
+                            disabled={user?.user_id === authorsField.value}
                           >
                             <FormControl>
                               <Button
@@ -366,14 +366,15 @@ export default function UploadResearchSheet() {
                           </PopoverContent>
                         </Popover>
 
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          disabled={user?.id === authorsField.value}
-                          onClick={() => removeAuthor(idx)}
-                        >
-                          <FaRegTrashAlt />
-                        </Button>
+                        {user?.user_id !== authorsField.value && (
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            onClick={() => removeAuthor(idx)}
+                          >
+                            <FaRegTrashAlt />
+                          </Button>
+                        )}
                       </div>
                     ))}
 

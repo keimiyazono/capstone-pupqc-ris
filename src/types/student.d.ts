@@ -6,14 +6,14 @@ declare interface ProfileCardsContainer {
 }
 
 declare interface Student {
-  id: string
-  username: string
+  user_id: string
   email: string
-  student_id: string
-  student_number: string
   name: string
-  section: string
+  student_number: string
+  phone_number: string
   course: string
+  status: string
+  year_section: string
 }
 
 
