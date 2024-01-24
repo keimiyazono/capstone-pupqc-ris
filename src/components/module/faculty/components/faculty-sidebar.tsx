@@ -336,17 +336,17 @@ export function FacultySidebar() {
           </Accordion>
         )}
 
-        <Link href="/faculty/collaboration">
+        <Link href="/faculty/researchers-profile">
           <Button
             variant="ghost"
             className={cn(
               'relative justify-start w-full gap-6 text-[11px] py-6 hover:bg-blue-50 transition-colors hover:text-primary',
-              pathname.startsWith('/faculty/collaboration') &&
+              pathname.startsWith('/faculty/researchers-profile') &&
                 'bg-blue-50 text-primary after:absolute after:h-full after:w-1 after:bg-primary after:right-0'
             )}
           >
             <HiMiniUserGroup className="h-4 w-4" />
-            <span className="w-44 truncate text-left">Collaboration</span>
+            <span className="w-44 truncate text-left">Researchers Profile</span>
           </Button>
         </Link>
 

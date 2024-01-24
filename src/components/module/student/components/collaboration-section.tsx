@@ -8,7 +8,13 @@ import Link from 'next/link';
 import { useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-export function CollaborationSection() {
+export interface CollaborationSectionProps {
+  showMyProfileLink?: boolean;
+}
+
+export function CollaborationSection({
+  showMyProfileLink = false,
+}: CollaborationSectionProps) {
   const { data: studentData } = useGetStudents();
 
   const studentList = useMemo(() => {
@@ -37,19 +43,19 @@ export function CollaborationSection() {
       .sort((a, b) => b.students.length - a.students.length);
   }, [studentData]);
 
-  console.log({ studentList });
-
   return (
     <>
       <div className="prose dark:prose-h1:text-white prose-h1:m-0 max-w-none flex justify-between items-center">
         <h1>Researchers Profile</h1>
 
-        <Link
-          href="#"
-          className="text-lg font-bold text-muted-foreground underline"
-        >
-          View My Profile
-        </Link>
+        {showMyProfileLink && (
+          <Link
+            href="#"
+            className="text-lg font-bold text-muted-foreground underline"
+          >
+            View My Profile
+          </Link>
+        )}
       </div>
 
       <section>
