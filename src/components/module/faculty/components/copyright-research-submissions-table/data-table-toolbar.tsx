@@ -6,6 +6,7 @@ import { Table } from '@tanstack/react-table';
 import { DataTableFacetedFilter } from '@/components/global';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import UploadCopyrightResearchSheet from '../upload-copyright-research-sheet';
 // import UploadResearchSheet from '../upload-research-sheet';
 
 export const statuses = [
@@ -66,7 +67,7 @@ export function DataTableToolbar<TData>({
         )}
       </div>
 
-      {/* <UploadResearchSheet /> */}
+      <UploadCopyrightResearchSheet />
     </div>
   );
 }

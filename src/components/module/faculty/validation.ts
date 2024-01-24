@@ -94,19 +94,19 @@ export const updateFacultyAssignedProcessFormSchema = z.object({
   has_submitted_ethics_protocol: z.boolean(),
   has_submitted_full_manuscript: z.boolean(),
   has_set_final_defense_date: z.boolean(),
-  has_submitted_copyright: z.boolean()
-})
+  has_submitted_copyright: z.boolean(),
+});
 
 export const sidebarSelectFormSchema = z.object({
   researchType: z.string(),
   course_and_section: z.string(),
-})
+});
 
 export interface Root {
-  research_type: string
-  defense_type: string
-  date: string
-  time: string
+  research_type: string;
+  defense_type: string;
+  date: string;
+  time: string;
 }
 
 export const uploadDefenseFormSchema = z.object({
@@ -114,4 +114,14 @@ export const uploadDefenseFormSchema = z.object({
   // defense_type: z.string({ required_error: 'This field is required.' }),
   date: z.date({ required_error: 'This field is required.' }),
   time: z.string({ required_error: 'This field is required.' }),
-})
+});
+
+export const copyrightResearchSubsFormSchema = z.object({
+  title: z.string({ required_error: 'This field is required.' }),
+  content: z.string({ required_error: 'This field is required.' }),
+  abstract: z.string({ required_error: 'This field is required.' }),
+  file_path: z.string({ required_error: 'This field is required.' }),
+  category: z.string({ required_error: 'This field is required.' }),
+  publisher: z.string({ required_error: 'This field is required.' }),
+  date_publish: z.string({ required_error: 'This field is required.' }),
+});

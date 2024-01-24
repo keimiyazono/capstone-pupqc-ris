@@ -10,12 +10,12 @@ import { FacultyMyResearchPaper } from '../../hooks/use-faculty-research-paper-q
 
 export const columns: ColumnDef<FacultyMyResearchPaper>[] = [
   {
-    accessorKey: 'created_at',
+    accessorKey: 'date_publish',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Submitted Date" />
+      <DataTableColumnHeader column={column} title="Date Publish" />
     ),
     cell: ({ row }) => (
-      <div className="w-[100px]">{row.getValue('created_at')}</div>
+      <div className="w-[100px]">{row.getValue('date_publish')}</div>
     ),
   },
   {

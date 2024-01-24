@@ -249,7 +249,7 @@ export function DefenseSection({
                 variant="secondary"
                 className="w-48 text-lg capitalize"
                 disabled={
-                  isSubmitting || !Boolean(facultySetDefense) || !isApproved
+                  isSubmitting || !Boolean(facultySetDefense) //|| !isApproved
                 }
               >
                 {isSubmitting ? (
