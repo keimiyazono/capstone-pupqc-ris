@@ -32,12 +32,21 @@ export const columns: ColumnDef<FacultyMyResearchPaper>[] = [
     },
   },
   {
+    accessorKey: 'publisher',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Publisher" />
+    ),
+    cell: ({ row }) => (
+      <div className="w-[280px]">{row.getValue('publisher')}</div>
+    ),
+  },
+  {
     accessorKey: 'category',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Category" />
     ),
     cell: ({ row }) => (
-      <div className="w-[100px]">{row.getValue('category')}</div>
+      <div className="w-[180px]">{row.getValue('category')}</div>
     ),
   },
   {
