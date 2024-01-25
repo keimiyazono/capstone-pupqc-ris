@@ -17,8 +17,9 @@ export function SubmittedFacultyResearchSection() {
   const { data = [], isLoading } = useGetFacultyResearchPapers();
 
   const researchList: FacultyResearchTableData[] = data
-    .map(({ FacultyResearchPaper, name }) => ({
-      ...FacultyResearchPaper,
+    .map(({ FacultyResearchPaper: { status, ...rest }, name }) => ({
+      ...rest,
+      status: status ?? 'Pending',
       faculty_name: name,
     }))
     .sort(

@@ -71,7 +71,7 @@ export async function generateMetadata({
   }
 }
 
-export default function FacultyViewResearcherProfileLayout({
+export default function StudentViewResearcherProfileLayout({
   children,
 }: React.PropsWithChildren) {
   return children;
