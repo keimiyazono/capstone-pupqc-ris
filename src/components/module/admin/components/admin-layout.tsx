@@ -4,10 +4,13 @@ import { DashboardContent, Sidebar } from '@/components/global';
 import { ADMIN_NAVIGATION } from '@/lib/constants';
 import { useSidebarStore } from '@/store/sidebar-store';
 import { SidebarData } from '@/types/navigation';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { AdminWorkflowContext } from './context/process';
+import { AdminSidebar } from './admin-sidebar';
 
 export function AdminLayout({ children }: React.PropsWithChildren) {
   const { selectSidebar } = useSidebarStore();
+  const [researchType, setResearchType] = useState<string>('Admin');
 
   const sidebars = useMemo<SidebarData[]>(() => {
     return [
@@ -47,8 +50,15 @@ export function AdminLayout({ children }: React.PropsWithChildren) {
 
   return (
     <div>
-      <Sidebar sidebars={sidebars} />
-      <DashboardContent role="Admin">{children}</DashboardContent>
+      <AdminWorkflowContext.Provider
+        value={{
+          researchType,
+          setResearchType,
+        }}
+      >
+        <AdminSidebar />
+        <DashboardContent role="Admin">{children}</DashboardContent>
+      </AdminWorkflowContext.Provider>
     </div>
   );
 }
