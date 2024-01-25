@@ -88,7 +88,7 @@ export function CollaborationSection({
                       />
 
                       <div>
-                        <h4 className="text-xl font-bold text-[#44465B] hover:underline hover:cursor-pointer">
+                        <h4 className="text-xl font-bold text-[#44465B]">
                           {name}
                         </h4>
                         <p className="text-xl font-normal text-[#44465B]">
