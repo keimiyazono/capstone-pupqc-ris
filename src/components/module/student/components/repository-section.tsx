@@ -1,6 +1,5 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -15,10 +14,17 @@ import { Toggle } from '@/components/ui/toggle';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { useGetAllResearchPapersWithAuthors } from '@/hooks/use-research-query';
 import { useGetCourseList } from '@/hooks/use-user-query';
+import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
+import parse from 'html-react-parser';
 import moment from 'moment';
 import { useId, useMemo, useRef, useState } from 'react';
 import { BsFillPersonFill } from 'react-icons/bs';
 import { HiOutlineBookOpen } from 'react-icons/hi2';
+import {
+  FacultyResearchPaperData,
+  useGetFacultyResearchPapers,
+} from '../../admin/hooks/use-faculty-research-papers';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const PROPOSAL_TYPES = [
   'Research',
@@ -54,77 +60,68 @@ export function RepositorySection() {
   const { data: courseList, isLoading: courseListLoading } = useGetCourseList();
   const { data: researches, isLoading } = useGetAllResearchPapersWithAuthors();
 
+  const { data: facultyResearches = [] } = useGetFacultyResearchPapers();
+
+  const facultyResearchApprovedList = facultyResearches.filter(
+    ({ FacultyResearchPaper: { status } }) => status === 'Approved'
+  )
+
   const coursesId = useId();
   const proposalTypesId = useId();
   const characterId = useId();
   const researchId = useId();
   const courseId = useId();
 
-  const filteredResearches = useMemo<ResearchWithAuthorsV2[]>(() => {
-    let filter: ResearchWithAuthorsV2[] = [...(researches ?? [])];
+  const filteredResearches = useMemo<FacultyResearchPaperData[]>(() => {
+    let filter: FacultyResearchPaperData[] = Array.from(
+      facultyResearchApprovedList
+    );
 
-    if (activeCourses.length > 0) {
-      filter = filter.filter(({ authors }) =>
-        authors.some(({ course }) => activeCourses.includes(course))
-      );
-    }
+    // if (activeCourses.length > 0) {
+    //   filter = filter.filter(({ authors }) =>
+    //     authors.some(({ course }) => activeCourses.includes(course))
+    //   );
+    // }
 
-    if (activeProposalTypes.length > 0) {
-      filter = filter.filter(({ research_paper }) =>
-        activeProposalTypes.some((v) =>
-          research_paper.research_type.toLowerCase().startsWith(v.toLowerCase())
-        )
-      );
-    }
+    // if (activeProposalTypes.length > 0) {
+    //   filter = filter.filter(({ FacultyResearchPaper: {} }) =>
+    //     activeProposalTypes.some((v) =>
+    //       research_paper.research_type.toLowerCase().startsWith(v.toLowerCase())
+    //     )
+    //   );
+    // }
 
     if (activeChars.length > 0) {
-      filter = filter.filter(({ research_paper }) =>
-        activeChars.some((v) =>
-          research_paper.title.toLowerCase().startsWith(v.toLowerCase())
-        )
+      filter = filter.filter(({ FacultyResearchPaper: { title } }) =>
+        activeChars.some((v) => title.toLowerCase().startsWith(v.toLowerCase()))
       );
     }
 
     if (search) {
       const regex = new RegExp(search.toLowerCase());
 
-      filter = filter.filter(({ research_paper }) =>
-        research_paper.title.toLowerCase().match(regex)
+      filter = filter.filter(({ FacultyResearchPaper: { title } }) =>
+        title.toLowerCase().match(regex)
       );
     }
 
     if (Boolean(sortBy) && sortBy === 'title') {
       filter = filter.sort((a, b) =>
-        a.research_paper.title.localeCompare(b.research_paper.title)
+        a.FacultyResearchPaper.title.localeCompare(b.FacultyResearchPaper.title)
       );
     }
 
     if (Boolean(sortBy) && sortBy === 'submitted_date') {
       filter = filter.sort((a, b) => {
-        const bDate = Date.parse(b.research_paper.submitted_date);
-        const aDate = Date.parse(a.research_paper.submitted_date);
+        const bDate = Date.parse(b.FacultyResearchPaper.created_at);
+        const aDate = Date.parse(a.FacultyResearchPaper.created_at);
 
         return bDate - aDate;
       });
     }
 
     return filter;
-  }, [
-    researches,
-    activeCourses,
-    activeProposalTypes,
-    activeChars,
-    search,
-    sortBy,
-  ]);
-
-  console.log({
-    activeCourses,
-    activeProposalTypes,
-    activeChars,
-    search,
-    sortBy,
-  });
+  }, [facultyResearchApprovedList, activeChars, search, sortBy]);
 
   function toggleHandler(prev: string[], value: string) {
     const cloned = [...prev];
@@ -151,7 +148,7 @@ export function RepositorySection() {
   return (
     <section className="space-y-10 px-1">
       <div className="space-y-5">
-        {courseList && (
+        {/* {courseList && (
           <div className="flex items-center gap-3 flex-wrap">
             {courseList.courses.map((course, idx) => (
               <Toggle
@@ -167,9 +164,9 @@ export function RepositorySection() {
               </Toggle>
             ))}
           </div>
-        )}
+        )} */}
 
-        <div className="flex items-center gap-3 flex-wrap">
+        {/* <div className="flex items-center gap-3 flex-wrap">
           {PROPOSAL_TYPES.map((type) => (
             <Toggle
               key={proposalTypesId + type}
@@ -183,7 +180,7 @@ export function RepositorySection() {
               {type}
             </Toggle>
           ))}
-        </div>
+        </div> */}
 
         <div className="flex items-center flex-wrap">
           <ToggleGroup type="single" className="gap-0">
@@ -256,87 +253,135 @@ export function RepositorySection() {
 
         {filteredResearches &&
           !isLoading &&
-          filteredResearches.map(({ research_paper, authors }, idx) => {
-            const courses = authors
-              ? authors.map(
-                  ({ course, year_section }) => `${course} ${year_section}`
-                )
-              : [];
+          filteredResearches.map(
+            (
+              {
+                FacultyResearchPaper: {
+                  created_at,
+                  id,
+                  content,
+                  file_path,
+                  category,
+                  user_id,
+                  title,
+                  modified_at,
+                  abstract,
+                  date_publish,
+                  publisher,
+                  status,
+                },
+                name,
+              },
+              idx
+            ) => {
+              // const courses = authors
+              //   ? authors.map(
+              //       ({ course, year_section }) => `${course} ${year_section}`
+              //     )
+              //   : [];
 
-            const filteredCourses = Array.from(new Set(courses));
+              // const filteredCourses = Array.from(new Set(courses));
+              const docs = [
+                {
+                  uri: file_path ?? '',
+                },
+              ];
 
-            return (
-              <Dialog key={researchId + idx}>
-                <DialogTrigger asChild>
-                  <div
-                    role="button"
-                    className="border bg-card rounded p-3 transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1"
-                    onClick={() => {
-                      setSelectedResearch(research_paper);
-                    }}
-                  >
-                    <h2 className="font-bold">{research_paper.title}</h2>
-                    <div className="flex items-center gap-2 text-sm my-4">
-                      {filteredCourses.map((course, idx) => (
+              return (
+                <Dialog key={researchId + idx}>
+                  <DialogTrigger asChild>
+                    <div
+                      role="button"
+                      className="border bg-card rounded p-3 transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1"
+                      // onClick={() => {
+                      //   setSelectedResearch(research_paper);
+                      // }}
+                    >
+                      <h2 className="font-bold">{title}</h2>
+                      <div className="flex items-center gap-2 text-sm my-4">
+                        {/* {filteredCourses.map((course, idx) => (
                         <Badge key={courseId + idx} variant="outline">
                           {course}
                         </Badge>
-                      ))}
+                      ))} */}
 
-                      <div>
-                        {moment(research_paper.submitted_date).format('LL')}
+                        <div>{moment(created_at).format('LL')}</div>
+                      </div>
+
+                      <div className="flex items-center gap-4">
+                        <div className="flex flex-1 flex-wrap gap-3">
+                          {/* {authors &&
+                          authors.map(({ id, name }) => ( */}
+                          <div
+                            // key={id}
+                            className="flex items-center gap-2 capitalize text-sm"
+                          >
+                            <BsFillPersonFill />
+                            <span>{name}</span>
+                          </div>
+                          {/* ))} */}
+                        </div>
                       </div>
                     </div>
-
-                    <div className="flex items-center gap-4">
-                      <div className="flex flex-1 flex-wrap gap-3">
-                        {authors &&
-                          authors.map(({ id, name }) => (
-                            <div
-                              key={id}
-                              className="flex items-center gap-2 capitalize text-sm"
-                            >
-                              <BsFillPersonFill />
-                              <span>{name}</span>
-                            </div>
-                          ))}
-                      </div>
-                    </div>
-                  </div>
-                </DialogTrigger>
-                <DialogContent className="max-w-4xl">
-                  {selectedResearch && (
+                  </DialogTrigger>
+                  <DialogContent className="max-w-4xl">
                     <div>
                       <DialogHeader>
-                        <DialogTitle>
-                          The Impact Of Artificial Intelligence On Healthcare
-                          Systems
-                        </DialogTitle>
+                        <DialogTitle>{title}</DialogTitle>
                       </DialogHeader>
-                      <article className="prose prose-sm max-w-none">
-                        <h4>Content</h4>
-                        <p>
-                          Lorem ipsum dolor sit amet consectetur adipisicing
-                          elit. Rerum error quidem nisi neque optio incidunt
-                          quas, aliquam quibusdam accusantium fugit repudiandae
-                          necessitatibus odit id. Molestiae corporis voluptatem
-                          nesciunt non quo!
-                        </p>
-                        <h4>Abstract</h4>
-                        <p>
-                          Lorem ipsum dolor sit amet consectetur adipisicing
-                          elit. Rerum error quidem nisi neque optio incidunt
-                          quas, aliquam quibusdam accusantium fugit repudiandae
-                          necessitatibus odit id. Molestiae corporis voluptatem
-                          nesciunt non quo!
-                        </p>
-                      </article>
+                      <ScrollArea className="space-y-6 h-96 py-10">
+                        <div className="space-y-1 text-sm">
+                          <div className="font-semibold">Category</div>
+                          <div>{category}</div>
+                        </div>
+
+                        <div className="space-y-1 text-sm">
+                          <div className="font-semibold">Publisher</div>
+                          <div>{publisher}</div>
+                        </div>
+
+                        {content && (
+                          <div className="space-y-1 text-sm">
+                            <div className="font-semibold">Content</div>
+                            <div className="prose prose-sm max-w-none">
+                              {parse(content)}
+                            </div>
+                          </div>
+                        )}
+
+                        {abstract && (
+                          <div className="space-y-1 text-sm">
+                            <div className="font-semibold">Abstract</div>
+                            <div className="prose prose-sm max-w-none">
+                              {parse(abstract)}
+                            </div>
+                          </div>
+                        )}
+
+                        {file_path && (
+                          <div className="mt-10">
+                            <DocViewer
+                              documents={docs}
+                              pluginRenderers={DocViewerRenderers}
+                              theme={{
+                                primary: '#f4f4f4',
+                                textPrimary: '#000000',
+                              }}
+                            />
+                          </div>
+                        )}
+
+                        <div className="space-y-1 text-sm">
+                          <div className="font-semibold">Date Publish</div>
+                          <div>{date_publish}</div>
+                        </div>
+                      </ScrollArea>
                     </div>
-                  )}
-                </DialogContent>
-              </Dialog>
-            );
-          })}
+                  </DialogContent>
+                </Dialog>
+              );
+            }
+          )}
 
         {filteredResearches.length < 1 && (
           <div className="text-muted-foreground text-center">No results.</div>
