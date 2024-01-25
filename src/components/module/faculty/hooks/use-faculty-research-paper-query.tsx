@@ -14,6 +14,7 @@ export interface FacultyMyResearchPaper {
   category: string;
   publisher: string;
   user_id: string;
+  status: string;
 }
 
 export const FACULTY_MY_RESEARCH_PAPERS_KEY = '/faculty/my-research-papers';
