@@ -96,11 +96,6 @@ function ResearchPaper({ research_paper, authors }: Paper) {
             ))}
         </div>
 
-        <div className="space-y-1 text-sm">
-          <div className="font-semibold">Type</div>
-          <div>{research_paper.research_type}</div>
-        </div>
-
         {research_paper.content && (
           <div className="space-y-1 text-sm">
             <div className="font-semibold">Content</div>
