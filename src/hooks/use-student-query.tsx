@@ -159,7 +159,7 @@ export function useGetStudentFlowInfoStatus({
   const PATH_KEY = `/student/flow-info-status/${workflow_id}`;
 
   return useQuery<StudentFlowInfoStatus[]>({
-    queryKey: [PATH_KEY],
+    queryKey: [PATH_KEY, workflow_id, research_paper_id ],
     queryFn: async () => {
       const res = await risApi.get<StudentFlowInfoStatus[]>(PATH_KEY, {
         headers: {

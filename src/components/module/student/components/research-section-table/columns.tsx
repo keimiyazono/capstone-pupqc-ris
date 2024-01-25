@@ -1,10 +1,9 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
 import { DataTableColumnHeader } from './data-table-column-header';
 import { DataTableRowActions } from './data-table-row-actions';
+import { DataTableRowStatus } from './data-table-row-status';
 
 export const columns: ColumnDef<Research>[] = [
   {
@@ -43,21 +42,7 @@ export const columns: ColumnDef<Research>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Status" />
     ),
-    cell: ({ row }) => {
-      const status = row.getValue('status') as string;
-
-      return (
-        <Badge
-          className={cn(
-            status === 'Pending' && 'bg-yellow-500 hover:bg-yellow-500/80',
-            status === 'Approved' && 'bg-green-500 hover:bg-green-500/80',
-            status === 'Rejected' && 'bg-red-500 hover:bg-red-500/80'
-          )}
-        >
-          {status}
-        </Badge>
-      );
-    },
+    cell: ({ row, table }) => <DataTableRowStatus row={row} />,
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
     },
