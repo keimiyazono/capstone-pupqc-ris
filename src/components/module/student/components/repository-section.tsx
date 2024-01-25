@@ -9,6 +9,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Toggle } from '@/components/ui/toggle';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
@@ -24,7 +25,6 @@ import {
   FacultyResearchPaperData,
   useGetFacultyResearchPapers,
 } from '../../admin/hooks/use-faculty-research-papers';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 const PROPOSAL_TYPES = [
   'Research',
@@ -64,7 +64,7 @@ export function RepositorySection() {
 
   const facultyResearchApprovedList = facultyResearches.filter(
     ({ FacultyResearchPaper: { status } }) => status === 'Approved'
-  )
+  );
 
   const coursesId = useId();
   const proposalTypesId = useId();
@@ -329,51 +329,53 @@ export function RepositorySection() {
                       <DialogHeader>
                         <DialogTitle>{title}</DialogTitle>
                       </DialogHeader>
-                      <ScrollArea className="space-y-6 h-96 py-10">
-                        <div className="space-y-1 text-sm">
-                          <div className="font-semibold">Category</div>
-                          <div>{category}</div>
-                        </div>
-
-                        <div className="space-y-1 text-sm">
-                          <div className="font-semibold">Publisher</div>
-                          <div>{publisher}</div>
-                        </div>
-
-                        {content && (
+                      <ScrollArea className="h-96 py-10">
+                        <div className="space-y-6 ">
                           <div className="space-y-1 text-sm">
-                            <div className="font-semibold">Content</div>
-                            <div className="prose prose-sm max-w-none">
-                              {parse(content)}
-                            </div>
+                            <div className="font-semibold">Category</div>
+                            <div>{category}</div>
                           </div>
-                        )}
 
-                        {abstract && (
                           <div className="space-y-1 text-sm">
-                            <div className="font-semibold">Abstract</div>
-                            <div className="prose prose-sm max-w-none">
-                              {parse(abstract)}
+                            <div className="font-semibold">Publisher</div>
+                            <div>{publisher}</div>
+                          </div>
+
+                          {content && (
+                            <div className="space-y-1 text-sm">
+                              <div className="font-semibold">Content</div>
+                              <div className="prose prose-sm max-w-none">
+                                {parse(content)}
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
 
-                        {file_path && (
-                          <div className="mt-10">
-                            <DocViewer
-                              documents={docs}
-                              pluginRenderers={DocViewerRenderers}
-                              theme={{
-                                primary: '#f4f4f4',
-                                textPrimary: '#000000',
-                              }}
-                            />
-                          </div>
-                        )}
+                          {abstract && (
+                            <div className="space-y-1 text-sm">
+                              <div className="font-semibold">Abstract</div>
+                              <div className="prose prose-sm max-w-none">
+                                {parse(abstract)}
+                              </div>
+                            </div>
+                          )}
 
-                        <div className="space-y-1 text-sm">
-                          <div className="font-semibold">Date Publish</div>
-                          <div>{date_publish}</div>
+                          {file_path && (
+                            <div className="mt-10">
+                              <DocViewer
+                                documents={docs}
+                                pluginRenderers={DocViewerRenderers}
+                                theme={{
+                                  primary: '#f4f4f4',
+                                  textPrimary: '#000000',
+                                }}
+                              />
+                            </div>
+                          )}
+
+                          <div className="space-y-1 text-sm">
+                            <div className="font-semibold">Date Publish</div>
+                            <div>{date_publish}</div>
+                          </div>
                         </div>
                       </ScrollArea>
                     </div>
