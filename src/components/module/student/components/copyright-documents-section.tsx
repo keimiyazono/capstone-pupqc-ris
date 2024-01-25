@@ -80,7 +80,7 @@ export function CopyrightDocumentsSection({
             )}
           </div>
 
-          <div className="flex justify-end pt-6">
+          {/* <div className="flex justify-end pt-6">
             <Button
               type="button"
               variant="secondary"
@@ -90,7 +90,7 @@ export function CopyrightDocumentsSection({
             >
               Next
             </Button>
-          </div>
+          </div> */}
         </CardContent>
       </Card>
     </>
