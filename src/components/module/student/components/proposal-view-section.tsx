@@ -57,7 +57,7 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
       <Stepper
         steps={flowInfoSteps.map(({ name, info }) => {
           const isDefense = DEFENSE_LIST.includes(name);
-          const wholeInfo = info['whole-info'][0];
+          const wholeInfo = info?.['whole-info']?.[0];
           const hasWholeInfo = Boolean(wholeInfo);
 
           return {
