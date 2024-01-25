@@ -3,6 +3,7 @@
 import profilePicture from '@/assets/images/profile-v2.png';
 import { Button } from '@/components/ui/button';
 import { useGetStudents } from '@/hooks/use-student-query';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo } from 'react';
@@ -10,12 +11,15 @@ import { v4 as uuidv4 } from 'uuid';
 
 export interface CollaborationSectionProps {
   showMyProfileLink?: boolean;
+  profilePath?: string;
 }
 
 export function CollaborationSection({
   showMyProfileLink = false,
+  profilePath = '/student/researchers-profile',
 }: CollaborationSectionProps) {
   const { data: studentData } = useGetStudents();
+  const { data: session } = useSession();
 
   const studentList = useMemo(() => {
     if (!studentData?.result) return [];
@@ -50,7 +54,7 @@ export function CollaborationSection({
 
         {showMyProfileLink && (
           <Link
-            href="#"
+            href={`${profilePath}/${session?.user?.studentProfile?.id}`}
             className="text-lg font-bold text-muted-foreground underline"
           >
             View My Profile
@@ -90,9 +94,12 @@ export function CollaborationSection({
                         <p className="text-xl font-normal text-[#44465B]">
                           {course} {year_section}
                         </p>
-                        <Button className="gap-2 h-6 rounded-2xl mt-3">
-                          <span>Information</span>
-                        </Button>
+
+                        <Link href={`${profilePath}/${user_id}`}>
+                          <Button className="gap-2 h-6 rounded-2xl mt-3">
+                            <span>Information</span>
+                          </Button>
+                        </Link>
                       </div>
                     </div>
                   ))}
