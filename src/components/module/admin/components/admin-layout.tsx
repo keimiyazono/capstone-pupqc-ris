@@ -16,6 +16,26 @@ export function AdminLayout({ children }: React.PropsWithChildren) {
         label: 'Admin',
         navigations: ADMIN_NAVIGATION,
       },
+      {
+        key: 'Research',
+        label: 'Research',
+        navigations: ADMIN_NAVIGATION,
+      },
+      {
+        key: 'Feasibility Study',
+        label: 'Feasibility Study',
+        navigations: ADMIN_NAVIGATION,
+      },
+      {
+        key: 'Capstone',
+        label: 'Capstone',
+        navigations: ADMIN_NAVIGATION,
+      },
+      {
+        key: 'Business Plan',
+        label: 'Business Plan',
+        navigations: ADMIN_NAVIGATION,
+      },
     ];
   }, []);
 

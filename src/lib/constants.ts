@@ -159,6 +159,11 @@ export const ADMIN_NAVIGATION: NavigationParent = [
     ],
   },
   {
+    label: 'Researchers Profile',
+    Icon: HiMiniUserGroup,
+    href: '/admin/researchers-profile',
+  },
+  {
     label: 'Submitted faculty research',
     Icon: FaFolder,
     href: '/admin/submitted-faculty-research',

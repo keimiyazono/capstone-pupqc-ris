@@ -38,10 +38,6 @@ import { ResearchProfessorsDropdowns } from './sidebar-dropdown/research-profess
 
 const RESEARCH_PROFESSOR = 'research professor';
 
-type CourseSectionComboboxOptions = {
-  class_id: string;
-} & ComboboxOptions;
-
 export function FacultySidebar() {
   const labelId = useId();
   const pathname = usePathname();
@@ -56,8 +52,6 @@ export function FacultySidebar() {
   } = useFacultyWorkflowContext();
 
   const { data: facultyProcess } = useGetShowFacultyProcess();
-
-  console.log({ selectedProcess, selectedProcessIndex });
 
   const researchTypes = useMemo(() => {
     const collection = facultyProcess?.assigned_sections_as_adviser ?? [];

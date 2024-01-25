@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function FacultyCollaborationLayout({
+export default function AdminCollaborationLayout({
   children,
 }: React.PropsWithChildren) {
   return children;
