@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { StudentFlowInfoStep } from '@/hooks/use-student-query';
+import { BsChevronDoubleLeft, BsChevronDoubleRight } from 'react-icons/bs';
 import UpdateCopyrightDocuments from './copyright-documents/update-copyright-documents';
 import UploadCopyrightDocuments from './copyright-documents/upload-copyright-documents';
 
@@ -36,7 +37,7 @@ export interface CopyrightDocumentsData {
 export interface CopyrightDocumentsSectionProps {
   researchPaperId: string;
   step: StudentFlowInfoStep;
-  updateStepCallback: () => void;
+  updateStepCallback: (action: 'prev' | 'next') => void;
 }
 
 export function CopyrightDocumentsSection({
@@ -80,17 +81,28 @@ export function CopyrightDocumentsSection({
             )}
           </div>
 
-          {/* <div className="flex justify-end pt-6">
+          <div className="flex justify-between pt-6">
             <Button
               type="button"
               variant="secondary"
-              className="w-40 text-lg"
-              onClick={updateStepCallback}
-              disabled={!isApproved}
+              className="w-40 text-lg gap-2 items-center"
+              onClick={() => updateStepCallback('prev')}
             >
-              Next
+              <BsChevronDoubleLeft />
+              <span>Previous</span>
             </Button>
-          </div> */}
+
+            {/* <Button
+              type="button"
+              variant="secondary"
+              className="w-40 text-lg gap-2 items-center"
+              onClick={() => updateStepCallback('next')}
+              // disabled={!isApproved}
+            >
+              <span>Next</span>
+              <BsChevronDoubleRight />
+            </Button> */}
+          </div>
         </CardContent>
       </Card>
     </>

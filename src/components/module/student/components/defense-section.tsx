@@ -37,6 +37,7 @@ import moment from 'moment';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { BiLoaderAlt } from 'react-icons/bi';
+import { BsChevronDoubleLeft, BsChevronDoubleRight } from 'react-icons/bs';
 import * as z from 'zod';
 import { uploadDefenseFormSchema } from '../validation';
 import { useStudentWorkflowContext } from './context/student-workflow';
@@ -57,7 +58,7 @@ export interface DefenseSectionProps {
   className?: string;
   researchPaperId: string;
   step: StudentFlowInfoStep;
-  updateStepCallback: () => void;
+  updateStepCallback: (action: 'prev' | 'next') => void;
   facultySetDefense?: SetDefense;
 }
 
@@ -170,7 +171,7 @@ export function DefenseSection({
     //   }
     // }
 
-    updateStepCallback();
+    updateStepCallback('next');
   };
 
   return (
@@ -241,21 +242,32 @@ export function DefenseSection({
               )}
             />
 
-            <div className="pt-4 flex justify-end">
+            <div className="pt-4 flex justify-between">
+              <Button
+                type="button"
+                variant="secondary"
+                className="w-40 text-lg gap-2 items-center"
+                onClick={() => updateStepCallback('prev')}
+              >
+                <BsChevronDoubleLeft />
+                <span>Previous</span>
+              </Button>
+
               <Button
                 type="submit"
                 variant="secondary"
-                className="w-48 text-lg capitalize"
-                disabled={
-                  isSubmitting || !Boolean(facultySetDefense) //|| !isApproved
-                }
+                className="w-48 text-lg capitalize gap-2 items-center"
+                disabled={isSubmitting || !Boolean(facultySetDefense)}
               >
                 {isSubmitting ? (
                   <span className="h-fit w-fit animate-spin">
                     <BiLoaderAlt />
                   </span>
                 ) : action === 'update' ? (
-                  'next'
+                  <>
+                    <span>Next</span>
+                    <BsChevronDoubleRight />
+                  </>
                 ) : (
                   'done'
                 )}

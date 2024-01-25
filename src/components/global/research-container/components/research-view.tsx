@@ -81,7 +81,7 @@ export function ResearchView({
       enabled: status === 'authenticated',
     });
 
-  const research = researchWithAuthors?.research_paper[0];
+  const research = researchWithAuthors?.research_paper?.[0];
   const authors = researchWithAuthors?.authors ?? [];
 
   const docs = [

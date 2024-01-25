@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useGetStudentFlowInfoStatus } from '@/hooks/use-student-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { BsChevronDoubleRight } from 'react-icons/bs';
 import { IoChevronBackSharp } from 'react-icons/io5';
 import { StepStatus, Stepper } from '../../stepper';
 import { useStudentWorkflowContext } from './context/student-workflow';
@@ -31,8 +32,8 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
     workflow_id: workflowId,
   });
 
-  const flowInfoSteps = flowInfoStatus[0]?.steps ?? [];
-  const facultySetDefenseList = flowInfoStatus[0]?.set_defense ?? [];
+  const flowInfoSteps = flowInfoStatus?.[0]?.steps ?? [];
+  const facultySetDefenseList = flowInfoStatus?.[0]?.set_defense ?? [];
 
   const step = flowInfoSteps[currentStep];
 
@@ -84,7 +85,7 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
                 <Button
                   type="button"
                   variant="secondary"
-                  className="w-40 text-lg"
+                  className="w-40 text-lg gap-2 items-center"
                   disabled={!isApproved}
                   onClick={() => {
                     setCurrentStep((prev) =>
@@ -92,7 +93,8 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
                     );
                   }}
                 >
-                  Next
+                  <span>Next</span>
+                  <BsChevronDoubleRight />
                 </Button>
               </div>
             </div>
@@ -102,10 +104,14 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
             <EthicsProtocolSection
               step={step}
               researchPaperId={id}
-              updateStepCallback={() => {
-                setCurrentStep((prev) =>
-                  flowInfoSteps.length - 1 > prev ? prev + 1 : prev
-                );
+              updateStepCallback={(action) => {
+                if (action === 'next') {
+                  setCurrentStep((prev) =>
+                    flowInfoSteps.length - 1 > prev ? prev + 1 : prev
+                  );
+                } else if (action === 'prev') {
+                  setCurrentStep((prev) => prev - 1);
+                }
               }}
             />
           )}
@@ -114,10 +120,14 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
             <FullManuscriptSection
               step={step}
               researchPaperId={id}
-              updateStepCallback={() => {
-                setCurrentStep((prev) =>
-                  flowInfoSteps.length - 1 > prev ? prev + 1 : prev
-                );
+              updateStepCallback={(action) => {
+                if (action === 'next') {
+                  setCurrentStep((prev) =>
+                    flowInfoSteps.length - 1 > prev ? prev + 1 : prev
+                  );
+                } else if (action === 'prev') {
+                  setCurrentStep((prev) => prev - 1);
+                }
               }}
             />
           )}
@@ -126,10 +136,14 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
             <CopyrightDocumentsSection
               step={step}
               researchPaperId={id}
-              updateStepCallback={() => {
-                setCurrentStep((prev) =>
-                  flowInfoSteps.length - 1 > prev ? prev + 1 : prev
-                );
+              updateStepCallback={(action) => {
+                if (action === 'next') {
+                  setCurrentStep((prev) =>
+                    flowInfoSteps.length - 1 > prev ? prev + 1 : prev
+                  );
+                } else if (action === 'prev') {
+                  setCurrentStep((prev) => prev - 1);
+                }
               }}
             />
           )}
@@ -139,10 +153,14 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
               label="Pre-Oral Defense"
               step={step}
               researchPaperId={id}
-              updateStepCallback={() => {
-                setCurrentStep((prev) =>
-                  flowInfoSteps.length - 1 > prev ? prev + 1 : prev
-                );
+              updateStepCallback={(action) => {
+                if (action === 'next') {
+                  setCurrentStep((prev) =>
+                    flowInfoSteps.length - 1 > prev ? prev + 1 : prev
+                  );
+                } else if (action === 'prev') {
+                  setCurrentStep((prev) => prev - 1);
+                }
               }}
               facultySetDefense={facultySetDefenseList.find(
                 ({ defense_type }) => defense_type === 'pre-oral'
@@ -155,10 +173,14 @@ export function ProposalViewSection({ id }: ProposalViewSectionProps) {
               label="Final Defense"
               step={step}
               researchPaperId={id}
-              updateStepCallback={() => {
-                setCurrentStep((prev) =>
-                  flowInfoSteps.length - 1 > prev ? prev + 1 : prev
-                );
+              updateStepCallback={(action) => {
+                if (action === 'next') {
+                  setCurrentStep((prev) =>
+                    flowInfoSteps.length - 1 > prev ? prev + 1 : prev
+                  );
+                } else if (action === 'prev') {
+                  setCurrentStep((prev) => prev - 1);
+                }
               }}
               facultySetDefense={facultySetDefenseList.find(
                 ({ defense_type }) => defense_type === 'final'

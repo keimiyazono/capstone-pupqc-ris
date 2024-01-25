@@ -11,6 +11,7 @@ import {
 import { StudentFlowInfoStep } from '@/hooks/use-student-query';
 import UpdateFullManuscript from './full-manuscript/update-full-manuscript';
 import UploadFullManuscript from './full-manuscript/upload-full-manuscript';
+import { BsChevronDoubleLeft, BsChevronDoubleRight } from 'react-icons/bs';
 
 export interface FullManuscriptData {
   created_at: string;
@@ -28,7 +29,7 @@ export interface FullManuscriptData {
 export interface FullManuscriptSectionProps {
   researchPaperId: string;
   step: StudentFlowInfoStep;
-  updateStepCallback: () => void;
+  updateStepCallback: (action: 'prev' | 'next') => void;
 }
 
 export function FullManuscriptSection({
@@ -72,15 +73,26 @@ export function FullManuscriptSection({
             )}
           </div>
 
-          <div className="flex justify-end pt-6">
+          <div className="flex justify-between pt-6">
             <Button
               type="button"
               variant="secondary"
-              className="w-40 text-lg"
-              onClick={updateStepCallback}
+              className="w-40 text-lg gap-2 items-center"
+              onClick={() => updateStepCallback('prev')}
+            >
+              <BsChevronDoubleLeft />
+              <span>Previous</span>
+            </Button>
+
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-40 text-lg gap-2 items-center"
+              onClick={() => updateStepCallback('next')}
               disabled={!isApproved}
             >
-              Next
+              <span>Next</span>
+              <BsChevronDoubleRight />
             </Button>
           </div>
         </CardContent>

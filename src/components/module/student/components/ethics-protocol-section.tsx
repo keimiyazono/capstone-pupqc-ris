@@ -11,6 +11,7 @@ import {
 import { StudentFlowInfoStep } from '@/hooks/use-student-query';
 import UpdateEthicsForm from './ethics/update-ethics-form';
 import UploadEthicsForm from './ethics/upload-ethics-form';
+import { BsChevronDoubleLeft, BsChevronDoubleRight } from 'react-icons/bs';
 
 export interface EthicsData {
   modified_at: string;
@@ -31,7 +32,7 @@ export interface EthicsData {
 export interface EthicsProtocolSectionProps {
   researchPaperId: string;
   step: StudentFlowInfoStep;
-  updateStepCallback: () => void;
+  updateStepCallback: (action: 'prev' | 'next') => void;
 }
 
 export function EthicsProtocolSection({
@@ -74,15 +75,26 @@ export function EthicsProtocolSection({
             )}
           </div>
 
-          <div className="flex justify-end pt-6">
+          <div className="flex justify-between pt-6">
             <Button
               type="button"
               variant="secondary"
-              className="w-40 text-lg"
-              onClick={updateStepCallback}
+              className="w-40 text-lg gap-2 items-center"
+              onClick={() => updateStepCallback('prev')}
+            >
+              <BsChevronDoubleLeft />
+              <span>Previous</span>
+            </Button>
+
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-40 text-lg gap-2 items-center"
+              onClick={() => updateStepCallback('next')}
               disabled={!isApproved}
             >
-              Next
+              <span>Next</span>
+              <BsChevronDoubleRight />
             </Button>
           </div>
         </CardContent>
