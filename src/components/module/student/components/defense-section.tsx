@@ -25,9 +25,7 @@ import {
 } from '@/components/ui/popover';
 import { useToast } from '@/components/ui/use-toast';
 import {
-  UpdateDefensePayload,
   UploadDefensePayload,
-  useUpdateDefense,
   useUploadDefense,
 } from '@/hooks/use-defense-query';
 import { SetDefense, StudentFlowInfoStep } from '@/hooks/use-student-query';
@@ -92,7 +90,7 @@ export function DefenseSection({
   const { workflowId } = useStudentWorkflowContext();
 
   const upload = useUploadDefense({ workflowId });
-  const update = useUpdateDefense({ workflowId });
+  // const update = useUpdateDefense({ workflowId });
 
   const {
     formState: { isSubmitting },
@@ -137,40 +135,42 @@ export function DefenseSection({
           title: `Submit ${label} Failed`,
           variant: 'destructive',
         });
-      } finally {
-        updateStepCallback();
-      }
+      } // finally {
+      //   updateStepCallback();
+      // }
     }
 
-    if (action === 'update') {
-      try {
-        const timeRegex = /^\d{2}\:\d{2}\:\d{2}$/;
+    // if (action === 'update') {
+    //   try {
+    //     const timeRegex = /^\d{2}\:\d{2}\:\d{2}$/;
 
-        const { time = '', date = '' } = values;
+    //     const { time = '', date = '' } = values;
 
-        const isValidTime = timeRegex.test(time);
+    //     const isValidTime = timeRegex.test(time);
 
-        const payload: UpdateDefensePayload = {
-          defense_id: wholeInfo?.id,
-          type: label === 'Pre-Oral Defense' ? 'pre-oral' : 'final',
-          time: isValidTime ? time : time + ':00',
-          date: moment(date).format('YYYY-MM-DD'),
-        };
+    //     const payload: UpdateDefensePayload = {
+    //       defense_id: wholeInfo?.id,
+    //       type: label === 'Pre-Oral Defense' ? 'pre-oral' : 'final',
+    //       time: isValidTime ? time : time + ':00',
+    //       date: moment(date).format('YYYY-MM-DD'),
+    //     };
 
-        await update.mutateAsync(payload);
+    //     await update.mutateAsync(payload);
 
-        toast({
-          title: `Update ${label} Success`,
-        });
-      } catch {
-        toast({
-          title: `Update ${label} Failed`,
-          variant: 'destructive',
-        });
-      } finally {
-        updateStepCallback();
-      }
-    }
+    //     toast({
+    //       title: `Update ${label} Success`,
+    //     });
+    //   } catch {
+    //     toast({
+    //       title: `Update ${label} Failed`,
+    //       variant: 'destructive',
+    //     });
+    //   } finally {
+    //     updateStepCallback();
+    //   }
+    // }
+
+    updateStepCallback();
   };
 
   return (
