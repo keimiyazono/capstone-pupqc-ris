@@ -84,9 +84,9 @@ export function FacultyLoginForm() {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter username here" {...field} />
+                    <Input placeholder="Enter email here" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
