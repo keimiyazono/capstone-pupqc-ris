@@ -62,9 +62,6 @@ export function DataTableRowStatus<TData>({
             currentStepStatus === 'Rejected' &&
               'bg-red-500 hover:bg-red-500/80',
 
-            currentStepStatus === 'Pending' &&
-              'bg-[#d4af37] hover:bg-[#d4af37]/80',
-
             currentStepStatus === 'Revise' &&
               'bg-blue-500 hover:bg-blue-500/80',
 

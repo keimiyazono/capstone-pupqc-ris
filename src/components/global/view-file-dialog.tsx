@@ -32,7 +32,7 @@ export function ViewFileDialog({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className={cn('gap-3', className)} disabled={disable}>
+        <Button className={cn('gap-3', className)} disabled={disable || !Boolean(uri)}>
           <FaRegFilePdf /> {label && <span>{label}</span>}
         </Button>
       </DialogTrigger>
