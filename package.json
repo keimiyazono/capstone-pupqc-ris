@@ -66,6 +66,7 @@
     "react-day-picker": "^8.9.1",
     "react-dom": "^18",
     "react-form-stepper": "^2.0.3",
+    "react-google-charts": "^4.0.1",
     "react-hook-form": "^7.47.0",
     "react-icons": "^4.11.0",
     "react-particles": "^2.12.2",

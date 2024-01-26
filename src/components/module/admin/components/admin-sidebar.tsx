@@ -180,12 +180,12 @@ export function AdminSidebar() {
                 Students Documents
               </AccordionTrigger>
               <AccordionContent className="p-0">
-                <Link href="/faculty/submitted-proposal">
+                <Link href="/admin/submitted-proposal">
                   <Button
                     variant="ghost"
                     className={cn(
                       'border-bd relative justify-start w-full gap-6 text-[11px] py-6 hover:bg-blue-50 transition-colors hover:text-primary',
-                      pathname.startsWith('/faculty/submitted-proposal') &&
+                      pathname.startsWith('/admin/submitted-proposal') &&
                         'bg-blue-50 text-primary after:absolute after:h-full after:w-1 after:bg-primary after:right-0'
                     )}
                   >
@@ -196,14 +196,12 @@ export function AdminSidebar() {
                   </Button>
                 </Link>
 
-                <Link href="/faculty/submitted-ethics-protocol">
+                <Link href="/admin/submitted-ethics-protocol">
                   <Button
                     variant="ghost"
                     className={cn(
                       'border-bd relative justify-start w-full gap-6 text-[11px] py-6 hover:bg-blue-50 transition-colors hover:text-primary',
-                      pathname.startsWith(
-                        '/faculty/submitted-ethics-protocol'
-                      ) &&
+                      pathname.startsWith('/admin/submitted-ethics-protocol') &&
                         'bg-blue-50 text-primary after:absolute after:h-full after:w-1 after:bg-primary after:right-0'
                     )}
                   >
@@ -214,14 +212,12 @@ export function AdminSidebar() {
                   </Button>
                 </Link>
 
-                <Link href="/faculty/submitted-full-manuscript">
+                <Link href="/admin/submitted-full-manuscript">
                   <Button
                     variant="ghost"
                     className={cn(
                       'border-bd relative justify-start w-full gap-6 text-[11px] py-6 hover:bg-blue-50 transition-colors hover:text-primary',
-                      pathname.startsWith(
-                        '/faculty/submitted-full-manuscript'
-                      ) &&
+                      pathname.startsWith('/admin/submitted-full-manuscript') &&
                         'bg-blue-50 text-primary after:absolute after:h-full after:w-1 after:bg-primary after:right-0'
                     )}
                   >
@@ -232,13 +228,13 @@ export function AdminSidebar() {
                   </Button>
                 </Link>
 
-                <Link href="/faculty/submitted-copyright-documents">
+                <Link href="/admin/submitted-copyright-documents">
                   <Button
                     variant="ghost"
                     className={cn(
                       'border-bd relative justify-start w-full gap-6 text-[11px] py-6 hover:bg-blue-50 transition-colors hover:text-primary',
                       pathname.startsWith(
-                        '/faculty/submitted-copyright-documents'
+                        '/admin/submitted-copyright-documents'
                       ) &&
                         'bg-blue-50 text-primary after:absolute after:h-full after:w-1 after:bg-primary after:right-0'
                     )}
