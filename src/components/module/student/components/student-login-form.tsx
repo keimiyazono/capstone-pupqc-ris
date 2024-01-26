@@ -81,10 +81,10 @@ export function StudentLoginForm() {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username/Student ID</FormLabel>
+                  <FormLabel>Student ID</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter username/student id here"
+                      placeholder="Enter Student ID here"
                       {...field}
                     />
                   </FormControl>
@@ -125,9 +125,9 @@ export function StudentLoginForm() {
               )}
             </Button>
 
-            <Button variant="ghost" type="button" className="w-full">
+            {/* <Button variant="ghost" type="button" className="w-full">
               Forgot password?
-            </Button>
+            </Button> */}
           </form>
         </Form>
       </CardContent>

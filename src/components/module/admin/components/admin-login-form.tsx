@@ -122,9 +122,9 @@ export function AdminLoginForm() {
               )}
             </Button>
 
-            <Button variant="ghost" type="button" className="w-full">
+            {/* <Button variant="ghost" type="button" className="w-full">
               Forgot password?
-            </Button>
+            </Button> */}
           </form>
         </Form>
       </CardContent>

@@ -160,8 +160,6 @@ export function CommentSection({ id, className }: CommentSectionProps) {
     }
   }
 
-  console.log({ comments });
-
   return (
     <div className={cn('border-t', className)}>
       <div className="text-sm font-bold py-6">Comments</div>
