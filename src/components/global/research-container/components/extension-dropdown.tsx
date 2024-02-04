@@ -27,9 +27,14 @@ import { extensionFormSchema } from '../validation';
 export interface ExtensionDropdownProps {
   id: string;
   extension: string;
+  disabled?: boolean;
 }
 
-export function ExtensionDropdown({ id, extension }: ExtensionDropdownProps) {
+export function ExtensionDropdown({
+  id,
+  extension,
+  disabled = false,
+}: ExtensionDropdownProps) {
   const { data: session } = useSession();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -66,6 +71,7 @@ export function ExtensionDropdown({ id, extension }: ExtensionDropdownProps) {
           render={({ field }) => (
             <FormItem>
               <Select
+                disabled={disabled}
                 onValueChange={async (e) => {
                   try {
                     field.onChange(e);

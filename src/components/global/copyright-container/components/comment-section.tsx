@@ -71,7 +71,7 @@ export function CommentSection({ id, className }: CommentSectionProps) {
       );
       return res.data;
     },
-    enabled: status === 'authenticated',
+    enabled: status === 'authenticated' && Boolean(profileEndPoint),
   });
 
   const {

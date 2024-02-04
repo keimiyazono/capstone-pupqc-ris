@@ -18,8 +18,10 @@ export function ResearchViewSection({ id }: ProposalViewSectionProps) {
         <ResearchView
           id={id}
           showApproveDialog
+          showReviseDialog
           showRejectDialog
           showBackButton
+          hasCooldown
         />
       ) : (
         <Unauthorized />

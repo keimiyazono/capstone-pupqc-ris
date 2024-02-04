@@ -61,23 +61,23 @@ export function FacultyDashboardSection() {
     type: process?.type,
   });
 
-  const advisee = facultyAnalytics.find(
+  const advisee = facultyAnalytics?.find(
     (data) => 'Advisee' in data
   ) as AdviseeData;
 
-  const proposal = facultyAnalytics.find(
+  const proposal = facultyAnalytics?.find(
     (data) => 'Approved Proposal' in data
   ) as ProposalData;
 
-  const ethics = facultyAnalytics.find(
+  const ethics = facultyAnalytics?.find(
     (data) => 'Approved Ethics' in data
   ) as EthicsData;
 
-  const copyright = facultyAnalytics.find(
+  const copyright = facultyAnalytics?.find(
     (data) => 'Approved Copyright' in data
   ) as CopyrightData;
 
-  const manuscript = facultyAnalytics.find(
+  const manuscript = facultyAnalytics?.find(
     (data) => 'Approved Full Manuscript' in data
   ) as ManuscriptData;
 

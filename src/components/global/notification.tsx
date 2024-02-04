@@ -76,6 +76,12 @@ export function Notification() {
                     </div>
                   )
                 )}
+
+                {notificationList.length === 0 && (
+                  <div className="h-60 flex items-center justify-center text-sm text-muted-foreground">
+                    🔔 You have no notifications
+                  </div>
+                )}
               </ScrollArea>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

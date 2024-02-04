@@ -11,12 +11,15 @@ import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { BsFillPersonFill } from 'react-icons/bs';
 import { IoChevronBackSharp } from 'react-icons/io5';
+import Cooldown from '../../cooldown';
 import { ApproveDialog } from './approve-dialog';
 import { CommentSection } from './comment-section';
 import { ExtensionDropdown } from './extension-dropdown';
 import { RejectDialog } from './reject-dialog';
+import { ReviseDialog } from './revise-dialog';
 
 export interface ResearchPaperDetails {
   research_paper: ResearchPaper[];
@@ -33,6 +36,7 @@ export interface ResearchPaper {
   faculty_name: string;
   research_type: string;
   extension: string | null;
+  modified_at: string;
 }
 
 export interface Author {
@@ -47,20 +51,25 @@ export interface ResearchViewProps {
   id: string;
   showUpdateSheet?: boolean;
   showApproveDialog?: boolean;
+  showReviseDialog?: boolean;
   showRejectDialog?: boolean;
   showBackButton?: boolean;
   hideExtensionDropdown?: boolean;
+  hasCooldown?: boolean;
 }
 
 export function ResearchView({
   id,
   showUpdateSheet = false,
   showApproveDialog = false,
+  showReviseDialog = false,
   showRejectDialog = false,
   showBackButton = false,
   hideExtensionDropdown = false,
+  hasCooldown = false,
 }: ResearchViewProps) {
   const router = useRouter();
+  const [isCooldown, setIsCooldown] = useState<boolean>(false);
 
   const { data: session, status } = useSession();
 
@@ -82,6 +91,7 @@ export function ResearchView({
     });
 
   const research = researchWithAuthors?.research_paper?.[0];
+
   const authors = researchWithAuthors?.authors ?? [];
 
   const docs = [
@@ -92,6 +102,14 @@ export function ResearchView({
 
   return (
     <>
+      {hasCooldown && (
+        <Cooldown
+          modified_at={research?.modified_at ?? ''}
+          isCooldown={isCooldown}
+          setIsCooldown={(value) => setIsCooldown(value)}
+        />
+      )}
+
       <div className="flex items-start">
         {showBackButton && (
           <div>
@@ -115,17 +133,29 @@ export function ResearchView({
               <ExtensionDropdown
                 id={research.id}
                 extension={research?.extension ?? ''}
+                disabled={isCooldown}
               />
             )}
 
             {showApproveDialog && (
               <ApproveDialog
                 id={id}
-                disabled={research.status === 'Approved'}
+                disabled={research.status === 'Approved' || isCooldown}
               />
             )}
+
+            {showReviseDialog && (
+              <ReviseDialog
+                id={id}
+                disabled={research.status === 'Revise' || isCooldown}
+              />
+            )}
+
             {showRejectDialog && (
-              <RejectDialog id={id} disabled={research.status === 'Rejected'} />
+              <RejectDialog
+                id={id}
+                disabled={research.status === 'Rejected' || isCooldown}
+              />
             )}
           </div>
         )}
