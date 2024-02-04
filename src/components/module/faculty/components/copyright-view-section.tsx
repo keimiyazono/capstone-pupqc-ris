@@ -19,8 +19,10 @@ export function CopyrightViewSection({ id }: CopyrightViewSectionProps) {
         <CopyrightView
           id={id}
           showApproveDialog
+          showReviseDialog
           showRejectDialog
           showBackButton
+          hasCooldown
         />
       ) : (
         <Unauthorized />

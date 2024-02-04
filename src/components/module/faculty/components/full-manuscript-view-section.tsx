@@ -20,8 +20,10 @@ export function FullManuscriptViewSection({
         <FullManuscriptView
           id={id}
           showApproveDialog
+          showReviseDialog
           showRejectDialog
           showBackButton
+          hasCooldown
         />
       ) : (
         <Unauthorized />

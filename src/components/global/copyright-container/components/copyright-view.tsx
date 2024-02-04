@@ -1,32 +1,43 @@
 'use client';
 
 import { useGetFacultyCopyrightById } from '@/components/module/faculty/hooks/use-faculty-copyrigh-query';
+import { APPROVE_LIST } from '@/components/module/stepper';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { FileUploadInput } from '@/components/ui/file-upload-input';
 import { Form } from '@/components/ui/form';
+import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IoChevronBackSharp } from 'react-icons/io5';
 import * as z from 'zod';
+import Cooldown from '../../cooldown';
 import { copyrightDocumentsFormSchema } from '../validation';
 import { ApproveDialog } from './approve-dialog';
 import { RejectDialog } from './reject-dialog';
+import { ReviseDialog } from './revise-dialog';
 
 export interface CopyrightViewProps {
   id: string;
   showApproveDialog?: boolean;
+  showReviseDialog?: boolean;
   showRejectDialog?: boolean;
   showBackButton?: boolean;
+  hasCooldown?: boolean;
 }
 
 export function CopyrightView({
   id,
   showApproveDialog = false,
+  showReviseDialog = false,
   showRejectDialog = false,
   showBackButton = false,
+  hasCooldown = false,
 }: CopyrightViewProps) {
   const router = useRouter();
+  const [isCooldown, setIsCooldown] = useState<boolean>(false);
 
   const { data: copyright } = useGetFacultyCopyrightById({ id });
 
@@ -37,6 +48,14 @@ export function CopyrightView({
 
   return (
     <>
+      {hasCooldown && (
+        <Cooldown
+          modified_at={copyright?.modified_at ?? ''}
+          isCooldown={isCooldown}
+          setIsCooldown={(value) => setIsCooldown(value)}
+        />
+      )}
+
       <div className="flex items-center">
         {showBackButton && (
           <div>
@@ -57,18 +76,53 @@ export function CopyrightView({
             {showApproveDialog && (
               <ApproveDialog
                 id={id}
-                disabled={copyright.status === 'Approved'}
+                disabled={
+                  copyright.status === 'Approved' ||
+                  copyright.status === 'Revise' ||
+                  isCooldown
+                }
               />
             )}
+
+            {showReviseDialog && (
+              <ReviseDialog
+                id={id}
+                disabled={copyright.status === 'Revise' || isCooldown}
+              />
+            )}
+
             {showRejectDialog && (
               <RejectDialog
                 id={id}
-                disabled={copyright.status === 'Rejected'}
+                disabled={copyright.status === 'Rejected' || isCooldown}
               />
             )}
           </div>
         )}
       </div>
+
+      {copyright?.status && (
+        <Badge
+          className={cn(
+            APPROVE_LIST.includes(copyright?.status) &&
+              'bg-green-500 hover:bg-green-500/80',
+
+            copyright?.status === 'Pending' &&
+              'bg-[#d4af37] hover:bg-[#d4af37]/80',
+
+            copyright?.status === 'Rejected' &&
+              'bg-red-500 hover:bg-red-500/80',
+
+            copyright?.status === 'Revise' &&
+              'bg-blue-500 hover:bg-blue-500/80',
+
+            copyright?.status === 'Revised' &&
+              'bg-purple-500 hover:bg-purple-500/80'
+          )}
+        >
+          {copyright?.status}
+        </Badge>
+      )}
 
       {copyright && (
         <div className="flex flex-col">

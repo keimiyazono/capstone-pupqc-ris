@@ -8,6 +8,8 @@ import { FacultyManuscript } from '../../hooks/use-faculty-manuscript-query';
 import { DataTableColumnHeader } from './data-table-column-header';
 import { DataTableRowActions } from './data-table-row-actions';
 
+const APPROVE_LIST = ['Approve', 'Approved'];
+
 export const columns: ColumnDef<FacultyManuscript>[] = [
   {
     accessorKey: 'title',
@@ -33,9 +35,16 @@ export const columns: ColumnDef<FacultyManuscript>[] = [
       return (
         <Badge
           className={cn(
-            status === 'Pending' && 'bg-yellow-500 hover:bg-yellow-500/80',
-            status === 'Approved' && 'bg-green-500 hover:bg-green-500/80',
-            status === 'Rejected' && 'bg-red-500 hover:bg-red-500/80'
+            APPROVE_LIST.includes(status) &&
+              'bg-green-500 hover:bg-green-500/80',
+
+            status === 'Pending' && 'bg-[#d4af37] hover:bg-[#d4af37]/80',
+
+            status === 'Rejected' && 'bg-red-500 hover:bg-red-500/80',
+
+            status === 'Revise' && 'bg-blue-500 hover:bg-blue-500/80',
+
+            status === 'Revised' && 'bg-purple-500 hover:bg-purple-500/80'
           )}
         >
           {status}

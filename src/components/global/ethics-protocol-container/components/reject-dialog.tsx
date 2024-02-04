@@ -1,4 +1,3 @@
-import { useFacultyWorkflowContext } from '@/components/module/faculty/components/context/faculty-workflow';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -27,7 +26,6 @@ export function RejectDialog({ id, disabled = false }: RejectDialogProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const { toast } = useToast();
-  const { researchType, selectedProcess } = useFacultyWorkflowContext();
 
   const update = useMutation({
     mutationFn: (payload: { status: string }) => {
@@ -38,12 +36,9 @@ export function RejectDialog({ id, disabled = false }: RejectDialogProps) {
       });
     },
 
-    async onSuccess() {
-      await queryClient.invalidateQueries({
-        queryKey: [
-          `/faculty/adviser/ethics/${selectedProcess?.course}/${selectedProcess?.section}`,
-          researchType,
-        ],
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: [`/ethics/get-ethics/${id}`],
       });
     },
   });

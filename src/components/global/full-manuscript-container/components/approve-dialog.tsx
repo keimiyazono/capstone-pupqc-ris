@@ -1,4 +1,3 @@
-import { useFacultyWorkflowContext } from '@/components/module/faculty/components/context/faculty-workflow';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -27,7 +26,6 @@ export function ApproveDialog({ id, disabled = false }: ApproveDialogProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const { toast } = useToast();
-  const { researchType, selectedProcess } = useFacultyWorkflowContext();
 
   const update = useMutation({
     mutationFn: (payload: { status: string }) => {
@@ -38,12 +36,9 @@ export function ApproveDialog({ id, disabled = false }: ApproveDialogProps) {
       });
     },
 
-    async onSuccess() {
-      await queryClient.invalidateQueries({
-        queryKey: [
-          `/faculty/adviser/manuscript/${selectedProcess?.course}/${selectedProcess?.section}`,
-          researchType,
-        ],
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: [`/fullmanuscript/get-manuscript/${id}`],
       });
     },
   });

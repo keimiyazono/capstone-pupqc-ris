@@ -27,7 +27,7 @@ export function ApproveDialog({ id, disabled = false }: ApproveDialogProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const { toast } = useToast();
-  const { researchType, selectedProcess } = useFacultyWorkflowContext();
+
 
   const update = useMutation({
     mutationFn: (payload: { status: string }) => {
@@ -38,12 +38,9 @@ export function ApproveDialog({ id, disabled = false }: ApproveDialogProps) {
       });
     },
 
-    async onSuccess() {
-      await queryClient.invalidateQueries({
-        queryKey: [
-          `/faculty/adviser/ethics/${selectedProcess?.course}/${selectedProcess?.section}`,
-          researchType,
-        ],
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: [`/ethics/get-ethics/${id}`],
       });
     },
   });

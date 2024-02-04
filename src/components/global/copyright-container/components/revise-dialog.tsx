@@ -13,14 +13,14 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { BiLoaderAlt } from 'react-icons/bi';
-import { FaXmark } from 'react-icons/fa6';
+import { FaPencil } from 'react-icons/fa6';
 
-export interface RejectDialogProps {
+export interface ReviseDialogProps {
   id: string;
   disabled?: boolean;
 }
 
-export function RejectDialog({ id, disabled = false }: RejectDialogProps) {
+export function ReviseDialog({ id, disabled = false }: ReviseDialogProps) {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState<boolean>(false);
@@ -29,7 +29,7 @@ export function RejectDialog({ id, disabled = false }: RejectDialogProps) {
 
   const update = useMutation({
     mutationFn: (payload: { status: string }) => {
-      return risApi.put(`/faculty/approve_manuscript/${id}`, payload, {
+      return risApi.put(`/faculty/approve_copyright/${id}`, payload, {
         headers: {
           Authorization: `Bearer ${session?.user.authToken}`,
         },
@@ -38,25 +38,25 @@ export function RejectDialog({ id, disabled = false }: RejectDialogProps) {
 
     onSuccess() {
       queryClient.invalidateQueries({
-        queryKey: [`/fullmanuscript/get-manuscript/${id}`],
+        queryKey: [`/copyright/get-copyright/${id}`],
       });
     },
   });
 
-  async function rejectHandler() {
+  async function approveHandler() {
     try {
       setIsSubmitting(true);
 
-      await update.mutateAsync({ status: 'Rejected' });
+      await update.mutateAsync({ status: 'Revise' });
 
       toast({
-        title: 'Reject Full Manuscript Success',
+        title: 'Revise Copyright Document Success',
       });
 
       setOpen(false);
     } catch (error) {
       toast({
-        title: 'Reject Full Manuscript Failed',
+        title: 'Revise Copyright Document Failed',
         variant: 'destructive',
       });
     } finally {
@@ -71,29 +71,28 @@ export function RejectDialog({ id, disabled = false }: RejectDialogProps) {
       onOpenChange={() => setOpen((prev) => !prev)}
     >
       <DialogTrigger asChild>
-        <Button variant="destructive" className="gap-2" disabled={disabled}>
-          <FaXmark /> <span>Reject</span>
+        <Button
+          className="gap-2 bg-blue-500 hover:bg-blue-500/80"
+          disabled={disabled}
+        >
+          <FaPencil /> <span>Revise</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Reject full manuscript</DialogTitle>
+          <DialogTitle>Revise Copyright Document</DialogTitle>
         </DialogHeader>
         <div>
-          <p>Do you want to reject this full manuscript?</p>
+          <p>Do you want to revise this copyright document?</p>
         </div>
         <DialogFooter>
-          <Button
-            variant="destructive"
-            onClick={rejectHandler}
-            disabled={isSubmitting}
-          >
+          <Button onClick={approveHandler} disabled={isSubmitting}>
             {isSubmitting ? (
               <span className="h-fit w-fit animate-spin">
                 <BiLoaderAlt />
               </span>
             ) : (
-              'Reject'
+              'Revise'
             )}
           </Button>
         </DialogFooter>

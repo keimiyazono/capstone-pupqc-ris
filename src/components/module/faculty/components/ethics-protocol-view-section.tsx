@@ -21,8 +21,10 @@ export function EthicsProtocolViewSection({
         <EthicsProtocolView
           id={id}
           showApproveDialog
+          showReviseDialog
           showRejectDialog
           showBackButton
+          hasCooldown
         />
       ) : (
         <Unauthorized />

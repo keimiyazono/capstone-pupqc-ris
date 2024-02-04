@@ -1,34 +1,47 @@
 'use client';
 
 import { useGetFacultyEthicsProtocolsById } from '@/components/module/faculty/hooks/use-faculty-ethics-protocol-query';
+import { APPROVE_LIST } from '@/components/module/stepper';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { FileUploadInput } from '@/components/ui/file-upload-input';
 import { Form } from '@/components/ui/form';
+import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IoChevronBackSharp } from 'react-icons/io5';
 import * as z from 'zod';
+import Cooldown from '../../cooldown';
 import { ethicsProtocolFormSchema } from '../validation';
 import { ApproveDialog } from './approve-dialog';
 import { RejectDialog } from './reject-dialog';
+import { ReviseDialog } from './revise-dialog';
 
 export interface EthicsProtocolViewProps {
   id: string;
   showApproveDialog?: boolean;
+  showReviseDialog?: boolean;
   showRejectDialog?: boolean;
   showBackButton?: boolean;
+  hasCooldown?: boolean;
 }
 
 export function EthicsProtocolView({
   id,
   showApproveDialog = false,
+  showReviseDialog = false,
   showRejectDialog = false,
   showBackButton = false,
+  hasCooldown = false,
 }: EthicsProtocolViewProps) {
   const router = useRouter();
+  const [isCooldown, setIsCooldown] = useState<boolean>(false);
 
-  const { data: ethicsProtocol } = useGetFacultyEthicsProtocolsById({ id });
+  const { data: ethicsProtocol, refetch } = useGetFacultyEthicsProtocolsById({
+    id,
+  });
 
   const form = useForm<z.infer<typeof ethicsProtocolFormSchema>>({
     resolver: zodResolver(ethicsProtocolFormSchema),
@@ -37,6 +50,14 @@ export function EthicsProtocolView({
 
   return (
     <>
+      {hasCooldown && (
+        <Cooldown
+          modified_at={ethicsProtocol?.modified_at ?? ''}
+          isCooldown={isCooldown}
+          setIsCooldown={(value) => setIsCooldown(value)}
+        />
+      )}
+
       <div className="flex items-center">
         {showBackButton && (
           <div>
@@ -57,18 +78,53 @@ export function EthicsProtocolView({
             {showApproveDialog && (
               <ApproveDialog
                 id={id}
-                disabled={ethicsProtocol.status === 'Approved'}
+                disabled={
+                  ethicsProtocol.status === 'Approved' ||
+                  ethicsProtocol.status === 'Revise' ||
+                  isCooldown
+                }
               />
             )}
+
+            {showReviseDialog && (
+              <ReviseDialog
+                id={id}
+                disabled={ethicsProtocol.status === 'Revise' || isCooldown}
+              />
+            )}
+
             {showRejectDialog && (
               <RejectDialog
                 id={id}
-                disabled={ethicsProtocol.status === 'Rejected'}
+                disabled={ethicsProtocol.status === 'Rejected' || isCooldown}
               />
             )}
           </div>
         )}
       </div>
+
+      {ethicsProtocol?.status && (
+        <Badge
+          className={cn(
+            APPROVE_LIST.includes(ethicsProtocol?.status) &&
+              'bg-green-500 hover:bg-green-500/80',
+
+            ethicsProtocol?.status === 'Pending' &&
+              'bg-[#d4af37] hover:bg-[#d4af37]/80',
+
+            ethicsProtocol?.status === 'Rejected' &&
+              'bg-red-500 hover:bg-red-500/80',
+
+            ethicsProtocol?.status === 'Revise' &&
+              'bg-blue-500 hover:bg-blue-500/80',
+
+            ethicsProtocol?.status === 'Revised' &&
+              'bg-purple-500 hover:bg-purple-500/80'
+          )}
+        >
+          {ethicsProtocol?.status}
+        </Badge>
+      )}
 
       {ethicsProtocol && (
         <div className="flex flex-col">
