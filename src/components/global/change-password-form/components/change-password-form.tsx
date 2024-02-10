@@ -55,7 +55,6 @@ export function ChangePasswordForm({
         description: data?.detail ?? '',
       });
     } catch (error: any) {
-      console.log(error);
       toast({
         title: 'Change Password Failed',
         description: error?.response?.data?.detail ?? '',
