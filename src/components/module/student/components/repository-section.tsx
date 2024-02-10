@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -13,8 +14,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Toggle } from '@/components/ui/toggle';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { useGetAllResearchPapersWithAuthors } from '@/hooks/use-research-query';
-import { useGetCourseList } from '@/hooks/use-user-query';
 import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import parse from 'html-react-parser';
 import moment from 'moment';
@@ -49,28 +48,28 @@ const CHARACTERS = Array.from({ length: 26 }, function (_, idx) {
 });
 
 export function RepositorySection() {
-  const [activeCourses, setActiveCourses] = useState<string[]>([]);
-  const [activeProposalTypes, setActiveProposalTypes] = useState<string[]>([]);
+  // const [activeCourses, setActiveCourses] = useState<string[]>([]);
+  // const [activeProposalTypes, setActiveProposalTypes] = useState<string[]>([]);
   const [activeChars, setActiveChars] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<string>('');
   const [search, setSearch] = useState<string>('');
-  const [selectedResearch, setSelectedResearch] = useState<ResearchPaperV2>();
+  // const [selectedResearch, setSelectedResearch] = useState<ResearchPaperV2>();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { data: courseList, isLoading: courseListLoading } = useGetCourseList();
-  const { data: researches, isLoading } = useGetAllResearchPapersWithAuthors();
+  // const { data: courseList, isLoading: courseListLoading } = useGetCourseList();
+  // const { data: researches, isLoading } = useGetAllResearchPapersWithAuthors();
 
-  const { data: facultyResearches = [] } = useGetFacultyResearchPapers();
+  const { data: facultyResearches = [], isLoading } =
+    useGetFacultyResearchPapers();
 
   const facultyResearchApprovedList = facultyResearches.filter(
     ({ FacultyResearchPaper: { status } }) => status === 'Approved'
   );
 
-  const coursesId = useId();
+  // const coursesId = useId();
   const proposalTypesId = useId();
   const characterId = useId();
   const researchId = useId();
-  const courseId = useId();
 
   const filteredResearches = useMemo<FacultyResearchPaperData[]>(() => {
     let filter: FacultyResearchPaperData[] = Array.from(
@@ -100,8 +99,10 @@ export function RepositorySection() {
     if (search) {
       const regex = new RegExp(search.toLowerCase());
 
-      filter = filter.filter(({ FacultyResearchPaper: { title } }) =>
-        title.toLowerCase().match(regex)
+      filter = filter.filter(
+        ({ FacultyResearchPaper: { title, keywords } }) =>
+          title.toLowerCase().match(regex) ||
+          keywords.toLowerCase().match(regex)
       );
     }
 
@@ -221,7 +222,7 @@ export function RepositorySection() {
         <div className="relative h-fit max-w-lg">
           <Input
             ref={inputRef}
-            placeholder="Search research title..."
+            placeholder="Search research title/keywords..."
             className="pr-28"
             onChange={(e) => {
               if (!Boolean(e.target.value)) {
@@ -269,6 +270,7 @@ export function RepositorySection() {
                   date_publish,
                   publisher,
                   status,
+                  keywords,
                 },
                 name,
               },
@@ -298,6 +300,9 @@ export function RepositorySection() {
                       // }}
                     >
                       <h2 className="font-bold">{title}</h2>
+                      <small className="text-muted-foreground">
+                        {keywords}
+                      </small>
                       <div className="flex items-center gap-2 text-sm my-4">
                         {/* {filteredCourses.map((course, idx) => (
                         <Badge key={courseId + idx} variant="outline">
@@ -328,6 +333,7 @@ export function RepositorySection() {
                     <div>
                       <DialogHeader>
                         <DialogTitle>{title}</DialogTitle>
+                        <DialogDescription>{keywords}</DialogDescription>
                       </DialogHeader>
                       <ScrollArea className="h-96 py-10">
                         <div className="space-y-6 ">
