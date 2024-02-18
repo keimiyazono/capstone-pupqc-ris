@@ -388,7 +388,7 @@ export function RepositorySection() {
                             </div>
                           )}
 
-                          {file && (
+                          {/* {file && (
                             <div className="mt-10">
                               <DocViewer
                                 documents={docs}
@@ -399,7 +399,7 @@ export function RepositorySection() {
                                 }}
                               />
                             </div>
-                          )}
+                          )} */}
 
                           <div className="space-y-1 text-sm">
                             <div className="font-semibold">Date Publish</div>
